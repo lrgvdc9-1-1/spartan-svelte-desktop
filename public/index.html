@@ -1,0 +1,130 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+	<title>Svelte app</title>
+
+	<link rel='icon' type='image/png' href='favicon.png'>
+	<!-- <link rel='stylesheet' href='global.css'> -->
+	<link href="https://fonts.googleapis.com/css?family=Ubuntu&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.metroui.org.ua/v4/css/metro-all.min.css">
+
+	<link rel='stylesheet' href='./bundle.css'>
+
+	<link rel="stylesheet" href="https://js.arcgis.com/3.28/esri/css/esri.css">
+	<style>
+		body{
+			font-family: 'Ubuntu', sans-serif;
+			background: #5B71A2 !important;
+            color:white;
+            overflow: hidden;
+		}
+		.content-holder {
+			background: #243C73 !important;
+		}
+
+		.ribbon-button {
+			background: transparent !important;
+			color: white !important;
+		}
+		.tabs-holder {
+			color: white !important;
+		}
+		.ribbon-menu .tabs-holder li {
+			background: #05173F !important;
+			color: white !important;
+			cursor: pointer;
+		}
+		.ribbon-menu .tabs-holder .active {
+			background: #243C73 !important;
+		}
+		.ribbon-menu .content-holder .group .title{
+			border-top: 1px solid #D55441;
+		}
+
+		.ribbon-menu .content-holder .section{
+			border-bottom: transparent;
+		}
+
+		.window-caption {
+			background: #243C73;
+        }
+        
+        .shortCut {
+            height: 100vh;
+        }
+	</style>
+</head>
+<script>
+
+const remote = require('electron').remote;
+
+(function handleWindowControls() {
+    // When document has loaded, initialise
+    document.onreadystatechange = () => {
+        if (document.readyState == "complete") {
+            init();
+        }
+    };
+
+    function init() {
+        let window = remote.getCurrentWindow();
+        const minButton = document.getElementById('min-button'),
+            maxButton = document.getElementById('max-button'),
+            restoreButton = document.getElementById('restore-button'),
+            closeButton = document.getElementById('close-button');
+
+        minButton.addEventListener("click", event => {
+            window = remote.getCurrentWindow();
+            window.minimize();
+        });
+
+        maxButton.addEventListener("click", event => {
+            window = remote.getCurrentWindow();
+            window.maximize();
+            toggleMaxRestoreButtons();
+        });
+
+        restoreButton.addEventListener("click", event => {
+            window = remote.getCurrentWindow();
+            window.unmaximize();
+            toggleMaxRestoreButtons();
+        });
+
+        // Toggle maximise/restore buttons when maximisation/unmaximisation
+        // occurs by means other than button clicks e.g. double-clicking
+        // the title bar:
+        toggleMaxRestoreButtons();
+        window.on('maximize', toggleMaxRestoreButtons);
+        window.on('unmaximize', toggleMaxRestoreButtons);
+
+        closeButton.addEventListener("click", event => {
+            window = remote.getCurrentWindow();
+            window.close();
+        });
+
+        function toggleMaxRestoreButtons() {
+            window = remote.getCurrentWindow();
+            if (window.isMaximized()) {
+                maxButton.style.display = "none";
+                restoreButton.style.display = "flex";
+            } else {
+                restoreButton.style.display = "none";
+                maxButton.style.display = "flex";
+            }
+        }
+    }
+})();
+
+</script>
+
+<body>
+	<script defer async src="./socket.io.js"></script>
+	
+	<script defer async src='./bundle.js'></script>
+	
+	
+</body>
+</html>

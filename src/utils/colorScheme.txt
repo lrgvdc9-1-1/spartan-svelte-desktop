@@ -1,0 +1,6 @@
+#D55441 - Indian Red
+#243C73 - Midnight Blue
+#CACBCF - Light Steel Blue
+#3B3B2B - Dark Olive Green
+#727F8B - Slate Gray
+#FFFFFF - white
