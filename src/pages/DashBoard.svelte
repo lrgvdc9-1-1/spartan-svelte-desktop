@@ -1,21 +1,38 @@
 <script>
-    import { onMount } from 'svelte';
+    import { onMount, onDestroy } from 'svelte';
+    import SQL from '../utils/sql.js';
+
     export let url;
     export let option;
+    let available = false;
+    let sql = new SQL(client, api);
+
     let openTickets = [];
     let iconURL = url + "users/getUserImage/?pic=";
     
 
     //Once the component is mount will fetch the pending tickets by user.localStorage.
     onMount(async () => {
-
-		const res = await fetch(url + "addressticket/getAllPendingTicketsByOrga2/?id=6");
         
-		let hold = await res.json();
-        openTickets = (hold) ? hold['data'] : [];
-        console.log(openTickets);
+        //If sql available then get organization tickets
+        if(sql.isAvailable()) {
+           sql.getOrganizationTickets(6).then(res => {
+               console.log(res);
+               console.timeEnd("query");
+               openTickets = res.rows;
+               setTimeout(() => {
+                   available = true;
+               }, 300);
+           });
+        }
 	});
     
+    onDestroy(async () => {
+        //End of component life. 
+        console.log("component desroyed...");
+        openTickets = [];
+    });
+
 </script>
 <style>
     .listview {
@@ -23,7 +40,10 @@
         display: inline;
     }
 </style>
-<div class="container">
+
+{#if available}
+     <!-- content here -->
+     <div class="container">
 
         <div class="window" style="float: left; width: 400px;">
             <div class="window-caption">
@@ -46,7 +66,16 @@
                                     {ticket.staff} | <b> {((ticket.created_date) ? ticket.created_date : '')}</b>
                                 </div>
                                 <div class="card-content p-2">
-                                    Card with header and footer...
+                                    <table class="table">
+                                        <tr>
+                                            <td>Ticket Id</td>
+                                            <td>{ticket.objectid}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Customer Name</td>
+                                            <td>{ticket.cfirst_name} {ticket.clast_name}</td>
+                                        </tr>
+                                    </table>
                                 </div>
                                 <div class="card-footer">
                                     <button class="flat-button mif-thumbs-up"></button>
@@ -74,7 +103,7 @@
                 Window content
             </div>
         </div>
- 
+    </div>
+{/if}
 
-</div>
 

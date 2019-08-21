@@ -63,7 +63,8 @@
     //Here add all the global node requirements..
     const remote = require('electron').remote;
     const {Client} = require('pg');
-    const db = require('./configurations/db');
+	const db = require('./configurations/db');
+	const api = require('./configurations/api');
     const client = new Client(db) //Connect to database...
 </script>
 

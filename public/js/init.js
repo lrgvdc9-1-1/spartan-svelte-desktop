@@ -7,11 +7,7 @@ async function  initDB() {
     client.on('error', err => {
         console.error('something bad has happened!', err.stack)
     })
-    //This is just for testing..
-    client.query('SELECT NOW()', (err, res) => {
-            console.log(err, res)
-
-    })
+    
 }
 
 initDB();
