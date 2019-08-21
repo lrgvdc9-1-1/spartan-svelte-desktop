@@ -17,10 +17,11 @@ let mainWindow
 function createWindow () {
   // Create the browser window.
   const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize
-  
+  console.log(`WIDTH: ${width}`);
+  console.log(`HEIGHT: ${height}`);
   mainWindow = new BrowserWindow({
-    width: width,
-    height: height,
+    width: width - 50,
+    height: height - 50,
     show: false,
     frame: false,
     webPreferences: {
