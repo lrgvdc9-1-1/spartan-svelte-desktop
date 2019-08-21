@@ -26,6 +26,7 @@
   "dependencies": {
     "electron-reload": "^1.5.0",
     "imask": "^5.2.0",
+    "pg": "^7.12.1",
     "svero": "^1.0.0"
   }
 }
