@@ -1,5 +1,5 @@
 <script>
-    import { Router, Route, Link, navigateTo  } from 'svero';
+    import { Router, Route, Link, navigateTo  } from '../lib/main';
     import { fade, fly } from 'svelte/transition';
     import DashBoard from '../pages/DashBoard.svelte';
     import DashBoardCard from '../pages/DashBoardCard.svelte';

@@ -1,5 +1,5 @@
 <script>
-    import {  Link } from 'svero';
+    import {  Link } from '../lib/main';
 </script>
 <style>
     [class*=mif-] {
