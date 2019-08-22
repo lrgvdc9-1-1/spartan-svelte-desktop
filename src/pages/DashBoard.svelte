@@ -5,9 +5,12 @@
     export let url;
     export let option;
     let available = false;
-    let sql = new SQL(client, api);
+
+
+    let sql = new SQL(client, api, client_status);
 
     let openTickets = [];
+
     let iconURL = url + "users/getUserImage/?pic=";
     
 
@@ -15,7 +18,7 @@
     onMount(async () => {
         
         //If sql available then get organization tickets
-        if(sql.isAvailable()) {
+        if(sql.isLocalAvailable()) {
            sql.getOrganizationTickets(6).then(res => {
                console.log(res);
                console.timeEnd("query");
@@ -24,6 +27,13 @@
                    available = true;
                }, 300);
            });
+        }else {
+            const res = await sql.getOrganizationTickets(6, url);
+            let hold = await res.json();
+            openTickets = (hold) ? hold['data'] : [];
+            setTimeout(() => {
+                   available = true;
+               }, 300);
         }
 	});
     

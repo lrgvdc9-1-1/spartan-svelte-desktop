@@ -5,15 +5,15 @@
 	import DatePicker from './ui/DatePicker.svelte';
 	import  svelte from 'svelte/compiler';
 
-	console.log(`CURRENT VERSION OF SVELTE RUNNING: ${svelte.VERSION}v`);
+  console.log(`CURRENT VERSION OF SVELTE RUNNING: ${svelte.VERSION}v`);
+  
+  //Main API EndPOINT
 	let url = "https://gis.lrgvdc911.org/php/spartan/api/v2/index.php/";
 
 
+  //Connection to spartan chat server...
 	const socket = io('http://localhost:3000');
 	
-	socket.on('connect', () => {
-		
-	});
 </script>
 
 <style>
@@ -66,7 +66,7 @@
   top: 0;
   right: 0;
   height: 100%;
-  font-family: "Segoe MDL2 Assets";
+  font-family: segoe;
   font-size: 10px;
 }
 #window-controls {

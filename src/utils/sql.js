@@ -1,15 +1,21 @@
 export default class SQL {
-    constructor(client, api) {
+    constructor(client, api, client_status) {
         this.client = client;
         this.api = api;
+        this.client_status = client_status;
     }
 
-    isAvailable() {
-        return this.client;
+    isLocalAvailable() {
+        return this.client_status;
     }
 
-    getOrganizationTickets(organization_id) {
-        return this.client.query(this.api['tickets']['organization'], [organization_id]);
+    getOrganizationTickets(organization_id, url = null) {
+        if(this.client_status) {
+            return this.client.query(this.api['tickets']['organization'], [organization_id]);
+        }else{
+            return fetch(`${url}addressticket/getAllPendingTicketsByOrga2/?id=${organization_id}`);
+        }
+       
         
     }
 

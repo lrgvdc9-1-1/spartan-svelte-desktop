@@ -15,6 +15,11 @@
 
 	<link rel="stylesheet" href="https://js.arcgis.com/3.28/esri/css/esri.css">
 	<style>
+
+		@font-face {
+			font-family: segoe;
+			src: url(fonts/SegMDL2.ttf);
+		}
 		body{
 			font-family: 'Ubuntu', sans-serif;
 			background: rgb(2,0,36);
@@ -64,22 +69,40 @@
     const remote = require('electron').remote;
     const {Client} = require('pg');
 	const api = require('./configurations/api');
-
-
+	const dns = require('dns')
+	const osystem = require('os');
+	
+	let db = null;
+	let client = null;
 	let client_status = true;
 
+	//IF DB JSON is not there then tell the system not to connect to database
+
 	try {
-		const db = require('./configurations/db');
+		db = require('./configurations/db');
+		client_status = (Object.entries(db).length === 0) ? false : true;
+
 	} catch (error) {
 		client_status = false;
 	}
 
 
 	//Only create a client if there is a db json..
+	//if connected lets check first if we are in local network.
 	if(client_status) {
-		const client = new Client(db) //Connect to database...
-	}else {
-		client_status = false;
+	
+		// DO DNS LOOK UP local network connect to db
+		// if not fail over to API http request 
+		dns.lookup('911.local', {all: true}, (err, addresses) =>
+				client_status = (addresses.length > 0) ? true : false
+			);
+		if(client_status) {
+			try { //Try to connect if fail then tell the app to switch
+				client = new Client(db) //Connect to database...
+			} catch (error) {
+				client_status = false;
+			}
+		}	
 	}
     
 </script>
