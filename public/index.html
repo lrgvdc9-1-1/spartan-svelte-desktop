@@ -65,7 +65,14 @@
     const {Client} = require('pg');
 	const db = require('./configurations/db');
 	const api = require('./configurations/api');
-    const client = new Client(db) //Connect to database...
+	let client_status = true;
+	//Only create a client if there is a db json..
+	if(db) {
+		const client = new Client(db) //Connect to database...
+	}else {
+		client_status = false;
+	}
+    
 </script>
 
 <body>
