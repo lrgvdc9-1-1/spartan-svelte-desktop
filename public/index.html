@@ -63,11 +63,20 @@
     //Here add all the global node requirements..
     const remote = require('electron').remote;
     const {Client} = require('pg');
-	const db = require('./configurations/db');
 	const api = require('./configurations/api');
+
+
 	let client_status = true;
+
+	try {
+		const db = require('./configurations/db');
+	} catch (error) {
+		client_status = false;
+	}
+
+
 	//Only create a client if there is a db json..
-	if(db) {
+	if(client_status) {
 		const client = new Client(db) //Connect to database...
 	}else {
 		client_status = false;
