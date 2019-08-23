@@ -1,7 +1,7 @@
 <script>
     import { Router, Route, Link, navigateTo  } from '../lib/main';
     import { fade, fly } from 'svelte/transition';
-    import DashBoard from '../pages/DashBoard.svelte';
+    import DashBoard from '../pages/DashBoard';
     import DashBoardCard from '../pages/DashBoardCard.svelte';
     import Ticket from '../pages/Ticket.svelte';
     import ShortCuts from '../ui/ShortCuts.svelte';
