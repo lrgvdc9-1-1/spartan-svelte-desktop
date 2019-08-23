@@ -2,12 +2,26 @@
 async function  initDB() {
    
     if(client_status) {
-        await client.connect(); //await to Connect to the database...
 
-        //Couple of test everything works fine...
-        client.on('error', err => {
-            console.error('something bad has happened!', err.stack)
-        })
+		// DO DNS LOOK UP local network connect to db
+		// if not fail over to API http request 
+		await dns.lookup('911.local', {all: true}, (err, addresses) =>
+				{client_status = (addresses.length > 0) ? true : false;
+				
+								if(client_status) {
+						try { //Try to connect if fail then tell the app to switch
+							client = new Client(db) //Connect to database...
+                            console.log("SQL Local");
+                            client.connect(); //await to Connect to the database...
+						} catch (error) {
+							client_status = false;
+						}
+					}	
+				}
+			);
+       
+
+      
     }
     
 }
