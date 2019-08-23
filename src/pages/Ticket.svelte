@@ -5,7 +5,7 @@
    import DatePicker from "../ui/DatePicker.svelte";
    import Loading from "../ui/Loading.svelte";
    import OnlineDash from "../ui/OnlineDash.svelte";
-   import Ticket from "../utils/Tickets.js";
+   import Ticket from "../utils/Tickets";
    import IMask from 'imask';
 
 
@@ -24,10 +24,13 @@
     let dockable = false;
 
     export let action;
-    export let newTicket;
+    export let newTicket = false;
     export let api;
     export let socket;
-    
+
+     export let router;
+
+ 
     //Handle action for the riboon and other actions..
     $: handleAction = (action) ? decideAction(action) : '';
     $: customerData = (active === 'customerData') ? '' : 'none';
@@ -78,7 +81,7 @@
 
      onMount(async () => {
        
-         // heightTicket = (document.body.clientHeight - 218) + "px";
+
          var classname = document.getElementsByClassName("input");
          var fakeName = new Date();
      
@@ -121,8 +124,18 @@
             // .then(response => 
             // console.log('Success:', response))
 
-         }else{ //Fetch The URL..
+         }else{
+             //Fetch The URL..
+            console.log(router.params); // /about/bill/123/kansas { who: 'bill', where: 'kansas' }
+            ticket.objectid = router.params['objectid'];
+            ticket.id_ticket = router.params['idTicket'];
+            if(client_status) {
+               console.log("LOCAL DATABASE ACCESS");
 
+            }else{
+               console.log("FETCH THROUGH API");
+              
+            } 
          }
 
          loading = false;

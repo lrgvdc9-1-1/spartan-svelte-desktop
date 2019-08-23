@@ -1,7 +1,7 @@
 <script>
     import { Router, Route, Link, navigateTo  } from '../lib/main';
     import { fade, fly } from 'svelte/transition';
-    import DashBoard from '../pages/DashBoard';
+    import DashBoard from '../pages/DashBoard.svelte';
     import DashBoardCard from '../pages/DashBoardCard.svelte';
     import Ticket from '../pages/Ticket.svelte';
     import ShortCuts from '../ui/ShortCuts.svelte';
@@ -255,7 +255,7 @@
                 <Route path="#WalkIns" ><DashBoardCard url={url} path={"addressticket/getAllWalkIn/"} /></Route>
                 <Route path="#AllOpenTickets" ><DashBoardCard url={url} path={"addressticket/getAllPendingTicketsByOrga2/?id=6"} /></Route>
                 <Route path="#newTicket"  ><Ticket  newTicket={true} api={url} action={action} /></Route>
-                
+                <Route path="#viewTicket/:idTicket/:objectid" let:router><Ticket {router} newTicket={false} api={url} action={action} /></Route>
                 <Route path="*" ><DashBoard url={url} /></Route>
             </Router>
         
