@@ -1,5 +1,6 @@
 <script>
     import { onMount, onDestroy } from 'svelte';
+    import { Router, Route, Link, navigateTo  } from '../lib/main';
     import SQL from '../utils/sql.js';
 
     export let url;
@@ -20,8 +21,8 @@
         //If sql available then get organization tickets
         if(sql.isLocalAvailable()) {
            sql.getOrganizationTickets(6).then(res => {
-               console.log(res);
-               console.timeEnd("query");
+            
+              
                openTickets = res.rows;
                setTimeout(() => {
                    available = true;
@@ -42,6 +43,23 @@
         console.log("component desroyed...");
         openTickets = [];
     });
+
+    function getDateFormat(date) {
+        let dateFormat = "";
+        if(date instanceof String) {
+            dateFormat = (date) ? date : "";
+        }else if(date instanceof Date){
+            dateFormat = date.getFullYear() + "-" + ((date.getMonth() < 10) ? "0" + date.getMonth() : date.getMonth()) + "-" + ((date.getDate()	< 10) ? "0" + date.getDate() : date.getDate());
+        }
+
+        return dateFormat;
+        
+    }
+
+    function getIMAGE(image){
+        
+        return (image) ? iconURL + image : "./assets/spartan_logo.webp"; 
+    }
 
 </script>
 <style>
@@ -71,9 +89,9 @@
                             <div class="card">
                                 <div class="card-header">
                                     <span class="icon">
-                                    <img width="50" height="50" src="{iconURL + ticket.icon}" alt="" id="src">
+                                    <img width="50" height="50" src="{getIMAGE(ticket.icon)}" alt="" id="src">
                                     </span>
-                                    {ticket.staff} | <b> {((ticket.created_date) ? ticket.created_date : '')}</b>
+                                    {ticket.staff} | <b> {getDateFormat(ticket.created_date)}</b>
                                 </div>
                                 <div class="card-content p-2">
                                     <table class="table">
@@ -88,7 +106,7 @@
                                     </table>
                                 </div>
                                 <div class="card-footer">
-                                    <button class="flat-button mif-thumbs-up"></button>
+                                    <button on:click={() => { navigateTo(`#viewTicket/${ticket.id_ticket}/${ticket.objectid}`)}} class="flat-button mif-thumbs-up"></button>
                                     <button class="flat-button mif-tag"></button>
                                     <button class="flat-button mif-share"></button>
                                 </div>
