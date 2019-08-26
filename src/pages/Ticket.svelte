@@ -58,65 +58,35 @@
             } 
     }
 
-    function keyPressElement(e) {
-       //console.log(e);
-       let element = e.target;
-       if(element.tagName == "INPUT") {
-          var attribute = element.getAttribute("id");
-          var value = element.value;
-          console.log(`VALUE IS ${value} and attribute is ${attribute}`);
-          socket.emit("ticketViewer", {room: ticket.objectid,locked: true, value: value, attribute: attribute});
-       }
-    }
-
-    function onBlurElement(e) {
-       let element = e.target;
-       if(element.tagName == "INPUT") {
-          var attribute = e.target.getAttribute("id");
-          var value = e.target.value;
-          socket.emit("ticketViewer", {room: ticket.objectid,locked: false, value: value, attribute: attribute});
-          console.log(`lost focus VALUE IS ${value} and attribute is ${attribute}`);
-       }
-    }
+   
+   
 
      onMount(async () => {
        
-
-         var classname = document.getElementsByClassName("input");
-         var fakeName = new Date();
-     
-         for (var i = 0; i < classname.length; i++) {
-             classname[i].addEventListener('focus', keyPressElement, false);
-            classname[i].addEventListener('keyup', keyPressElement, false);
-            classname[i].addEventListener('blur', onBlurElement, false);
-         }
-         
+         ticket.setUpInputsEvent();
 
          if(socket) {
+             
+               ticket.setSocket(socket);
                 socket.on("totalUsers", (msg) => {
-               console.log(msg);
-            });
+                     console.log(msg);
+                });
 
-            socket.on("ticketInfo", (data) => {
-                  console.log(data);
-                  let element = document.getElementById(data.attribute)
-                  element.disabled = data.locked;
-                  element.value = data.value;
-                  ticket.changeValue(data.attribute, data.value);
-            });
+               socket.on("ticketInfo", (data) => {
+                     console.log(data);
+                     let element = document.getElementById(data.attribute)
+                     element.disabled = data.locked;
+                     element.value = data.value;
+                     ticket.changeValue(data.attribute, data.value);
+               });
 
              socket.emit("joinTicketRoom", {ticketID: ticket.objectid, name: fakeName.getTime()});
          }else{
-            console.log("NO SOCKET");
+            console.log("NO SOCKET AVAILABLE");
          }
 
         
-          
-        
-
-         
-
-       
+      
          
          if(newTicket){
             
@@ -125,8 +95,8 @@
             // console.log('Success:', response))
 
          }else{
-             //Fetch The URL..
-            console.log(router.params); // /about/bill/123/kansas { who: 'bill', where: 'kansas' }
+            
+            //..GET THE TICKET ID AND OBJECTID FROM THE ROUTE...
             ticket.objectid = router.params['objectid'];
             ticket.id_ticket = router.params['idTicket'];
             if(client_status) {
@@ -153,15 +123,7 @@
        
        
        //Remove the event listeners..
-        var classname = document.getElementsByClassName("input");
-
-
-         for (var i = 0; i < classname.length; i++) {
-           
-             classname[i].removeEventListener('focus', keyPressElement, false);
-            classname[i].removeEventListener('keyup', keyPressElement, false);
-            classname[i].removeEventListener('blur', onBlurElement, false);
-         }
+        ticket.destroyInputsEvent();
        
 
        ticket.destroyMask();
@@ -252,37 +214,37 @@
                <div transition:fade  class="frame ribbed-white"  style="display: {customerData}" id="customerData">
                      <div class="form-group">
                         <label>First Name</label>
-                        <input class="input" id="inputFname"  bind:value={ticket.cfirst_name} type="text" />
+                        <input class="input" id="cfirst_name"  bind:value={ticket.cfirst_name} type="text" />
                      </div>
                      <div class="form-group">
                         <label>Last Name</label>
-                        <input class="input" id="inputLname" bind:value={ticket.clast_name} type="text" />
+                        <input class="input" id="clast_name" bind:value={ticket.clast_name} type="text" />
                      </div>
                      <div class="form-group">
                         <label>9-1-1 Telephone</label>
-                        <input class="input" id="inputTELE" bind:value={ticket.telephone_land_line} bind:this={ticket.tele_object} type="text" />
+                        <input class="input" id="telephone_land_line" bind:value={ticket.telephone_land_line} bind:this={ticket.tele_object} type="text" />
                      </div>
                      <div class="form-group">
                         <label>ALT 1 Tele</label>
-                        <input class="input" id="inputALT" bind:value={ticket.alt_telephone} bind:this={ticket.alt_object}  type="text" />
+                        <input class="input" id="alt_telephone" bind:value={ticket.alt_telephone} bind:this={ticket.alt_object}  type="text" />
                      </div>
                      <div class="form-group">
                         <label>ALT 2 Tele</label>
-                        <input class="input" id="inputALT2" bind:value={ticket.alt2_telephone} bind:this={ticket.alt2_object} type="text" />
+                        <input class="input" id="alt2_telephone" bind:value={ticket.alt2_telephone} bind:this={ticket.alt2_object} type="text" />
                      </div>
                      <div class="form-group">
                         <label>Email</label>
-                        <input class="input" id="inputEmail" bind:value={ticket.cemail} type="email"  />
+                        <input class="input" id="cemail" bind:value={ticket.cemail} type="email"  />
                      </div>
                      <div class="form-group">
                         <label>
                            ALT E-mail
                         </label>
-                        <input class="input" id="inputALTE" bind:value={ticket.alt_cemail} type="email" />
+                        <input class="input" id="alt_cemail" bind:value={ticket.alt_cemail} type="email" />
                      </div>
                      <div class="form-group">
                         <label>Prefered Language</label>
-                        <select  id="selectPRL" >
+                        <select  id="prf_language" >
                            <option></option>
                            <option>English</option>
                            <option>Spanish</option>
