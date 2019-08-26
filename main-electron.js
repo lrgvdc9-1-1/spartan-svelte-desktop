@@ -13,6 +13,35 @@ require('electron-reload')(`${__dirname}\\public`, {
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
+let winSplash
+function createSplash() {
+      winSplash = new BrowserWindow({
+        width: 440,
+        height: 400,
+        show: false,
+        frame: false
+    })
+
+
+      winSplash.loadURL(
+        url.format({
+          pathname: path.join(__dirname, './public/splash/index.html'),
+          protocol: 'file:',
+          slashes: true
+        })
+      );
+
+      
+      winSplash.once('ready-to-show', () => {
+        console.log("HELLO")
+        winSplash.show();
+        setTimeout(() => {
+          createWindow()
+        }, 500);
+       
+      });
+   
+}
 
 function createWindow () {
   // Create the browser window.
@@ -45,12 +74,17 @@ function createWindow () {
   );
   
   mainWindow.once('ready-to-show', () => {
-    mainWindow.show()
+      
+      setTimeout(() => {
+        mainWindow.show();
+        winSplash.close();
+      }, 600);
+      
   })
 
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools()
+  //mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
@@ -64,7 +98,7 @@ function createWindow () {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow)
+app.on('ready', createSplash)
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
