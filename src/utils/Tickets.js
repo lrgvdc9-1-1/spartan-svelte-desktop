@@ -60,14 +60,19 @@ export default class Tickets {
       this.tele_object;
       this.alt_object;
       this.alt2_object
-
-      this.formInputs = document.getElementsByClassName("input");
+      this.selectTicket = null;
+      this.formInputs = document.getElementsByClassName("inTicket");
       this.socket = null;
-      this.listATT = {
-          "inputFname" : this.cfirst_name
+      
+
+
+    }
+
+    generateList() {
+        this.listATT = {
+          "cfirst_name" : this.cfirst_name,
+          "clast_name"  : this.clast_name
       }
-
-
     }
 
     setSocket(socket) {
@@ -166,5 +171,24 @@ export default class Tickets {
       let endpoint = "addressticket/getTicketNumber";
       return fetch(api + endpoint);
     }
+
+    getSQL() {
+     
+      if(this.selectTicket) {
+        return this.selectTicket;
+      }else {
+        let sql = "SELECT "
+        for (var i = 0; i < this.formInputs.length; i++) {
+          let target = this.formInputs[i];
+          sql += `${target.getAttribute("id")}, `;
+  
+        }
+        sql = sql.slice(0, -2);
+        sql += " FROM addressticket where objectid = $1";
+        this.selectTicket = sql;
+        return this.selectTicket;
+      }
+     
   }
   
+}
