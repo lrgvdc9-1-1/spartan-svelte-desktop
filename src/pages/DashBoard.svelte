@@ -67,6 +67,12 @@
 
         display: inline;
     }
+    .flat-button {
+        cursor: pointer;
+    }
+    .icon {
+        cursor: pointer;
+    }
 </style>
 
 {#if available}
@@ -79,7 +85,7 @@
                 <span class="title">Open Ticket's</span>
                 
             </div>
-            <div class="window-content p-2" style="height: 300px; cursor: pointer;">
+            <div class="window-content p-2" style="height: 300px;">
                 <ul class="listview view-content">
                     {#each openTickets as ticket}
                      <!-- content here -->
@@ -106,7 +112,7 @@
                                     </table>
                                 </div>
                                 <div class="card-footer">
-                                    <button on:click={() => { navigateTo(`#viewTicket/${ticket.id_ticket}/${ticket.objectid}`)}} class="flat-button mif-thumbs-up"></button>
+                                    <button on:click={() => { navigateTo(`#viewTicket/${ticket.id_ticket}/${ticket.objectid}`)}} class="flat-button mif-note-add" ></button>
                                     <button class="flat-button mif-tag"></button>
                                     <button class="flat-button mif-share"></button>
                                 </div>
