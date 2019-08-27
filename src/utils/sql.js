@@ -19,6 +19,14 @@ export default class SQL {
         
     }
 
+    getTicketForm(sql, ticketId) {
+        if(this.client_status) {
+            return this.client.query(sql, ticketId);
+        }else {
+
+        }
+    }
+
     
    
 }
