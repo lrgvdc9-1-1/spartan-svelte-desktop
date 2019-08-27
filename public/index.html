@@ -71,13 +71,13 @@
 	const api = require('./configurations/api');
 	const dns = require('dns')
 	const osystem = require('os');
-	
+	let dirname = __dirname;
 	let db = null;
 	let client = null;
 	let client_status = true;
 
 	//IF DB JSON is not there then tell the system not to connect to database
-
+	console.log(dirname);
 	try {
 		db = require('./configurations/db');
 		client_status = (Object.entries(db).length === 0) ? false : true;
@@ -88,10 +88,10 @@
 </script>
 
 <body>
-	<script defer async src="./js/socket.io.js"></script>
-    <script src="./js/init.js"></script>
-    <script src="./js/windowEvents.js"></script>
-	<script defer async src='./bundle.js'></script>
+	<script defer  src="./js/socket.io.js"></script>
+    <script defer  src="./js/init.js"></script>
+    <script defer  src="./js/windowEvents.js"></script>
+	<script defer  src='./bundle.js'></script>
 	
 	
 </body>

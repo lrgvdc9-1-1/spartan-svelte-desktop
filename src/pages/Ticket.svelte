@@ -1,5 +1,5 @@
 <script>
-   import { onMount, onDestroy } from 'svelte';
+   import { onMount, onDestroy, createEventDispatcher } from 'svelte';
    import { fade } from 'svelte/transition';
    import SQL from '../utils/sql';
    import DatePicker from "../ui/DatePicker.svelte";
@@ -27,11 +27,11 @@
 
     export let action;
     export let newTicket = false;
-    export let api;
     export let socket;
 
      export let router;
 
+   const dispatch = createEventDispatcher();
  
     //Handle action for the riboon and other actions..
     $: handleAction = (action) ? decideAction(action) : '';
@@ -64,9 +64,8 @@
    
 
      onMount(async () => {
-       
+         dispatch('toolbar', {text: 'TICKET'});
          ticket.setUpInputsEvent();
-
          if(socket) {
              
                ticket.setSocket(socket);
@@ -105,7 +104,7 @@
                console.log("LOCAL DATABASE ACCESS");
                
                   sql.getTicketForm(ticket.getSQL(), [ticket.objectid]).then(res => {
-                   console.log(res);
+                     ticket.updateForm(res.rows);
                 })
 
             }else{
@@ -121,7 +120,7 @@
 
      onDestroy(async () => {
         
-        
+          dispatch('toolbar', {text: 'NONE'});
         if(socket) {
              //remove from room
             socket.emit("leaveTicketRoom", ticket.objectid);
@@ -177,7 +176,16 @@
    
    <div  class="tabs tabs-wrapper top tabs-expand" style="float: left;width: 90%; overflow: auto;" >
          <div style="width: 90%;background: white; color: #CAB448;">
-            <h3 >Ticket Number: {ticket.objectid}</h3>
+             <div style="display: grid; grid-template-columns: 80px auto">
+               <div>
+                  <img  src="./assets/spartan_logo.webp" width="70" height="70" alt=""> 
+               </div>
+               <div>
+                   <h3 >Ticket Number: {ticket.objectid}</h3>
+               </div>
+             </div>
+            
+            
          </div> 
             <ul class="tabs-list">
                <li on:click="{() => active = 'customerData'}" 
@@ -220,33 +228,33 @@
                <div transition:fade  class="frame ribbed-white"  style="display: {customerData}" id="customerData">
                      <div class="form-group">
                         <label>First Name</label>
-                        <input class="inTicket" id="cfirst_name"  bind:value={ticket.cfirst_name} type="text" />
+                        <input class="inTicket" id="cfirst_name" type="text" />
                      </div>
                      <div class="form-group">
                         <label>Last Name</label>
-                        <input class="inTicket" id="clast_name" bind:value={ticket.clast_name} type="text" />
+                        <input class="inTicket" id="clast_name" type="text" />
                      </div>
                      <div class="form-group">
                         <label>9-1-1 Telephone</label>
-                        <input class="inTicket" id="telephone_land_line" bind:value={ticket.telephone_land_line} bind:this={ticket.tele_object} type="text" />
+                        <input class="inTicket" id="telephone_land_line" type="text" />
                      </div>
                      <div class="form-group">
                         <label>ALT 1 Tele</label>
-                        <input class="inTicket" id="alt_telephone" bind:value={ticket.alt_telephone} bind:this={ticket.alt_object}  type="text" />
+                        <input class="inTicket" id="alt_telephone"  type="text" />
                      </div>
                      <div class="form-group">
                         <label>ALT 2 Tele</label>
-                        <input class="inTicket" id="alt2_telephone" bind:value={ticket.alt2_telephone} bind:this={ticket.alt2_object} type="text" />
+                        <input class="inTicket" id="alt2_telephone" type="text" />
                      </div>
                      <div class="form-group">
                         <label>Email</label>
-                        <input class="inTicket" id="cemail" bind:value={ticket.cemail} type="email"  />
+                        <input class="inTicket" id="cemail" type="email"  />
                      </div>
                      <div class="form-group">
                         <label>
                            ALT E-mail
                         </label>
-                        <input class="inTicket" id="alt_cemail" bind:value={ticket.alt_cemail} type="email" />
+                        <input class="inTicket" id="alt_cemail" type="email" />
                      </div>
                      <div class="form-group">
                         <label>Prefered Language</label>

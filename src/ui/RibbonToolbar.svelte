@@ -139,7 +139,7 @@
                             <span class="title">Display</span>
                         </div>
                         <div class="group">
-                            <button on:click={() => {display = "TICKET",console.log("Page location is " + window.location.href)}} class="ribbon-button">
+                            <button on:click={() => {display = "TICKET"}} class="ribbon-button">
 
                                 <Link href="#newTicket" className="btn">
                                         {#if iOS}
@@ -187,6 +187,9 @@
                                 Quick Search
                             </span>
                         </div>
+                        {#if display != "TICKET"}
+                            <div class="group" ></div>
+                        {/if}
                         {#if display === "TICKET"}
                             <div in:fly="{{ x: 200, duration: 2000 }}" out:fade class="group">
                                 <button on:click="{() => {action = "SAVE";}}"  class="ribbon-button">
@@ -254,8 +257,8 @@
                 <Route path="#dashboard" ><DashBoard url={url} /></Route>
                 <Route path="#WalkIns" ><DashBoardCard url={url} path={"addressticket/getAllWalkIn/"} /></Route>
                 <Route path="#AllOpenTickets" ><DashBoardCard url={url} path={"addressticket/getAllPendingTicketsByOrga2/?id=6"} /></Route>
-                <Route path="#newTicket"  ><Ticket  newTicket={true} api={url} action={action} /></Route>
-                <Route path="#viewTicket/:idTicket/:objectid" let:router><Ticket {router} newTicket={false} api={url} action={action} /></Route>
+                <Route path="#newTicket"  ><Ticket on:toolbar={(event)=>{display = event.detail.text}} newTicket={true}  action={action} /></Route>
+                <Route path="#viewTicket/:idTicket/:objectid" let:router><Ticket on:toolbar={(event)=>{display = event.detail.text}} {router} newTicket={false}  action={action} /></Route>
                 <Route path="*" ><DashBoard url={url} /></Route>
             </Router>
         
