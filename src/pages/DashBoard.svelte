@@ -7,7 +7,7 @@
     export let option;
     let available = false;
 
-
+    console.log(client);
     let sql = new SQL(client, api, client_status);
 
     let openTickets = [];

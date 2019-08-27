@@ -24,6 +24,7 @@
     let loading = true;
    
     let dockable = false;
+    let fakeName = new Date();
 
     export let action;
     export let newTicket = false;
@@ -66,6 +67,7 @@
      onMount(async () => {
          dispatch('toolbar', {text: 'TICKET'});
          ticket.setUpInputsEvent();
+
          if(socket) {
              
                ticket.setSocket(socket);
@@ -81,7 +83,7 @@
                      ticket.changeValue(data.attribute, data.value);
                });
 
-             socket.emit("joinTicketRoom", {ticketID: ticket.objectid, name: fakeName.getTime()});
+             socket.emit("joinTicketRoom", {ticketID: ticket.objectid, username: fakeName.getTime()});
          }else{
             console.log("NO SOCKET AVAILABLE");
          }
@@ -177,7 +179,7 @@
    <div  class="tabs tabs-wrapper top tabs-expand" style="float: left;width: 90%; overflow: auto;" >
          <div style="width: 90%;background: white; color: #CAB448;">
              <div style="display: grid; grid-template-columns: 80px auto">
-               <div>
+               <div style="cursor: pointer;">
                   <img  src="./assets/spartan_logo.webp" width="70" height="70" alt=""> 
                </div>
                <div>
