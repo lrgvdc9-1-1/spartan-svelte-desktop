@@ -1,7 +1,7 @@
 <script>
    import { onMount, onDestroy } from 'svelte';
    import { fade } from 'svelte/transition';
-  
+   import SQL from '../utils/sql';
    import DatePicker from "../ui/DatePicker.svelte";
    import Loading from "../ui/Loading.svelte";
    import OnlineDash from "../ui/OnlineDash.svelte";
@@ -11,6 +11,8 @@
 
     let listTabs = {'customerData' : true, 'premisesData': true, 'lv': true,
    'db': true, 'gis' : true, 'comment' : true, 'history' : true, 'msg' : true};
+   //This is sql transaction handler
+   let sql = new SQL(client, api, client_status);
 
     //First Lets figure out if the page has change or refresh..
     let href = listTabs[window.location.href.split("#")[1]] ? window.location.href.split("#")[1] : 'customerData';
@@ -101,6 +103,10 @@
             ticket.id_ticket = router.params['idTicket'];
             if(client_status) {
                console.log("LOCAL DATABASE ACCESS");
+               
+                  sql.getTicketForm(ticket.getSQL(), [ticket.objectid]).then(res => {
+                   console.log(res);
+                })
 
             }else{
                console.log("FETCH THROUGH API");
@@ -214,37 +220,37 @@
                <div transition:fade  class="frame ribbed-white"  style="display: {customerData}" id="customerData">
                      <div class="form-group">
                         <label>First Name</label>
-                        <input class="input" id="cfirst_name"  bind:value={ticket.cfirst_name} type="text" />
+                        <input class="inTicket" id="cfirst_name"  bind:value={ticket.cfirst_name} type="text" />
                      </div>
                      <div class="form-group">
                         <label>Last Name</label>
-                        <input class="input" id="clast_name" bind:value={ticket.clast_name} type="text" />
+                        <input class="inTicket" id="clast_name" bind:value={ticket.clast_name} type="text" />
                      </div>
                      <div class="form-group">
                         <label>9-1-1 Telephone</label>
-                        <input class="input" id="telephone_land_line" bind:value={ticket.telephone_land_line} bind:this={ticket.tele_object} type="text" />
+                        <input class="inTicket" id="telephone_land_line" bind:value={ticket.telephone_land_line} bind:this={ticket.tele_object} type="text" />
                      </div>
                      <div class="form-group">
                         <label>ALT 1 Tele</label>
-                        <input class="input" id="alt_telephone" bind:value={ticket.alt_telephone} bind:this={ticket.alt_object}  type="text" />
+                        <input class="inTicket" id="alt_telephone" bind:value={ticket.alt_telephone} bind:this={ticket.alt_object}  type="text" />
                      </div>
                      <div class="form-group">
                         <label>ALT 2 Tele</label>
-                        <input class="input" id="alt2_telephone" bind:value={ticket.alt2_telephone} bind:this={ticket.alt2_object} type="text" />
+                        <input class="inTicket" id="alt2_telephone" bind:value={ticket.alt2_telephone} bind:this={ticket.alt2_object} type="text" />
                      </div>
                      <div class="form-group">
                         <label>Email</label>
-                        <input class="input" id="cemail" bind:value={ticket.cemail} type="email"  />
+                        <input class="inTicket" id="cemail" bind:value={ticket.cemail} type="email"  />
                      </div>
                      <div class="form-group">
                         <label>
                            ALT E-mail
                         </label>
-                        <input class="input" id="alt_cemail" bind:value={ticket.alt_cemail} type="email" />
+                        <input class="inTicket" id="alt_cemail" bind:value={ticket.alt_cemail} type="email" />
                      </div>
                      <div class="form-group">
                         <label>Prefered Language</label>
-                        <select  id="prf_language" >
+                        <select class="inTicket" id="prf_language" >
                            <option></option>
                            <option>English</option>
                            <option>Spanish</option>
@@ -252,7 +258,7 @@
                      </div>
                      <div class="form-group">
                         <label>Walk In</label>
-                        <select id="selectWKI" >
+                        <select class="inTicket" id="walk_in" >
                            <option ></option>
                            <option >Yes</option>
                            <option >No</option>
@@ -260,7 +266,7 @@
                      </div>
                      <div class="form-group">
                         <label>Utilities</label>
-                        <select id="selectUTI" >
+                        <select class="inTicket" id="utility" >
                            <option ></option>
                            <option >Yes</option>
                            <option >No</option>
@@ -268,92 +274,92 @@
                      </div>
                      <div class="form-group">
                         <label>Mailing Info</label>
-                        <input class="input" id="inputMailingInfo"  type="text" />
+                        <input class="inTicket" id="mailing_address"  type="text" />
                      </div>
                </div>
                <div  style="display: {premisesData}" id="premisesData">
                      <div class="form-group">
                         <label>Owner First Name</label>
-                        <input class="input" id="inputOFName"  type="text" />
+                        <input class="inTicket" id="pfirst_name"  type="text" />
                      </div>
                      <div class="form-group">
                         <label>Owner Last Name</label>
-                        <input class="input" id="inputOLName" type="text" />
+                        <input class="inTicket" id="plast_name" type="text" />
                      </div>
                      <div class="form-group">
                         <label on:click={()=>{ dockable = true;}}>Subdivision</label>
-                        <input class="input" id="inputSub"  on:keyup={getHCADSubSuggestions} type="text" />
+                        <input class="inTicket" id="subdivision"  on:keyup={getHCADSubSuggestions} type="text" />
                      </div>
                      <div class="form-group">
                         <label>Block Number</label>
-                        <input class="input" id="inputBNumber" type="text" />
+                        <input class="inTicket" id="block_num" type="text" />
                      </div>
                      <div class="form-group">
                         <label>Lot Number</label>
-                        <input class="input" id="inputLNumber" type="text" />
+                        <input class="inTicket" id="lot_num" type="text" />
                      </div>
                      <div class="form-group">
                         <label>Tax Account</label>
-                        <input class="input" id="inputTaxAccount" type="text" />
+                        <input class="inTicket" id="tax_account_num" type="text" />
                      </div>
                      <div class="form-group">
                         <label>Property Id</label>
-                        <input class="input" id="inputPropID" type="text" />
+                        <input class="inTicket" id="property_id" type="text" />
                      </div>
                      <div class="form-group">
                         <label>Street</label>
-                        <input class="input" id="inputStreet" type="text" />
+                        <input class="inTicket" id="street" type="text" />
                      </div>
                      <div class="form-group">
                         <label>Intersection</label>
-                        <input class="input" id="inputINTER" type="text" />
+                        <input class="inTicket" id="intersection" type="text" />
                      </div>
                      <div class="form-group">
                         <label>Building Description</label>
-                        <textarea id="textareaBDes" ></textarea>
+                        <textarea class="inTicket" id="building_description" ></textarea>
                      </div>
                      
                </div>
                <div  style="display: {lv}" id="lv">
                      <div class="form-group">
                         <label>Address Number</label>
-                        <input class="input" id="inputAN" type="number" />
+                        <input class="inTicket" id="add_num" type="number" />
                      </div>
                      <div class="form-group">
                         <label>Pre Directional</label>
-                        <input class="input" id="inputPRD" type="text" />
+                        <input class="inTicket" id="prd" type="text" />
                      </div>
                      <div class="form-group">
                         <label>Road Name</label>
-                        <input class="input" id="inputRN" type="text" />
+                        <input class="inTicket" id="rd" type="text" />
                      </div>
                      <div class="form-group">
                         <label>Street Type</label>
-                        <input class="input" id="inputST" type="text" />
+                        <input class="inTicket" id="sts" type="text" />
                      </div>
                      <div class="form-group">
                         <label>Post Directional</label>
-                        <input class="input" id="inputPDIR" type="text" />
+                        <input class="inTicket" id="pod" type="text" />
                      </div>
                      <div class="form-group">
                         <label>Unit</label>
-                        <input class="input" id="inputUN" type="text" />
+                        <input class="inTicket" id="unit" type="text" />
                      </div>
                      <div class="form-group">
                         <label>MSAG Comm</label>
-                        <input class="input" id="inputMSAG" type="text" />
+                        <input class="inTicket" id="msag_comm" type="text" />
                      </div>
                      <div class="form-group">
                         <label>Postal Comm</label>
-                        <input class="input" id="inputPOSTAL" type="text" />
+                        <input class="inTicket" id="postal_comm" type="text" />
                      </div>
                      <div class="form-group">
                         <label>Full Address</label>
-                        <input class="input" id="inputFADD" type="text" />
+                        <input class="inTicket" id="full_address" type="text" />
                      </div>
                      <div class="form-group">
                         <label>Address By</label>
-                        <input class="input"  placeholder="CLICK HERE TO STAMP" type="text" />
+                        <input id="address_by" class="inTicket"  placeholder="CLICK HERE TO STAMP" type="text" />
                      </div>
                      <div class="form-group">
                         <DatePicker />
