@@ -74,10 +74,9 @@ function createWindow () {
   );
   
   mainWindow.once('ready-to-show', () => {
-      
+      winSplash.close();
       setTimeout(() => {
         mainWindow.show();
-        winSplash.close();
       }, 600);
       
   })
