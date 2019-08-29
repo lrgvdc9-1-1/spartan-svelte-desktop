@@ -47,6 +47,8 @@ class="button primary  outline large">Choose Date</button>
     import Week from './Week.svelte';
     import { fade } from 'svelte/transition';
 
+    export let selection;
+    
     let enable = false;
     let today = new Date();
     let choosen = null;

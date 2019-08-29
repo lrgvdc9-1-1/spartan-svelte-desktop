@@ -11,7 +11,12 @@ export default class Tickets {
       this.selectTicket = null;
       this.formInputs = document.getElementsByClassName("inTicket");
       this.socket = null;
+      this.tele_object;
+      this.alt_object;
+      this.alt2_object;
+
     }
+
 
     setSocket(socket) {
       this.socket = socket;
@@ -85,7 +90,9 @@ export default class Tickets {
       let endpoint = "addressticket/getTicketNumber";
       return fetch(api + endpoint);
     }
-
+    resetFormInputs(){
+      this.formInputs = document.getElementsByClassName("inTicket");
+    }
     getSQL() {
      
       if(this.selectTicket) {
@@ -105,16 +112,25 @@ export default class Tickets {
      
   }
 
+  formatDate(data) {
+    if(data instanceof Date) {
+
+      return `${data.getFullYear()}-${((data.getMonth() + 1) < 10 ? '0' + (data.getMonth() + 1) : (data.getMonth() + 1))}-${((data.getDate() < 10) ? '0' + data.getDate() : data.getDate())} `
+    }
+
+    return data;
+  }
+
   updateForm(row) {
       if(row.length == 1) { 
+
          let attribute = row[0]
          for(var x in attribute) {
           
-            document.getElementById(x).value = attribute[x];
+            document.getElementById(x).value = this.formatDate(attribute[x]);
          }
       }
 
-      console.log(this.cfull_name);
   }
   
 }
