@@ -177,7 +177,7 @@
 <div >
    
    <div  class="tabs tabs-wrapper top tabs-expand" style="float: left;width: 90%; overflow: auto;" >
-         <div style="width: 90%;background: white; color: #CAB448;">
+         <div style="width: 85%;background: white; color: #CAB448;">
              <div style="display: grid; grid-template-columns: 80px auto">
                <div style="cursor: pointer;">
                   <img  src="./assets/spartan_logo.webp" width="70" height="70" alt=""> 

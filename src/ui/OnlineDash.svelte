@@ -14,11 +14,24 @@
         list-style: none;
     }
 </style>
-<div style="float: right;width: 10%;height:100vh;background: #243C73;">
+<div style="float: right;width: 15%;height:100vh;background: #243C73;">
     <ul>
         {#each items as item}
              <!-- content here -->
-             <li>item</li>
+             <li>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="avatar">
+                            <img src="http://lorempixel.com/68/68/people/">
+                        </div>
+                        <div class="name">Employee</div>
+                    </div>
+                    <div class="card-content">
+                        <p>Content</p>
+                    </div>
+                </div>
+
+             </li>
         {/each}
     </ul>
 </div>
