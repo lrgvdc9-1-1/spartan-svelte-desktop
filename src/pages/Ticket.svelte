@@ -238,15 +238,15 @@
                      </div>
                      <div class="form-group">
                         <label>9-1-1 Telephone</label>
-                        <input class="inTicket" id="telephone_land_line" type="text" />
+                        <input class="inTicket" bind:this={ticket.tele_object} id="telephone_land_line" type="text" />
                      </div>
                      <div class="form-group">
                         <label>ALT 1 Tele</label>
-                        <input class="inTicket" id="alt_telephone"  type="text" />
+                        <input class="inTicket" bind:this={ticket.alt_object} id="alt_telephone"  type="text" />
                      </div>
                      <div class="form-group">
                         <label>ALT 2 Tele</label>
-                        <input class="inTicket" id="alt2_telephone" type="text" />
+                        <input class="inTicket" bind:this={ticket.alt2_object} id="alt2_telephone" type="text" />
                      </div>
                      <div class="form-group">
                         <label>Email</label>
@@ -375,6 +375,44 @@
                         <DatePicker />
                      </div>
                </div>
+               <div style="display: {db}" id="db">
+                      <div class="form-group">
+                        <label>Range From</label>
+                        <input class="inTicket"  id="range_low" type="number" />
+                     </div>
+                     <div class="form-group">
+                        <label>Range To</label>
+                        <input class="inTicket" id="range_high" type="number"  />
+                     </div>
+                     <div class="form-group">
+                        <label>
+                           ESN
+                        </label>
+                        <input class="inTicket" id="esn" type="text" />
+                     </div>
+                     <div class="form-group">
+                        <label>
+                           MSAG Valid
+                        </label>
+                        <select id="msag_valid" class="inTicket">
+                           <option></option>
+                           <option>YES</option>
+                           <option>NO</option>
+                        </select>
+                     </div>
+                      <div class="form-group">
+                        <label>
+                           Trans ID
+                        </label>
+                        <input class="inTicket" id="trans_id" type="text" />
+                     </div>
+                     <div class="form-group">
+                        <label>
+                           Verified Date
+                        </label>
+                        <input class="inTicket" on:change={()=> {console.log(this.id); console.log("START"); console.log(this);}} id="date_verified" type="text" />
+                     </div>
+               </div>
             </div>
          </div>
       <OnlineDash items={['test', 'test', 'test']}/>
@@ -404,5 +442,8 @@
     -webkit-box-pack: center;
     -ms-flex-pack: center;
     justify-content: center;
+}
+select {
+   cursor: pointer;
 }
 </style>
