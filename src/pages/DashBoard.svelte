@@ -49,7 +49,7 @@
         if(date instanceof String) {
             dateFormat = (date) ? date : "";
         }else if(date instanceof Date){
-            dateFormat = date.getFullYear() + "-" + ((date.getMonth() < 10) ? "0" + date.getMonth() : date.getMonth()) + "-" + ((date.getDate()	< 10) ? "0" + date.getDate() : date.getDate());
+            dateFormat = date.getFullYear() + "-" + ((date.getMonth() + 1 < 10) ? "0" + (date.getMonth() + 1) : (date.getMonth()+ 1)) + "-" + ((date.getDate()	< 10) ? "0" + date.getDate() : date.getDate());
         }
 
         return dateFormat;
