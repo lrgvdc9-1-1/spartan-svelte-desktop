@@ -27,8 +27,8 @@
     export let action;
     export let newTicket = false;
     export let socket;
-
-     export let router;
+    export let spartans;
+    export let router;
 
    const dispatch = createEventDispatcher();
  
@@ -63,6 +63,7 @@
    
 
      onMount(async () => {
+         console.log(spartans);
          dispatch('toolbar', {text: 'TICKET'});
          ticket.setUpInputsEvent();
          ticket.setUpMask();
@@ -81,7 +82,7 @@
                      ticket.changeValue(data.attribute, data.value);
                });
 
-             socket.emit("joinTicketRoom", {ticketID: ticket.objectid, username: fakeName.getTime()});
+             socket.emit("joinTicketRoom", {rmName: ticket.objectid, username: fakeName.getTime()});
          }else{
             console.log("NO SOCKET AVAILABLE");
          }
@@ -170,7 +171,7 @@
 
 <div >
 
-   <div  class="tabs tabs-wrapper top tabs-expand" style="float: left;width: 90%; overflow: auto;" >
+   <div  class="tabs tabs-wrapper top tabs-expand" style="float: left;width: 85%; overflow: auto;" >
          <div style="width: 85%;background: white; color: #CAB448;">
              <div style="display: grid; grid-template-columns: 80px auto">
                <div style="cursor: pointer;">
@@ -225,7 +226,7 @@
                       <div style="display: {customerData}"  id="customerData">
                            <div class="form-group">
                               <label>First Name</label>
-                              <input on:input={ticket.onUpdate} class="inTicket" id="cfirst_name" type="text" />
+                              <input class="inTicket" section="customer-data" id="cfirst_name" type="text" />
                            </div>
                            <div class="form-group">
                               <label>Last Name</label>
@@ -233,29 +234,29 @@
                            </div>
                            <div class="form-group">
                               <label>9-1-1 Telephone</label>
-                              <input class="inTicket" bind:this={ticket.tele_object}  id="telephone_land_line" type="text" />
+                              <input class="inTicket" bind:this={ticket.tele_object} section="customer-data"  id="telephone_land_line" type="text" />
                            </div>
                            <div class="form-group">
                               <label>ALT 1 Tele</label>
-                              <input class="inTicket" bind:this={ticket.alt_object}  id="alt_telephone"  type="text" />
+                              <input class="inTicket" bind:this={ticket.alt_object} section="customer-data"  id="alt_telephone"  type="text" />
                            </div>
                            <div class="form-group">
                               <label>ALT 2 Tele</label>
-                              <input class="inTicket" bind:this={ticket.alt2_object} id="alt2_telephone" type="text" />
+                              <input class="inTicket" bind:this={ticket.alt2_object} section="customer-data" id="alt2_telephone" type="text" />
                            </div>
                            <div class="form-group">
                               <label>Email</label>
-                              <input class="inTicket" id="cemail" type="email"  />
+                              <input class="inTicket" id="cemail" type="email" section="customer-data"  />
                            </div>
                            <div class="form-group">
                               <label>
                                  ALT E-mail
                               </label>
-                              <input class="inTicket" id="alt_cemail" type="email" />
+                              <input class="inTicket" id="alt_cemail" type="email" section="customer-data" />
                            </div>
                            <div class="form-group">
                               <label>Prefered Language</label>
-                              <select class="inTicket" id="prf_language" >
+                              <select class="inTicket" id="prf_language"  section="customer-data" >
                                  <option></option>
                                  <option>English</option>
                                  <option>Spanish</option>
@@ -263,7 +264,7 @@
                            </div>
                            <div class="form-group">
                               <label>Walk In</label>
-                              <select class="inTicket" id="walk_in" >
+                              <select class="inTicket" id="walk_in" section="customer-data" >
                                  <option ></option>
                                  <option >Yes</option>
                                  <option >No</option>
@@ -271,7 +272,7 @@
                            </div>
                            <div class="form-group">
                               <label>Utilities</label>
-                              <select class="inTicket" id="utility" >
+                              <select class="inTicket" id="utility" section="customer-data" >
                                  <option ></option>
                                  <option >Yes</option>
                                  <option >No</option>
@@ -279,7 +280,7 @@
                            </div>
                            <div class="form-group">
                               <label>Mailing Info</label>
-                              <input class="inTicket" id="mailing_address"  type="text" />
+                              <input class="inTicket" id="mailing_address"  type="text" section="customer-data" />
                            </div>
                       </div>
                       <!-- END OF CUSTOMER DATA -->

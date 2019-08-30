@@ -3,7 +3,6 @@
     export let items;
     let height = 0;
    
-
     onMount(() => {
         // content here
         height = (document.body.clientHeight - 126) + "px"
@@ -12,6 +11,9 @@
 <style>
     ul{
         list-style: none;
+    }
+    .name {
+        color: #CAB448;
     }
 </style>
 <div style="float: right;width: 15%;height:100vh;background: #243C73;">
@@ -22,7 +24,7 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="avatar">
-                            <img src="http://lorempixel.com/68/68/people/">
+                            <img alt="Logo" src="./assets/spartan_logo.webp">
                         </div>
                         <div class="name">Employee</div>
                     </div>

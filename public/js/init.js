@@ -2,7 +2,7 @@
 async function  initDB() {
    
     if(client_status) {
-
+		console.time("init");
 		// DO DNS LOOK UP local network connect to db
 		// if not fail over to API http request 
 		await dns.lookup('911.local', {all: true}, async (err, addresses) =>
@@ -13,6 +13,9 @@ async function  initDB() {
 							client = new Client(db) //Connect to database...
                             //console.log("SQL Local");
 							await client.connect(); //await to Connect to the database...
+							
+							window.dispatchEvent(new Event('clientready'));
+
 							client.on('end', (res) => {
 								console.log(`END: ${res}`)
 							})

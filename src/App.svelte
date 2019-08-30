@@ -1,18 +1,58 @@
 <script>
+  import {onMount} from "svelte";
 	import RibbonToolbar from './ui/RibbonToolbar.svelte';
 	import Login from "./pages/Login.svelte";
 	import Ticket from './pages/Ticket.svelte';
 	import DatePicker from './ui/DatePicker.svelte';
-	import  svelte from 'svelte/compiler';
+  import svelte from 'svelte/compiler';
+  import SQL from './utils/sql';
+  import User from './utils/User';
 
   console.log(`CURRENT VERSION OF SVELTE RUNNING: ${svelte.VERSION}v`);
   
   //Main API EndPOINT
 	let url = "https://gis.lrgvdc911.org/php/spartan/api/v2/index.php/";
-
+  let spartans = [];
+  let isMe = null;
+  let sql = new SQL(client, api, client_status)
 
   //Connection to spartan chat server...
-	const socket = io('http://localhost:3000');
+  let socket = io('http://localhost:3000');
+  
+  onMount(async () => {
+ 
+  });
+
+  function queryDB() {
+      console.timeEnd("init");
+      let sql = new SQL(client, api, client_status)
+
+      sql.getActiveUsers().then((res) => {
+         res.rows.forEach(em => {
+            spartans.push(new User(em.user_id, em.first_name, em.middle_name, em.last_name, em.email, em.icon2, em.organization_id, em.work_center));
+         });
+
+         console.log(spartans);
+      })
+  }
+
+  function onSelectUser(event) {
+    console.log(event);
+    spartans.forEach(spartan => {
+        if(spartan.user_id === event.detail.user_id) {
+          spartan.IsMe = true;
+          isMe = spartan;
+          return;//stop loop..
+        }
+    });
+
+    //reset with new values hope to tell the app changes..
+    spartans = spartans;
+
+    console.log(spartans)
+  }
+
+
 	
 </script>
 
@@ -109,6 +149,7 @@
 
 
 </style>
+<svelte:window on:clientready={queryDB}></svelte:window>
 
 <header id="titlebar">
       <div id="drag-region" style="cursor: grab !important;">
@@ -139,8 +180,7 @@
     </header>
 <div style="height: 38px;"></div>
 <!-- <DatePicker /> -->
-<!-- <Login /> -->
-
+<Login on:user={onSelectUser}  />
 <!-- <RibbonToolbar {socket} url={url} /> -->
-<RibbonToolbar  url={url} />
+<!-- <RibbonToolbar {spartans} url={url} /> -->
 <!-- <Ticket /> -->

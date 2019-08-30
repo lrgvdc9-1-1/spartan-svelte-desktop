@@ -64,8 +64,9 @@ export default class Tickets {
           var attribute = element.getAttribute("id");
           var value = element.value;
             if(this.socket) {
-              this.socket.emit("ticketViewer", {room: ticket.objectid,locked: true, value: value, attribute: attribute});
-            console.log(`VALUE IS ${value} and attribute is ${attribute}`);
+              console.log(this.objectid);
+              this.socket.emit("ticketViewer", {room: this.objectid,locked: true, value: value, elemID: attribute});
+              console.log(`VALUE IS ${value} and attribute is ${attribute}`);
             }
           
         }
@@ -74,21 +75,17 @@ export default class Tickets {
       onBlurElement(e) {
         let element = e.target;
         if(element.tagName == "INPUT") {
-          var attribute = e.target.getAttribute("id");
-          var value = e.target.value;
+            var attribute = e.target.getAttribute("id");
+            var value = e.target.value;
             if(this.socket) {
-              this.socket.emit("ticketViewer", {room: this.objectid, locked: false, value: value, attribute: attribute});
+              console.log(this.objectid);
+              this.socket.emit("ticketViewer", {room: this.objectid, locked: false, value: value, elemID: attribute});
               console.log(`lost focus VALUE IS ${value} and attribute is ${attribute}`);
             }
         }
          
     }
 
-    onUpdate(e) {
-      console.log(e);
-      let target = e.target;
-      console.log(target.value);
-    }
 
     onClearFullAddress() {
       document.getElementById("full_address").value = "";

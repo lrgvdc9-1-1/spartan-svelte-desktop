@@ -8,6 +8,8 @@
   
     export let url;
     export let socket;
+    export let spartans;
+
     let current = 'home'; //This handles the ribbon toolbar..
     let iOS = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform); //What type of platform we are in...
     let action = "";
@@ -257,8 +259,8 @@
                 <Route path="#dashboard" ><DashBoard url={url} /></Route>
                 <Route path="#WalkIns" ><DashBoardCard url={url} path={"addressticket/getAllWalkIn/"} /></Route>
                 <Route path="#AllOpenTickets" ><DashBoardCard url={url} path={"addressticket/getAllPendingTicketsByOrga2/?id=6"} /></Route>
-                <Route path="#newTicket"  ><Ticket on:toolbar={(event)=>{display = event.detail.text}} newTicket={true}  action={action} /></Route>
-                <Route path="#viewTicket/:idTicket/:objectid" let:router><Ticket on:toolbar={(event)=>{display = event.detail.text}} {router} newTicket={false}  action={action} /></Route>
+                <Route path="#newTicket"  ><Ticket on:toolbar={(event)=>{display = event.detail.text}} {spartans} newTicket={true}  action={action} /></Route>
+                <Route path="#viewTicket/:idTicket/:objectid" let:router><Ticket on:toolbar={(event)=>{display = event.detail.text}} {spartans} {router} newTicket={false}  action={action} /></Route>
                 <Route path="*" ><DashBoard url={url} /></Route>
             </Router>
         

@@ -27,6 +27,21 @@ export default class SQL {
         }
     }
 
+    getActiveUsers()
+    {
+        if(this.client_status) {
+            return this.client.query(this.api.users.active);
+        }else{
+            
+        }
+    }
+
+    logMeIn(email) {
+        if(this.client_status){
+            return this.client.query(this.api.users.authenticate, [email])
+        }
+    }
+
     
    
 }
