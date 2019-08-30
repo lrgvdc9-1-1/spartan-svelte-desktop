@@ -2,12 +2,10 @@
    import { onMount, onDestroy, createEventDispatcher } from 'svelte';
    import { fade } from 'svelte/transition';
    import SQL from '../utils/sql';
-   import DatePicker from "../ui/DatePicker.svelte";
    import Loading from "../ui/Loading.svelte";
    import OnlineDash from "../ui/OnlineDash.svelte";
    import Ticket from "../utils/Tickets";
-   import IMask from 'imask';
-
+   import DatePicker from "../ui/DatePicker.svelte";
 
     let listTabs = {'customerData' : true, 'premisesData': true, 'lv': true,
    'db': true, 'gis' : true, 'comment' : true, 'history' : true, 'msg' : true};
@@ -43,7 +41,7 @@
     $: gis     = (active === 'gis') ? '' : 'none';
     $: comment = (active === 'comment') ? '' : 'none';
     $: history = (active === 'history') ? '' : 'none';
-    $: msg     = (active === 'msg') ? '' : 'none';
+    $: msg     = (active === 'msg') ? ''     : 'none';
    
     //Decide Action is when ribbon press something happens in the ticket form...
 
@@ -67,7 +65,7 @@
      onMount(async () => {
          dispatch('toolbar', {text: 'TICKET'});
          ticket.setUpInputsEvent();
-
+         ticket.setUpMask();
          if(socket) {
              
                ticket.setSocket(socket);
@@ -106,7 +104,9 @@
                console.log("LOCAL DATABASE ACCESS");
                
                   sql.getTicketForm(ticket.getSQL(), [ticket.objectid]).then(res => {
+                     ticket.setOriginal(res)
                      ticket.updateForm(res.rows);
+                     loading = false;
                 })
 
             }else{
@@ -114,14 +114,10 @@
               
             } 
          }
-
-         loading = false;
-         
-         ticket.setUpMask();
      })
 
      onDestroy(async () => {
-        
+         ticket.destroyMask();
           dispatch('toolbar', {text: 'NONE'});
         if(socket) {
              //remove from room
@@ -129,11 +125,9 @@
         }
        
        
-       //Remove the event listeners..
-        ticket.destroyInputsEvent();
+        //Remove the event listeners..
+         ticket.destroyInputsEvent();
        
-
-       ticket.destroyMask();
      });
 
      function getHCADSubSuggestions(event) { 
@@ -175,7 +169,7 @@
 {/if}
 
 <div >
-   
+
    <div  class="tabs tabs-wrapper top tabs-expand" style="float: left;width: 90%; overflow: auto;" >
          <div style="width: 85%;background: white; color: #CAB448;">
              <div style="display: grid; grid-template-columns: 80px auto">
@@ -227,192 +221,227 @@
             </ul>    
 
             <div class="frames border bd-default no-border-top p-2">
-               <div transition:fade  class="frame ribbed-white"  style="display: {customerData}" id="customerData">
-                     <div class="form-group">
-                        <label>First Name</label>
-                        <input class="inTicket" id="cfirst_name" type="text" />
+
+                      <div style="display: {customerData}"  id="customerData">
+                           <div class="form-group">
+                              <label>First Name</label>
+                              <input on:input={ticket.onUpdate} class="inTicket" id="cfirst_name" type="text" />
+                           </div>
+                           <div class="form-group">
+                              <label>Last Name</label>
+                              <input class="inTicket" id="clast_name" type="text" />
+                           </div>
+                           <div class="form-group">
+                              <label>9-1-1 Telephone</label>
+                              <input class="inTicket" bind:this={ticket.tele_object}  id="telephone_land_line" type="text" />
+                           </div>
+                           <div class="form-group">
+                              <label>ALT 1 Tele</label>
+                              <input class="inTicket" bind:this={ticket.alt_object}  id="alt_telephone"  type="text" />
+                           </div>
+                           <div class="form-group">
+                              <label>ALT 2 Tele</label>
+                              <input class="inTicket" bind:this={ticket.alt2_object} id="alt2_telephone" type="text" />
+                           </div>
+                           <div class="form-group">
+                              <label>Email</label>
+                              <input class="inTicket" id="cemail" type="email"  />
+                           </div>
+                           <div class="form-group">
+                              <label>
+                                 ALT E-mail
+                              </label>
+                              <input class="inTicket" id="alt_cemail" type="email" />
+                           </div>
+                           <div class="form-group">
+                              <label>Prefered Language</label>
+                              <select class="inTicket" id="prf_language" >
+                                 <option></option>
+                                 <option>English</option>
+                                 <option>Spanish</option>
+                              </select>
+                           </div>
+                           <div class="form-group">
+                              <label>Walk In</label>
+                              <select class="inTicket" id="walk_in" >
+                                 <option ></option>
+                                 <option >Yes</option>
+                                 <option >No</option>
+                              </select>
+                           </div>
+                           <div class="form-group">
+                              <label>Utilities</label>
+                              <select class="inTicket" id="utility" >
+                                 <option ></option>
+                                 <option >Yes</option>
+                                 <option >No</option>
+                              </select>
+                           </div>
+                           <div class="form-group">
+                              <label>Mailing Info</label>
+                              <input class="inTicket" id="mailing_address"  type="text" />
+                           </div>
+                      </div>
+                      <!-- END OF CUSTOMER DATA -->
+                        <div  style="display: {premisesData}" id="premisesData">
+                           <div class="form-group">
+                              <label>Owner First Name</label>
+                              <input class="inTicket" id="pfirst_name"  type="text" />
+                           </div>
+                           <div class="form-group">
+                              <label>Owner Last Name</label>
+                              <input class="inTicket" id="plast_name" type="text" />
+                           </div>
+                           <div class="form-group">
+                              <label >Subdivision</label>
+                              <input class="inTicket" id="subdivision"  type="text" />
+                           </div>
+                           <div class="form-group">
+                              <label>Block Number</label>
+                              <input class="inTicket" id="block_num" type="text" />
+                           </div>
+                           <div class="form-group">
+                              <label>Lot Number</label>
+                              <input class="inTicket" id="lot_num" type="text" />
+                           </div>
+                           <div class="form-group">
+                              <label>Tax Account</label>
+                              <input class="inTicket" id="tax_account_num" type="text" />
+                           </div>
+                           <div class="form-group">
+                              <label>Property Id</label>
+                              <input class="inTicket" id="property_id" type="text" />
+                           </div>
+                           <div class="form-group">
+                              <label>Street</label>
+                              <input class="inTicket" id="street" type="text" />
+                           </div>
+                           <div class="form-group">
+                              <label>Intersection</label>
+                              <input class="inTicket" id="intersection" type="text" />
+                           </div>
+                           <div class="form-group">
+                              <label>Building Description</label>
+                              <textarea class="inTicket" id="building_description" ></textarea>
+                           </div>
+                        </div>
+                        <!-- END OF PREMISES DATA -->
+                     <div  style="display: {lv}"   id="lv">
+                           <div class="form-group">
+                              <label>Address Number</label>
+                              <input class="inTicket" id="add_num" type="number" />
+                           </div>
+                           <div class="form-group">
+                              <label>Pre Directional</label>
+                              <input class="inTicket" id="prd" type="text" />
+                           </div>
+                           <div class="form-group">
+                              <label>Road Name</label>
+                              <input class="inTicket" id="rd" type="text" />
+                           </div>
+                           <div class="form-group">
+                              <label>Street Type</label>
+                              <input class="inTicket" id="sts" type="text" />
+                           </div>
+                           <div class="form-group">
+                              <label>Post Directional</label>
+                              <input class="inTicket" id="pod" type="text" />
+                           </div>
+                           <div class="form-group">
+                              <label>Unit</label>
+                              <input class="inTicket" id="unit" type="text" />
+                           </div>
+                           <div class="form-group">
+                              <label>MSAG Comm</label>
+                              <input class="inTicket" id="msag_comm" type="text" />
+                           </div>
+                           <div class="form-group">
+                              <label>Postal Comm</label>
+                              <input class="inTicket" id="postal_comm" type="text" />
+                           </div>
+                           <div class="form-group">
+                              <label>Full Address</label>
+                              <div class="input">
+                                 <input class="inTicket" id="full_address" type="text">
+                                 <div class="button-group">
+                                    <button on:click={ticket.onClearFullAddress} class="button input-search-button"><span class="mif-bin"></span></button>
+                                    <button on:click={ticket.onGlueFullAddress}  class="button input-search-button"><span class="mif-clipboard"></span></button>
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="form-group">
+                              <label>Address By</label>
+                              <input id="address_by" class="inTicket"  placeholder="CLICK HERE TO STAMP" type="text" />
+                           </div>
+                           <div class="form-group">
+                              <DatePicker />
+                           </div>
                      </div>
-                     <div class="form-group">
-                        <label>Last Name</label>
-                        <input class="inTicket" id="clast_name" type="text" />
+                     <!-- END OF LV -->
+                     <div  style="display: {db}"  id="db">
+                           <div class="form-group">
+                              <label>Range From</label>
+                              <input class="inTicket"  id="range_low" type="number" />
+                           </div>
+                           <div class="form-group">
+                              <label>Range To</label>
+                              <input class="inTicket" id="range_high" type="number"  />
+                           </div>
+                           <div class="form-group">
+                              <label>
+                                 ESN
+                              </label>
+                              <input class="inTicket" id="esn" type="text" />
+                           </div>
+                           <div class="form-group">
+                              <label>
+                                 MSAG Valid
+                              </label>
+                              <select id="msag_valid" class="inTicket">
+                                 <option></option>
+                                 <option>YES</option>
+                                 <option>NO</option>
+                              </select>
+                           </div>
+                           <div class="form-group">
+                              <label>
+                                 Trans ID
+                              </label>
+                              <input class="inTicket" id="trans_id" type="text" />
+                           </div>
+                           <div class="form-group">
+                              <label>
+                                 Verified Date
+                              </label>
+                              <input class="inTicket" on:change={()=> {console.log(this.id); console.log("START"); console.log(this);}} id="date_verified" type="text" />
+                           </div>
                      </div>
-                     <div class="form-group">
-                        <label>9-1-1 Telephone</label>
-                        <input class="inTicket" bind:this={ticket.tele_object} id="telephone_land_line" type="text" />
+                     <!-- END OF DB -->
+                     <div style="display: {gis}" id="gis">
+                           <h2>RCL Valid</h2>
+                           <div class="form-group">
+                              <label>
+                                 Staff Initials
+                              </label>
+                              <input class="inTicket" id="initials_mapping" type="text" />
+                           </div>
+                           <div class="form-group">
+                              <input type="text" id="mapping_verified_date" class="inTicket">
+                           </div>
+                           <br>
+                           <hr>
+                           <h2>SSAP Valid</h2>
+                           <div class="form-group">
+                              <label>
+                                 Staff Initials
+                              </label>
+                              <input class="inTicket" id="initials_geocoding" type="text" />
+                           </div>
+                           <div class="form-group">
+                              <input type="text" id="geocoding_date" class="inTicket">
+                           </div>
                      </div>
-                     <div class="form-group">
-                        <label>ALT 1 Tele</label>
-                        <input class="inTicket" bind:this={ticket.alt_object} id="alt_telephone"  type="text" />
-                     </div>
-                     <div class="form-group">
-                        <label>ALT 2 Tele</label>
-                        <input class="inTicket" bind:this={ticket.alt2_object} id="alt2_telephone" type="text" />
-                     </div>
-                     <div class="form-group">
-                        <label>Email</label>
-                        <input class="inTicket" id="cemail" type="email"  />
-                     </div>
-                     <div class="form-group">
-                        <label>
-                           ALT E-mail
-                        </label>
-                        <input class="inTicket" id="alt_cemail" type="email" />
-                     </div>
-                     <div class="form-group">
-                        <label>Prefered Language</label>
-                        <select class="inTicket" id="prf_language" >
-                           <option></option>
-                           <option>English</option>
-                           <option>Spanish</option>
-                        </select>
-                     </div>
-                     <div class="form-group">
-                        <label>Walk In</label>
-                        <select class="inTicket" id="walk_in" >
-                           <option ></option>
-                           <option >Yes</option>
-                           <option >No</option>
-                        </select>
-                     </div>
-                     <div class="form-group">
-                        <label>Utilities</label>
-                        <select class="inTicket" id="utility" >
-                           <option ></option>
-                           <option >Yes</option>
-                           <option >No</option>
-                        </select>
-                     </div>
-                     <div class="form-group">
-                        <label>Mailing Info</label>
-                        <input class="inTicket" id="mailing_address"  type="text" />
-                     </div>
-               </div>
-               <div  style="display: {premisesData}" id="premisesData">
-                     <div class="form-group">
-                        <label>Owner First Name</label>
-                        <input class="inTicket" id="pfirst_name"  type="text" />
-                     </div>
-                     <div class="form-group">
-                        <label>Owner Last Name</label>
-                        <input class="inTicket" id="plast_name" type="text" />
-                     </div>
-                     <div class="form-group">
-                        <label on:click={()=>{ dockable = true;}}>Subdivision</label>
-                        <input class="inTicket" id="subdivision"  on:keyup={getHCADSubSuggestions} type="text" />
-                     </div>
-                     <div class="form-group">
-                        <label>Block Number</label>
-                        <input class="inTicket" id="block_num" type="text" />
-                     </div>
-                     <div class="form-group">
-                        <label>Lot Number</label>
-                        <input class="inTicket" id="lot_num" type="text" />
-                     </div>
-                     <div class="form-group">
-                        <label>Tax Account</label>
-                        <input class="inTicket" id="tax_account_num" type="text" />
-                     </div>
-                     <div class="form-group">
-                        <label>Property Id</label>
-                        <input class="inTicket" id="property_id" type="text" />
-                     </div>
-                     <div class="form-group">
-                        <label>Street</label>
-                        <input class="inTicket" id="street" type="text" />
-                     </div>
-                     <div class="form-group">
-                        <label>Intersection</label>
-                        <input class="inTicket" id="intersection" type="text" />
-                     </div>
-                     <div class="form-group">
-                        <label>Building Description</label>
-                        <textarea class="inTicket" id="building_description" ></textarea>
-                     </div>
-                     
-               </div>
-               <div  style="display: {lv}" id="lv">
-                     <div class="form-group">
-                        <label>Address Number</label>
-                        <input class="inTicket" id="add_num" type="number" />
-                     </div>
-                     <div class="form-group">
-                        <label>Pre Directional</label>
-                        <input class="inTicket" id="prd" type="text" />
-                     </div>
-                     <div class="form-group">
-                        <label>Road Name</label>
-                        <input class="inTicket" id="rd" type="text" />
-                     </div>
-                     <div class="form-group">
-                        <label>Street Type</label>
-                        <input class="inTicket" id="sts" type="text" />
-                     </div>
-                     <div class="form-group">
-                        <label>Post Directional</label>
-                        <input class="inTicket" id="pod" type="text" />
-                     </div>
-                     <div class="form-group">
-                        <label>Unit</label>
-                        <input class="inTicket" id="unit" type="text" />
-                     </div>
-                     <div class="form-group">
-                        <label>MSAG Comm</label>
-                        <input class="inTicket" id="msag_comm" type="text" />
-                     </div>
-                     <div class="form-group">
-                        <label>Postal Comm</label>
-                        <input class="inTicket" id="postal_comm" type="text" />
-                     </div>
-                     <div class="form-group">
-                        <label>Full Address</label>
-                        <input class="inTicket" id="full_address" type="text" />
-                     </div>
-                     <div class="form-group">
-                        <label>Address By</label>
-                        <input id="address_by" class="inTicket"  placeholder="CLICK HERE TO STAMP" type="text" />
-                     </div>
-                     <div class="form-group">
-                        <DatePicker />
-                     </div>
-               </div>
-               <div style="display: {db}" id="db">
-                      <div class="form-group">
-                        <label>Range From</label>
-                        <input class="inTicket"  id="range_low" type="number" />
-                     </div>
-                     <div class="form-group">
-                        <label>Range To</label>
-                        <input class="inTicket" id="range_high" type="number"  />
-                     </div>
-                     <div class="form-group">
-                        <label>
-                           ESN
-                        </label>
-                        <input class="inTicket" id="esn" type="text" />
-                     </div>
-                     <div class="form-group">
-                        <label>
-                           MSAG Valid
-                        </label>
-                        <select id="msag_valid" class="inTicket">
-                           <option></option>
-                           <option>YES</option>
-                           <option>NO</option>
-                        </select>
-                     </div>
-                      <div class="form-group">
-                        <label>
-                           Trans ID
-                        </label>
-                        <input class="inTicket" id="trans_id" type="text" />
-                     </div>
-                     <div class="form-group">
-                        <label>
-                           Verified Date
-                        </label>
-                        <input class="inTicket" on:change={()=> {console.log(this.id); console.log("START"); console.log(this);}} id="date_verified" type="text" />
-                     </div>
-               </div>
+                     <!-- END OF GIS -->
             </div>
          </div>
       <OnlineDash items={['test', 'test', 'test']}/>
@@ -445,5 +474,8 @@
 }
 select {
    cursor: pointer;
+}
+input {
+   text-transform: uppercase;
 }
 </style>

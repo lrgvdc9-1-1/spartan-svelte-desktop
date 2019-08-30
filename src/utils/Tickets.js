@@ -3,7 +3,6 @@ export default class Tickets {
   
 
     constructor() {
-        
       this.id_ticket      = 0;
       this.objectid       = 0;
       this.started_ticket = 0;
@@ -14,10 +13,13 @@ export default class Tickets {
       this.tele_object;
       this.alt_object;
       this.alt2_object;
-
+      this.ogData;
+      this.full_address;
     }
 
-
+    setOriginal(original) {
+      this.ogData = original;
+    }
     setSocket(socket) {
       this.socket = socket;
     }
@@ -61,9 +63,11 @@ export default class Tickets {
         if(element.tagName == "INPUT") {
           var attribute = element.getAttribute("id");
           var value = element.value;
+            if(this.socket) {
+              this.socket.emit("ticketViewer", {room: ticket.objectid,locked: true, value: value, attribute: attribute});
+            console.log(`VALUE IS ${value} and attribute is ${attribute}`);
+            }
           
-          this.socket.emit("ticketViewer", {room: ticket.objectid,locked: true, value: value, attribute: attribute});
-          console.log(`VALUE IS ${value} and attribute is ${attribute}`);
         }
     }
 
@@ -72,9 +76,33 @@ export default class Tickets {
         if(element.tagName == "INPUT") {
           var attribute = e.target.getAttribute("id");
           var value = e.target.value;
-          this.socket.emit("ticketViewer", {room: this.objectid, locked: false, value: value, attribute: attribute});
-          console.log(`lost focus VALUE IS ${value} and attribute is ${attribute}`);
+            if(this.socket) {
+              this.socket.emit("ticketViewer", {room: this.objectid, locked: false, value: value, attribute: attribute});
+              console.log(`lost focus VALUE IS ${value} and attribute is ${attribute}`);
+            }
         }
+         
+    }
+
+    onUpdate(e) {
+      console.log(e);
+      let target = e.target;
+      console.log(target.value);
+    }
+
+    onClearFullAddress() {
+      document.getElementById("full_address").value = "";
+      
+    }
+
+    onGlueFullAddress(e) {
+      let hno = document.getElementById("add_num").value;
+      let prd = document.getElementById("prd").value;
+      let rd  = document.getElementById("rd").value;
+      let sts = document.getElementById("sts").value;
+      let pod = document.getElementById("pod").value;
+
+      document.getElementById("full_address").value = `${hno} ${prd} ${rd} ${sts} ${pod}`.replace(/\s+/g,' ').trim();
     }
 
   
