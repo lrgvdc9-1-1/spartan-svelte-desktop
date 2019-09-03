@@ -22,13 +22,14 @@
     let loading = true;
    
     let dockable = false;
-    let fakeName = new Date();
+
 
     export let action;
     export let newTicket = false;
     export let socket;
     export let spartans;
     export let router;
+    export let isMe;
 
    const dispatch = createEventDispatcher();
  
@@ -64,6 +65,8 @@
 
      onMount(async () => {
          console.log(spartans);
+         console.log(`${Date()} ${isMe}`);
+         
          dispatch('toolbar', {text: 'TICKET'});
          ticket.setUpInputsEvent();
          ticket.setUpMask();

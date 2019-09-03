@@ -1,5 +1,7 @@
 <script>
   import {onMount} from "svelte";
+  import { fade } from 'svelte/transition';
+  import { Router, Route, Link, navigateTo  } from './lib/main';
 	import RibbonToolbar from './ui/RibbonToolbar.svelte';
 	import Login from "./pages/Login.svelte";
 	import Ticket from './pages/Ticket.svelte';
@@ -15,29 +17,35 @@
   let spartans = [];
   let isMe = null;
   let sql = new SQL(client, api, client_status)
+  let login = false;
+  let loginComponent;
+  let send = false;
+  let startApp = false;
+  let shMenu = false;
+
+  $: username = (isMe) ? `${isMe.first_name} ${isMe.last_name}` : 'SIGN IN - SPARTANS'
 
   //Connection to spartan chat server...
-  let socket = io('http://localhost:3000');
+  //let socket = io('http://localhost:3000');
   
   onMount(async () => {
- 
+      
   });
 
   function queryDB() {
       console.timeEnd("init");
       let sql = new SQL(client, api, client_status)
-
+     loginComponent.setSQL(sql);
       sql.getActiveUsers().then((res) => {
          res.rows.forEach(em => {
             spartans.push(new User(em.user_id, em.first_name, em.middle_name, em.last_name, em.email, em.icon2, em.organization_id, em.work_center));
          });
-
          console.log(spartans);
       })
   }
 
   function onSelectUser(event) {
-    console.log(event);
+   
     spartans.forEach(spartan => {
         if(spartan.user_id === event.detail.user_id) {
           spartan.IsMe = true;
@@ -49,8 +57,32 @@
     //reset with new values hope to tell the app changes..
     spartans = spartans;
 
+    if(isMe) {
+        ipc.send('SvelteAlive', {"action" : "resize"});
+        startApp = true;
+    }
+    
     console.log(spartans)
+
+
   }
+
+  function onLoginReady() {
+    if(!login) {
+      login = true;
+      setTimeout(() => {
+          ipc.send('SvelteAlive', {"action" : "ready"});
+      }, 400); 
+    }
+    loginComponent.authenticateSQL();
+  }
+
+  function onLogOut() {
+     isMe = null;
+     startApp = false;
+  }
+
+  
 
 
 	
@@ -63,94 +95,145 @@
   width: 100%;
   height: 38px;
   background: #05173F;
-  
   z-index: 2;
   border-bottom: 2px solid #CAB448;
-}
+  }
 
-#titlebar #drag-region {
-  width: 100%;
-  height: 100%;
-  cursor: grab;
-  -webkit-app-region: drag;
-}
-#titlebar {
-  color: #FFF;
-}
-#titlebar #drag-region {
-  display: grid;
-  grid-template-columns: auto auto 138px;
-}
-#window-title {
-  grid-column: 2;
-  display: flex;
-  align-items: center;
-  margin-left: 20px;
- 
-}
-#window-icon {
-  grid-column: 1;
-  display: flex;
-  align-items: center;
-  margin-left: 8px;
-}
-#window-title span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  line-height: 1.5;
-}
-#window-controls {
-  display: grid;
-  grid-template-columns: repeat(3, 46px);
-  position: absolute;
-  top: 0;
-  right: 0;
-  height: 100%;
-  font-family: segoe;
-  font-size: 10px;
-}
-#window-controls {
-  -webkit-app-region: no-drag;
-}
-#window-controls .button {
-  grid-row: 1 / span 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-}
-#window-controls .button {
-  user-select: none;
-  color: #BBB;
-  background: transparent;
-}
-#window-controls .button:hover {
-  background: rgba(255,255,255,0.2);
-  color: #FFF;
-  cursor: pointer;
-}
-#window-controls #min-button {
-  grid-column: 1;
-}
-#window-controls #max-button, #window-controls #restore-button {
-  grid-column: 2;
-}
-#window-controls #restore-button {
-  display: none;
-}
-#window-controls #close-button {
-  grid-column: 3;
-}
-#window-controls #close-button:hover {
-  background: #E81123;
-}
+  #titlebar #drag-region {
+    width: 100%;
+    height: 100%;
+    cursor: grab;
+    -webkit-app-region: drag;
+  }
+  #titlebar {
+    color: #FFF;
+  }
+  #titlebar #drag-region {
+    display: grid;
+    grid-template-columns: 80px auto 125px 138px;
+  }
+  #window-title {
+    grid-column: 2;
+    display: flex;
+    align-items: center;
+    bottom: 8px;
+    
+  
+  }
 
 
+  #window-icon {
+    grid-column: 1;
+    display: flex;
+    align-items: center;
+    margin-left: 8px;
+  }
+
+  #window-username {
+    position: absolute;
+    z-index: 4;
+    align-items: center;
+    right: 126px;
+    top: 4px;
+  }
+
+  #window-username button:hover {
+    cursor: pointer;
+  }
+  #window-title span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.5;
+  }
+  #window-controls {
+    display: grid;
+    grid-template-columns: repeat(4, 46px);
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    font-family: segoe;
+    font-size: 10px;
+  }
+  #window-controls {
+    -webkit-app-region: no-drag;
+  }
+  #window-controls .button {
+    grid-row: 1 / span 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+  }
+
+
+
+  #window-controls .button {
+    user-select: none;
+    color: #BBB;
+    background: transparent;
+  }
+  #window-controls .button:hover {
+    background: rgba(255,255,255,0.2);
+    color: #FFF;
+    cursor: pointer;
+  }
+
+  #window-controls #min-button {
+    grid-column: 3;
+  }
+  #window-controls #max-button, #window-controls #restore-button {
+    grid-column: 4;
+  }
+  #window-controls #restore-button {
+    display: none;
+  }
+  #window-controls #close-button {
+    grid-column: 5;
+  }
+  #window-controls #close-button:hover {
+    background: #E81123;
+  }
+  .subMenu {
+    list-style: none;
+      position: absolute;
+      z-index: 5;
+      background: #05173F;
+      width: 109px;
+      top: 18px;
+      /* bottom: 16px; */
+      height: auto;
+      right: -16px;
+      padding: 10px;
+
+  }
+
+  li:hover {
+    cursor: pointer;
+    background: rgba(0, 0,0, .5)
+  }
 
 </style>
 <svelte:window on:clientready={queryDB}></svelte:window>
-
+<div  id="window-username">
+              <button on:blur={()=>{shMenu = false;}} style="color:#CAB448; background: transparent; border: 0;" 
+                      on:click={()=>{shMenu = (isMe) ? !shMenu : false;}}>
+                {username}
+                <span class="mif-arrow-drop-down"></span>
+              </button>
+              
+              {#if shMenu} 
+                <ul transition:fade  class="subMenu">
+                    <li>
+                      <span class="mif-profile"></span>
+                      Profile
+                    </li>
+                    <li on:click={onLogOut}><span class="mif-lock"></span>
+                    Log Out</li>
+                </ul>
+              {/if}
+          </div>
 <header id="titlebar">
       <div id="drag-region" style="cursor: grab !important;">
         <div id="window-icon">
@@ -159,9 +242,16 @@
         <div id="window-title">
          
           <span>Spartan Pro Desktop</span>
+           
         </div>
 
+         
+         
+
         <div id="window-controls">
+          
+        
+
           <div class="button" id="min-button">
             <span>&#xE921;</span>
           </div>
@@ -174,13 +264,18 @@
           <div class="button" id="close-button">
             <span>&#xE8BB;</span>
           </div>
-
         </div>
       </div>
     </header>
 <div style="height: 38px;"></div>
 <!-- <DatePicker /> -->
-<Login on:user={onSelectUser}  />
+
 <!-- <RibbonToolbar {socket} url={url} /> -->
-<!-- <RibbonToolbar {spartans} url={url} /> -->
+{#if startApp}
+   <!-- content here -->
+  <RibbonToolbar {isMe} {spartans} url={url} />
+{:else }
+<Login bind:this={loginComponent} on:ready={onLoginReady} on:user={onSelectUser}  />
+{/if}
+
 <!-- <Ticket /> -->

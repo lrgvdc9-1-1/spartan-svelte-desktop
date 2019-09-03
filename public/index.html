@@ -76,6 +76,8 @@
 	let client = null;
 	let client_status = true;
 
+	var ipc = require('electron').ipcRenderer;	
+
 	//IF DB JSON is not there then tell the system not to connect to database
 	console.log(dirname);
 	try {

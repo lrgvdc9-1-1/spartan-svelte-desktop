@@ -4,6 +4,9 @@ const { app, BrowserWindow } = electron
 const path = require('path')
 const url  = require('url')
 
+var ipc = require('electron').ipcMain;
+
+
 // enabled live reload for all the files inside your project
 require('electron-reload')(`${__dirname}\\public`, {
   electron: path.join(__dirname, 'node_modules', '.bin', 'electron'),
@@ -30,32 +33,47 @@ function createSplash() {
           slashes: true
         })
       );
-
+      createWindow()
       
       winSplash.once('ready-to-show', () => {
-        console.log("HELLO")
         winSplash.show();
-        setTimeout(() => {
-          createWindow()
-        }, 500);
-       
       });
    
 }
 
+
+ipc.on('SvelteAlive', function(event, data){
+
+    console.log(data);
+    const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
+    
+    if(data.action == 'ready') {
+      mainWindow.show();
+      if(winSplash){
+        winSplash.close();   
+        winSplash.destroy();
+        winSplash = null;
+      }
+
+    }else if(data.action == 'resize')
+    {
+        // set a single bounds property
+      mainWindow.setBounds({x: 10, y: 0, width: width - 50, height: height - 50 }); 
+    }
+});
+
 function createWindow () {
   // Create the browser window.
-  const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize
-  console.log(`WIDTH: ${width}`);
-  console.log(`HEIGHT: ${height}`);
+  
+ 
   mainWindow = new BrowserWindow({
-    width: width - 50,
-    height: height - 50,
+    width: 750,
+    height: 500,
     show: false,
     frame: false,
     webPreferences: {
-      nodeIntegration: true
-  }
+        nodeIntegration: true
+    }
   })
 
 
@@ -73,13 +91,6 @@ function createWindow () {
 		})
   );
   
-  mainWindow.once('ready-to-show', () => {
-      winSplash.close();
-      setTimeout(() => {
-        mainWindow.show();
-      }, 600);
-      
-  })
 
 
   // Open the DevTools.
@@ -91,6 +102,16 @@ function createWindow () {
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
     mainWindow = null
+  })
+
+
+  mainWindow.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
+    // if (frameName === 'modal') {
+    //   // open window as modal
+    //  // event.preventDefault()
+
+      event.newGuest = new BrowserWindow({frame: true})
+    // }
   })
 }
 

@@ -19,11 +19,12 @@
         }
 
 
-        webview = true;
+        //webview = true;
         buttons[index].activate = true;
         title = buttons[index].caption;
         src = buttons[index].src;
         trackIndex = index;
+        window.open(src, 'modal')
     }
 
     function reset() {

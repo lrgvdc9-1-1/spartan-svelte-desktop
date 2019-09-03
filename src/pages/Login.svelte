@@ -2,7 +2,7 @@
     import {onMount, createEventDispatcher} from "svelte";
     import { fade } from 'svelte/transition';
     import {  Link } from '../lib/main';
-      import SQL from '../utils/sql';
+    import SQL from '../utils/sql';
 
     let sql;
     let visible = false;
@@ -15,12 +15,19 @@
  
 
     onMount(() => {
-        setTimeout(() => {
-            visible = true;
-            sql = new SQL(client, api, client_status)
-        }, 1200);
+         dispatch("ready", true);
+       
         
     }); 
+
+    export function setSQL(sqlObject) {
+        sql = sqlObject;
+    }
+    export function authenticateSQL() {
+        sql = new SQL(client, api, client_status)
+        visible = true;
+        console.log("I AM AWESOME LOL");
+    }
 
 
     async function onAuthenticate() {
@@ -36,9 +43,6 @@
         }else { //IS a pin
             isPin = true;
         }
-
-      
-      
         
         sql.logMeIn(email).then((res) => {
                 console.log(res);
@@ -125,7 +129,7 @@
             <input type="text" bind:value={username} data-role="input" data-prepend="<span class='mif-envelop'>" placeholder="Enter your email..." data-validate="required email">
         </div>
         <div class="form-group">
-            <input type="password" bind:value={password} data-role="input" data-prepend="<span class='mif-key'>" placeholder="Enter your password..." data-validate="required minlength=6">
+            <input type="password" bind:value={password}   placeholder="Enter your password..." >
         </div>
         <div class="form-group mt-10">
 
