@@ -9,6 +9,8 @@
   import svelte from 'svelte/compiler';
   import SQL from './utils/sql';
   import User from './utils/User';
+  import Messages from './ui/modal/Messages.svelte';
+
 
   console.log(`CURRENT VERSION OF SVELTE RUNNING: ${svelte.VERSION}v`);
   
@@ -22,6 +24,7 @@
   let send = false;
   let startApp = false;
   let shMenu = false;
+  let appError = false;
 
   $: username = (isMe) ? `${isMe.first_name} ${isMe.last_name}` : 'SIGN IN - SPARTANS'
 
@@ -215,7 +218,7 @@
   }
 
 </style>
-<svelte:window on:clientready={queryDB}></svelte:window>
+<svelte:window on:clientfailed={()=>{appError = true; console.log("I FAILEd")}} on:clientready={queryDB}></svelte:window>
 <div  id="window-username">
               <button on:blur={()=>{shMenu = false;}} style="color:#CAB448; background: transparent; border: 0;" 
                       on:click={()=>{shMenu = (isMe) ? !shMenu : false;}}>
@@ -275,7 +278,11 @@
    <!-- content here -->
   <RibbonToolbar {isMe} {spartans} url={url} />
 {:else }
-<Login bind:this={loginComponent} on:ready={onLoginReady} on:user={onSelectUser}  />
+ <Login bind:this={loginComponent} on:ready={onLoginReady} on:user={onSelectUser}  />
+{/if}
+
+{#if appError} 
+    <Messages message="Database down: Working Offline" />
 {/if}
 
 <!-- <Ticket /> -->
