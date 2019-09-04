@@ -1,6 +1,6 @@
 <script>
     import { onMount, onDestroy } from 'svelte';
-    export let items;
+    export let onticket;
     let height = 0;
    
     onMount(() => {
@@ -18,7 +18,7 @@
 </style>
 <div style="float: right;width: 15%;height:100vh;background: #243C73;">
     <ul>
-        {#each items as item}
+        {#each onticket as spartan}
              <!-- content here -->
              <li>
                 <div class="card">

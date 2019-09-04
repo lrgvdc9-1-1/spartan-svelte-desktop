@@ -26,19 +26,44 @@
   let shMenu = false;
   let appError = false;
 
+  $: console.log(`CHANGING: ${spartans.length}`)
   $: username = (isMe) ? `${isMe.first_name} ${isMe.last_name}` : 'SIGN IN - SPARTANS'
 
   //Connection to spartan chat server...
-  //let socket = io('http://localhost:3000');
+  let socket = io('http://localhost:3000'); 
   
   onMount(async () => {
       
+      socket.on("online", (users) => { // Collect all the users...
+          //Reset everythign to no socket id, and online off everyone.
+          spartans.forEach(spartan => {
+             spartan.SOCKETID = null;
+             spartan.ONLINE = 0;
+          });
+
+          //Then Change which spartan to be on or off..
+          for(var x in users) {
+              let user = users[x];
+              spartans.forEach(spartan => {
+                    if(user.uid == spartan.UID) {
+                      spartan.SOCKETID = user.socketid;
+                      spartan.ONLINE = 1;
+                      return; //Kill for each..
+                    }
+              });
+          }
+
+          //Reassig itself..
+          spartans = spartans;
+      })
+
   });
 
+  //Once the application has sign in then this can happen..
   function queryDB() {
       console.timeEnd("init");
       let sql = new SQL(client, api, client_status)
-     loginComponent.setSQL(sql);
+      loginComponent.setSQL(sql);
       sql.getActiveUsers().then((res) => {
          res.rows.forEach(em => {
             spartans.push(new User(em.user_id, em.first_name, em.middle_name, em.last_name, em.email, em.icon2, em.organization_id, em.work_center));
@@ -63,6 +88,7 @@
     if(isMe) {
         ipc.send('SvelteAlive', {"action" : "resize"});
         startApp = true;
+        socket.emit("aboutme", isMe); //Tell Socket about me..
     }
     
     console.log(spartans)
@@ -83,6 +109,14 @@
   function onLogOut() {
      isMe = null;
      startApp = false;
+  }
+
+  function onExit() {
+     if(client) {
+                    client.end();
+    }
+     let window = remote.getCurrentWindow();
+     window.close();
   }
 
   
@@ -214,7 +248,7 @@
 
   li:hover {
     cursor: pointer;
-    background: rgba(0, 0,0, .5)
+    background: #CAB448;
   }
 
 </style>
@@ -234,6 +268,10 @@
                     </li>
                     <li on:click={onLogOut}><span class="mif-lock"></span>
                     Log Out</li>
+                    <li on:click={onExit}>
+                      <span class="mif-exit"></span>
+                      Exit
+                    </li>
                 </ul>
               {/if}
           </div>
@@ -276,7 +314,7 @@
 <!-- <RibbonToolbar {socket} url={url} /> -->
 {#if startApp}
    <!-- content here -->
-  <RibbonToolbar {isMe} {spartans} url={url} />
+  <RibbonToolbar {socket} {isMe} {spartans} url={url} />
 {:else }
  <Login bind:this={loginComponent} on:ready={onLoginReady} on:user={onSelectUser}  />
 {/if}

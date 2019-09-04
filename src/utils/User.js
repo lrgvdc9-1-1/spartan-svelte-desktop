@@ -14,6 +14,10 @@ export default class User {
         this.me = false;
     }
 
+    get UID() {
+        return this.user_id;
+    }
+
     get IsMe() {
         return this.me;
     }

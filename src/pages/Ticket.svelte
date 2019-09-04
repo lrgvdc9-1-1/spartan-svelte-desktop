@@ -30,7 +30,7 @@
     export let spartans;
     export let router;
     export let isMe;
-
+   let viewers = [];
    const dispatch = createEventDispatcher();
  
     //Handle action for the riboon and other actions..
@@ -43,7 +43,7 @@
     $: comment = (active === 'comment') ? '' : 'none';
     $: history = (active === 'history') ? '' : 'none';
     $: msg     = (active === 'msg') ? ''     : 'none';
-   
+    $: onticket = viewers;
     //Decide Action is when ribbon press something happens in the ticket form...
 
     function decideAction(key) {
@@ -75,6 +75,9 @@
                ticket.setSocket(socket);
                 socket.on("totalUsers", (msg) => {
                      console.log(msg);
+                     console.log(spartans);
+                     viewers = spartans.filter((spartan) => (msg.users.includes(spartan.SOCKETID) ));
+                     console.log(viewers);
                 });
 
                socket.on("ticketInfo", (data) => {
@@ -85,7 +88,7 @@
                      ticket.changeValue(data.attribute, data.value);
                });
 
-             socket.emit("joinTicketRoom", {rmName: ticket.objectid, username: fakeName.getTime()});
+             
          }else{
             console.log("NO SOCKET AVAILABLE");
          }
@@ -104,6 +107,10 @@
             //..GET THE TICKET ID AND OBJECTID FROM THE ROUTE...
             ticket.objectid = router.params['objectid'];
             ticket.id_ticket = router.params['idTicket'];
+
+            //Tell spartan chat server to join the room
+            socket.emit("joinTicketRoom", {rmName: ticket.objectid, username: isMe.EMAIL});
+
             if(client_status) {
                console.log("LOCAL DATABASE ACCESS");
                
@@ -111,6 +118,8 @@
                      ticket.setOriginal(res)
                      ticket.updateForm(res.rows);
                      loading = false;
+
+                     
                 })
 
             }else{
@@ -448,7 +457,7 @@
                      <!-- END OF GIS -->
             </div>
          </div>
-      <OnlineDash items={['test', 'test', 'test']}/>
+      <OnlineDash {onticket}/>
 </div>
 
 

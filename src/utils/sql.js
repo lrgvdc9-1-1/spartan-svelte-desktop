@@ -38,7 +38,10 @@ export default class SQL {
 
     logMeIn(email) {
         if(this.client_status){
-            return this.client.query(this.api.users.authenticate, [email])
+            if(this.client) {
+                return this.client.query(this.api.users.authenticate, [email])
+            }
+            
         }
     }
 

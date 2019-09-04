@@ -110,6 +110,11 @@
     input {
         cursor: pointer !important;
     }
+
+    .button:hover {
+        background: #CAB448 !important;
+        color: white !important;
+    }
 </style>
 
 
@@ -140,7 +145,7 @@
                 <Link>Forgot Password</Link>
             </div>
            
-            <button on:click|preventDefault={onAuthenticate} class="button large rounded">Login</button>
+            <button on:click|preventDefault={onAuthenticate} style="border: 1px solid #CAB448; background: transparent; color: #05173F;" class="button large rounded">Login</button>
         </div>
     </form>
     {/if}
