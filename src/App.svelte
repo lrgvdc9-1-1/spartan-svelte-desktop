@@ -30,7 +30,7 @@
   $: username = (isMe) ? `${isMe.first_name} ${isMe.last_name}` : 'SIGN IN - SPARTANS'
 
   //Connection to spartan chat server...
-  let socket = io('http://localhost:3000'); 
+  let socket = io('http://hchapa:3000'); 
   
   onMount(async () => {
       

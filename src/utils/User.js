@@ -12,6 +12,8 @@ export default class User {
         this.socket_id = 0;
         this.online = 0;
         this.me = false;
+        this.chat = false;
+        this.editing = {form: "", section: "", attribute: ""}
     }
 
     get UID() {
@@ -40,6 +42,10 @@ export default class User {
 
     set SOCKETID(value) {
         this.socket_id = value;
+    }
+
+    get FULL_NAME() {
+        return this.first_name + " " + this.last_name;
     }
     
     get FNAME(){

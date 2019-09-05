@@ -43,7 +43,7 @@
     $: comment = (active === 'comment') ? '' : 'none';
     $: history = (active === 'history') ? '' : 'none';
     $: msg     = (active === 'msg') ? ''     : 'none';
-    $: onticket = viewers;
+    $: ontickets = viewers;
     //Decide Action is when ribbon press something happens in the ticket form...
 
     function decideAction(key) {
@@ -71,21 +71,39 @@
          ticket.setUpInputsEvent();
          ticket.setUpMask();
          if(socket) {
-             
-               ticket.setSocket(socket);
+
+
+               ticket.socket = socket;
                 socket.on("totalUsers", (msg) => {
                      console.log(msg);
                      console.log(spartans);
-                     viewers = spartans.filter((spartan) => (msg.users.includes(spartan.SOCKETID) ));
+                     viewers = spartans.filter((spartan) => (msg.users.includes(spartan.SOCKETID)));
                      console.log(viewers);
                 });
 
                socket.on("ticketInfo", (data) => {
                      console.log(data);
-                     let element = document.getElementById(data.attribute)
-                     element.disabled = data.locked;
-                     element.value = data.value;
-                     ticket.changeValue(data.attribute, data.value);
+                     let form = data.data;
+                   
+                     let element = document.getElementById(form.elemID)
+                     let userId  = data.user;
+                     element.disabled = form.locked;
+                     element.value = form.value;
+                     viewers.forEach(spartan => {
+                        if(spartan.SOCKETID == userId) {
+                            spartan.editing.form = "TICKET";
+                           spartan.editing.section = form.section;
+                           spartan.editing.attribute = form.title;
+                           return; ///break the function once meet the requirements.alt2_mask..
+                        }
+                       
+                     });
+                     //reset the viewers  
+                     viewers = viewers;
+               });
+
+               socket.on("ticket:leaving", (data) => {
+                     viewers = viewers.filter((spartan) => (spartan.SOCKETID != data.id))
                });
 
              
@@ -183,8 +201,8 @@
 
 <div >
 
-   <div  class="tabs tabs-wrapper top tabs-expand" style="float: left;width: 85%; overflow: auto;" >
-         <div style="width: 85%;background: white; color: #CAB448;">
+   <div  class="tabs tabs-wrapper top tabs-expand" style="float: left;width: 70%; overflow: auto;" >
+         <div style="width: 70%;background: white; color: #CAB448;">
              <div style="display: grid; grid-template-columns: 80px auto">
                <div style="cursor: pointer;">
                   <img  src="./assets/spartan_logo.webp" width="70" height="70" alt=""> 
@@ -238,37 +256,38 @@
                       <div style="display: {customerData}"  id="customerData">
                            <div class="form-group">
                               <label>First Name</label>
-                              <input class="inTicket" section="customer-data" id="cfirst_name" type="text" />
+                              <input class="inTicket" data-title="First Name" data-section="Customer Data" id="cfirst_name" type="text" />
+                              <span>MSG FROM SPARTAN CHAT</span>
                            </div>
                            <div class="form-group">
                               <label>Last Name</label>
-                              <input class="inTicket" id="clast_name" type="text" />
+                              <input class="inTicket" data-title="Last Name" data-section="Customer Data" id="clast_name" type="text" />
                            </div>
                            <div class="form-group">
                               <label>9-1-1 Telephone</label>
-                              <input class="inTicket" bind:this={ticket.tele_object} section="customer-data"  id="telephone_land_line" type="text" />
+                              <input class="inTicket" data-title="9-1-1 Telephone" data-section="Customer Data" bind:this={ticket.tele_object}   id="telephone_land_line" type="text" />
                            </div>
                            <div class="form-group">
                               <label>ALT 1 Tele</label>
-                              <input class="inTicket" bind:this={ticket.alt_object} section="customer-data"  id="alt_telephone"  type="text" />
+                              <input class="inTicket" data-title="ALT 1 Tele" data-section="Customer Data" bind:this={ticket.alt_object}   id="alt_telephone"  type="text" />
                            </div>
                            <div class="form-group">
                               <label>ALT 2 Tele</label>
-                              <input class="inTicket" bind:this={ticket.alt2_object} section="customer-data" id="alt2_telephone" type="text" />
+                              <input class="inTicket" data-title="ALT 2 Tele" data-section="Customer Data" bind:this={ticket.alt2_object}  id="alt2_telephone" type="text" />
                            </div>
                            <div class="form-group">
                               <label>Email</label>
-                              <input class="inTicket" id="cemail" type="email" section="customer-data"  />
+                              <input class="inTicket" data-title="Email" data-section="Customer Data" id="cemail" type="email"   />
                            </div>
                            <div class="form-group">
                               <label>
                                  ALT E-mail
                               </label>
-                              <input class="inTicket" id="alt_cemail" type="email" section="customer-data" />
+                              <input class="inTicket" data-title="ALT E-mail" data-section="Customer Data" id="alt_cemail" type="email" section="customer-data" />
                            </div>
                            <div class="form-group">
                               <label>Prefered Language</label>
-                              <select class="inTicket" id="prf_language"  section="customer-data" >
+                              <select class="inTicket" data-title="Prefered Language" data-section="Customer Data" id="prf_language"  section="customer-data" >
                                  <option></option>
                                  <option>English</option>
                                  <option>Spanish</option>
@@ -276,7 +295,7 @@
                            </div>
                            <div class="form-group">
                               <label>Walk In</label>
-                              <select class="inTicket" id="walk_in" section="customer-data" >
+                              <select class="inTicket" data-title="Walk In" data-section="Customer Data" id="walk_in" section="customer-data" >
                                  <option ></option>
                                  <option >Yes</option>
                                  <option >No</option>
@@ -284,7 +303,7 @@
                            </div>
                            <div class="form-group">
                               <label>Utilities</label>
-                              <select class="inTicket" id="utility" section="customer-data" >
+                              <select class="inTicket" data-title="Utilities" data-section="Customer Data" id="utility" section="customer-data" >
                                  <option ></option>
                                  <option >Yes</option>
                                  <option >No</option>
@@ -292,90 +311,90 @@
                            </div>
                            <div class="form-group">
                               <label>Mailing Info</label>
-                              <input class="inTicket" id="mailing_address"  type="text" section="customer-data" />
+                              <input class="inTicket" data-title="Mailing Info" data-section="Customer Data" id="mailing_address"  type="text" section="customer-data" />
                            </div>
                       </div>
                       <!-- END OF CUSTOMER DATA -->
                         <div  style="display: {premisesData}" id="premisesData">
                            <div class="form-group">
                               <label>Owner First Name</label>
-                              <input class="inTicket" id="pfirst_name"  type="text" />
+                              <input class="inTicket" data-title="Owner First Name" data-section="Premises Data" id="pfirst_name"  type="text" />
                            </div>
                            <div class="form-group">
                               <label>Owner Last Name</label>
-                              <input class="inTicket" id="plast_name" type="text" />
+                              <input class="inTicket" data-title="Owner Last Name" data-section="Premises Data" id="plast_name" type="text" />
                            </div>
                            <div class="form-group">
                               <label >Subdivision</label>
-                              <input class="inTicket" id="subdivision"  type="text" />
+                              <input class="inTicket" data-title="Subdivision" data-section="Premises Data" id="subdivision"  type="text" />
                            </div>
                            <div class="form-group">
                               <label>Block Number</label>
-                              <input class="inTicket" id="block_num" type="text" />
+                              <input class="inTicket" data-title="Block Number" data-section="Premises Data" id="block_num" type="text" />
                            </div>
                            <div class="form-group">
                               <label>Lot Number</label>
-                              <input class="inTicket" id="lot_num" type="text" />
+                              <input class="inTicket" data-title="Lot Number" data-section="Premises Data" id="lot_num" type="text" />
                            </div>
                            <div class="form-group">
                               <label>Tax Account</label>
-                              <input class="inTicket" id="tax_account_num" type="text" />
+                              <input class="inTicket" data-title="Tax Account" data-section="Premises Data" id="tax_account_num" type="text" />
                            </div>
                            <div class="form-group">
                               <label>Property Id</label>
-                              <input class="inTicket" id="property_id" type="text" />
+                              <input class="inTicket" data-title="Property Id" data-section="Premises Data" id="property_id" type="text" />
                            </div>
                            <div class="form-group">
                               <label>Street</label>
-                              <input class="inTicket" id="street" type="text" />
+                              <input class="inTicket" data-title="Street" data-section="Premises Data" id="street" type="text" />
                            </div>
                            <div class="form-group">
                               <label>Intersection</label>
-                              <input class="inTicket" id="intersection" type="text" />
+                              <input class="inTicket" data-title="Intersection" data-section="Premises Data" id="intersection" type="text" />
                            </div>
                            <div class="form-group">
                               <label>Building Description</label>
-                              <textarea class="inTicket" id="building_description" ></textarea>
+                              <textarea class="inTicket" data-title="Building Description" data-section="Premises Data" id="building_description" ></textarea>
                            </div>
                         </div>
                         <!-- END OF PREMISES DATA -->
                      <div  style="display: {lv}"   id="lv">
                            <div class="form-group">
                               <label>Address Number</label>
-                              <input class="inTicket" id="add_num" type="number" />
+                              <input class="inTicket" data-title="Address Number" data-section="Location Validation" id="add_num" type="number" />
                            </div>
                            <div class="form-group">
                               <label>Pre Directional</label>
-                              <input class="inTicket" id="prd" type="text" />
+                              <input class="inTicket" data-title="Pre Directional" data-section="Location Validation" id="prd" type="text" />
                            </div>
                            <div class="form-group">
                               <label>Road Name</label>
-                              <input class="inTicket" id="rd" type="text" />
+                              <input class="inTicket" data-title="Road Name" data-section="Location Validation" id="rd" type="text" />
                            </div>
                            <div class="form-group">
                               <label>Street Type</label>
-                              <input class="inTicket" id="sts" type="text" />
+                              <input class="inTicket" data-title="Street Type" data-section="Location Validation" id="sts" type="text" />
                            </div>
                            <div class="form-group">
                               <label>Post Directional</label>
-                              <input class="inTicket" id="pod" type="text" />
+                              <input class="inTicket" data-title="Post Directional" data-section="Location Validation" id="pod" type="text" />
                            </div>
                            <div class="form-group">
                               <label>Unit</label>
-                              <input class="inTicket" id="unit" type="text" />
+                              <input class="inTicket" data-title="Unit" data-section="Location Validation" id="unit" type="text" />
                            </div>
                            <div class="form-group">
                               <label>MSAG Comm</label>
-                              <input class="inTicket" id="msag_comm" type="text" />
+                              <input class="inTicket" data-title="MSAG Comm" data-section="Location Validation"  id="msag_comm" type="text" />
                            </div>
                            <div class="form-group">
                               <label>Postal Comm</label>
-                              <input class="inTicket" id="postal_comm" type="text" />
+                              <input class="inTicket" data-title="Postal Comm" data-section="Location Validation" id="postal_comm" type="text" />
                            </div>
                            <div class="form-group">
                               <label>Full Address</label>
                               <div class="input">
-                                 <input class="inTicket" id="full_address" type="text">
+                                 <input class="inTicket" data-title="Full Address" data-section="Location Validation" id="full_address" type="text">
                                  <div class="button-group">
                                     <button on:click={ticket.onClearFullAddress} class="button input-search-button"><span class="mif-bin"></span></button>
                                     <button on:click={ticket.onGlueFullAddress}  class="button input-search-button"><span class="mif-clipboard"></span></button>
@@ -384,7 +403,7 @@
                            </div>
                            <div class="form-group">
                               <label>Address By</label>
-                              <input id="address_by" class="inTicket"  placeholder="CLICK HERE TO STAMP" type="text" />
+                              <input id="address_by" data-title="Address By" data-section="Location Validation" class="inTicket"  placeholder="CLICK HERE TO STAMP" type="text" />
                            </div>
                            <div class="form-group">
                               <DatePicker />
@@ -394,23 +413,23 @@
                      <div  style="display: {db}"  id="db">
                            <div class="form-group">
                               <label>Range From</label>
-                              <input class="inTicket"  id="range_low" type="number" />
+                              <input class="inTicket" data-title="Range From" data-section="Database" id="range_low" type="number" />
                            </div>
                            <div class="form-group">
                               <label>Range To</label>
-                              <input class="inTicket" id="range_high" type="number"  />
+                              <input class="inTicket" data-title="Range To" data-section="Database" id="range_high" type="number"  />
                            </div>
                            <div class="form-group">
                               <label>
                                  ESN
                               </label>
-                              <input class="inTicket" id="esn" type="text" />
+                              <input class="inTicket" data-title="ESN" data-section="Database" id="esn" type="text" />
                            </div>
                            <div class="form-group">
                               <label>
                                  MSAG Valid
                               </label>
-                              <select id="msag_valid" class="inTicket">
+                              <select id="msag_valid" data-title="MSAG Valid" data-section="Database" class="inTicket">
                                  <option></option>
                                  <option>YES</option>
                                  <option>NO</option>
@@ -420,13 +439,13 @@
                               <label>
                                  Trans ID
                               </label>
-                              <input class="inTicket" id="trans_id" type="text" />
+                              <input class="inTicket" data-title="Trans ID" data-section="Database"  id="trans_id" type="text" />
                            </div>
                            <div class="form-group">
                               <label>
                                  Verified Date
                               </label>
-                              <input class="inTicket" on:change={()=> {console.log(this.id); console.log("START"); console.log(this);}} id="date_verified" type="text" />
+                              <input class="inTicket" data-title="Verified Date"  data-section="Database" on:change={()=> {console.log(this.id); console.log("START"); console.log(this);}} id="date_verified" type="text" />
                            </div>
                      </div>
                      <!-- END OF DB -->
@@ -436,10 +455,10 @@
                               <label>
                                  Staff Initials
                               </label>
-                              <input class="inTicket" id="initials_mapping" type="text" />
+                              <input class="inTicket" data-title="Staff Initials" data-section="GIS" id="initials_mapping" type="text" />
                            </div>
                            <div class="form-group">
-                              <input type="text" id="mapping_verified_date" class="inTicket">
+                              <input type="text" data-title="Date" data-section="GIS" id="mapping_verified_date" class="inTicket">
                            </div>
                            <br>
                            <hr>
@@ -448,26 +467,29 @@
                               <label>
                                  Staff Initials
                               </label>
-                              <input class="inTicket" id="initials_geocoding" type="text" />
+                              <input class="inTicket" data-title="Staff Initials" data-section="GIS" id="initials_geocoding" type="text" />
                            </div>
                            <div class="form-group">
-                              <input type="text" id="geocoding_date" class="inTicket">
+                              <input type="text" data-title="Geocoding Date" data-section="GIS" id="geocoding_date" class="inTicket">
                            </div>
                      </div>
                      <!-- END OF GIS -->
             </div>
          </div>
-      <OnlineDash {onticket}/>
+      <OnlineDash {ontickets}/>
 </div>
 
 
 <style>
+  span {
+     color: red;
+  }
    ul.tabs-list > li:hover {
       cursor: pointer;
    }
 
    .tabs {
-      height: calc(100vh - 182px);
+      height: calc(100vh - 184px);
    }
 
    .tabs>ul.tabs-list>li>span {

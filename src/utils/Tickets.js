@@ -1,6 +1,7 @@
 import IMask from 'imask';
+let _self;
 export default class Tickets {
-  
+
 
     constructor() {
       this.id_ticket      = 0;
@@ -9,12 +10,18 @@ export default class Tickets {
       this.created_date;
       this.selectTicket = null;
       this.formInputs = document.getElementsByClassName("inTicket");
-      this.socket = null;
+      this.socket;
       this.tele_object;
       this.alt_object;
       this.alt2_object;
       this.ogData;
       this.full_address;
+      _self = this;
+    }
+
+    set SOCKET(socket) {
+
+      this.socket = socket;
     }
 
     setOriginal(original) {
@@ -62,10 +69,12 @@ export default class Tickets {
         let element = e.target;
         if(element.tagName == "INPUT") {
           var attribute = element.getAttribute("id");
+          var section   = element.dataset.section;
+          var title     = element.dataset.title;
           var value = element.value;
-            if(this.socket) {
-              console.log(this.objectid);
-              this.socket.emit("ticketViewer", {room: this.objectid,locked: true, value: value, elemID: attribute});
+            if(_self.socket) {
+             
+              _self.socket.emit("ticketViewer", {room: _self.objectid,locked: true, section: section,title: title,  value: value, elemID: attribute});
               console.log(`VALUE IS ${value} and attribute is ${attribute}`);
             }
           
@@ -75,11 +84,13 @@ export default class Tickets {
       onBlurElement(e) {
         let element = e.target;
         if(element.tagName == "INPUT") {
-            var attribute = e.target.getAttribute("id");
+            var attribute = element.getAttribute("id");
+            var section   = element.dataset.section;
+            var title     = element.dataset.title;
             var value = e.target.value;
-            if(this.socket) {
-              console.log(this.objectid);
-              this.socket.emit("ticketViewer", {room: this.objectid, locked: false, value: value, elemID: attribute});
+            if(_self.socket) {
+              console.log(_self.objectid);
+              _self.socket.emit("ticketViewer", {room: _self.objectid, locked: false, value: value, title: title, section: section, elemID: attribute});
               console.log(`lost focus VALUE IS ${value} and attribute is ${attribute}`);
             }
         }
