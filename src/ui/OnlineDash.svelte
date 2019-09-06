@@ -2,6 +2,7 @@
     import { onMount, onDestroy } from 'svelte';
     import Chat from './modal/Chat.svelte';
     export let ontickets;
+    export let isMe;
 
     $: spartans = ontickets;
     let height = 0;
@@ -15,7 +16,11 @@
     function onChat(index) {
         console.log(index);
         console.log(ontickets[index]);
-        ontickets[index].chat = true;
+        let spartan = ontickets[index];
+       // if(isMe.user_id != spartan.user_id) {
+                ontickets[index].chat = true;
+       // }
+        
     }
 </script>
 <style>
@@ -52,7 +57,7 @@
                             </tr>
                         </table>
                         {:else if spartan.chat} 
-                                <Chat person={spartan.FULL_NAME}/>
+                                <Chat {isMe} person={spartan.FULL_NAME}/>
                         {/if}
                     </div>
                     <div class="card-footer">

@@ -54,11 +54,6 @@ ipc.on('SvelteAlive', function(event, data){
         winSplash.destroy();
         winSplash = null;
       }
-
-    }else if(data.action == 'resize')
-    {
-        // set a single bounds property
-      mainWindow.setBounds({x: 10, y: 0, width: width - 50, height: height - 50 }); 
     }
 });
 
@@ -67,8 +62,8 @@ function createWindow () {
   
  
   mainWindow = new BrowserWindow({
-    width: 750,
-    height: 500,
+    width: 1200,
+    height: 800,
     show: false,
     frame: false,
     webPreferences: {

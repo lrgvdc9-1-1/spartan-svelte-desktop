@@ -86,7 +86,6 @@
     spartans = spartans;
 
     if(isMe) {
-        ipc.send('SvelteAlive', {"action" : "resize"});
         startApp = true;
         socket.emit("aboutme", isMe); //Tell Socket about me..
     }
@@ -101,7 +100,7 @@
       login = true;
       setTimeout(() => {
           ipc.send('SvelteAlive', {"action" : "ready"});
-      }, 400); 
+      }, 600); 
     }
     loginComponent.authenticateSQL();
   }

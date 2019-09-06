@@ -476,7 +476,7 @@
                      <!-- END OF GIS -->
             </div>
          </div>
-      <OnlineDash {ontickets}/>
+      <OnlineDash {isMe} {ontickets}/>
 </div>
 
 
