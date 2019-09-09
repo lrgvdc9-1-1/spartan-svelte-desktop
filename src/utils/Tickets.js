@@ -67,7 +67,8 @@ export default class Tickets {
       onKeyPressElement(e) {
         //console.log(e);
         let element = e.target;
-        if(element.tagName == "INPUT") {
+        console.log(e);
+        if(element.tagName == "INPUT" || element.tagName == "SELECT") {
           var attribute = element.getAttribute("id");
           var section   = element.dataset.section;
           var title     = element.dataset.title;
@@ -83,7 +84,7 @@ export default class Tickets {
 
       onBlurElement(e) {
         let element = e.target;
-        if(element.tagName == "INPUT") {
+        if(element.tagName == "INPUT" || element.tagName == "SELECT") {
             var attribute = element.getAttribute("id");
             var section   = element.dataset.section;
             var title     = element.dataset.title;
