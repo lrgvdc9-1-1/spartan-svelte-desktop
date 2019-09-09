@@ -1,8 +1,10 @@
 <script>
     import { onMount, onDestroy } from 'svelte';
     import Chat from './modal/Chat.svelte';
+    
     export let ontickets;
     export let isMe;
+    export let socket;
 
     $: spartans = ontickets;
     let height = 0;
@@ -17,9 +19,9 @@
         console.log(index);
         console.log(ontickets[index]);
         let spartan = ontickets[index];
-       // if(isMe.user_id != spartan.user_id) {
+        if(isMe.user_id != spartan.user_id) {
                 ontickets[index].chat = true;
-       // }
+        }
         
     }
 </script>
@@ -31,7 +33,7 @@
         color: #CAB448;
     }
 </style>
-<div style="float: right;width: 30%;height:100vh;background: #243C73;">
+<div style="float: right;width: 30%;height:100vh;background: #243C73;overflow:auto;">
     <ul>
         {#each spartans as spartan, i}
              <!-- content here -->
@@ -57,7 +59,7 @@
                             </tr>
                         </table>
                         {:else if spartan.chat} 
-                                <Chat {isMe} person={spartan.FULL_NAME}/>
+                                <Chat {socket} {isMe} person={spartan}/>
                         {/if}
                     </div>
                     <div class="card-footer">
