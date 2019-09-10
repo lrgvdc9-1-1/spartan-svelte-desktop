@@ -23,6 +23,7 @@
     "start": "sirv public",
     "electron": "cross-env NODE_ENV=development electron .",
     "electronbuild" : "electron-packager . SpartanPro --overwrite",
+	"package" : "electron-packager . SpartanPro --overwrite",
     "start:dev": "sirv public --dev -s"
   },
   "dependencies": {

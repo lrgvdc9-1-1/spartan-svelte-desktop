@@ -64,43 +64,138 @@
         overflow: auto;
         margin-bottom: 5px;
     }
-    .msgBubble {
-        border-radius: 4px;
-        text-align: center;
-        padding: 4px;
-        margin-bottom: 10px;
-        background: #243C73;
 
+
+    .message {
+      
+        
+      
+        background: #243C73;
+        color: white;
+        width: 50%;
+        padding: 18px 10px;
+        line-height: 26px;
+        font-size: 16px;
+        border-radius: 7px;
+        margin-bottom: 30px;
+        position: relative;
     }
-    .containerSender {
-        display: flex;
-        justify-content: flex-end;
-        border-spacing: 10px;
+    
+  
+
+      .message::after {
+          bottom: 100%;
+          left: 7%;
+          border: solid transparent;
+          content: " ";
+          height: 0;
+            width: 0;
+            position: absolute;
+            pointer-events: none;
+            border-bottom-color: #243C73;
+            border-width: 10px;
+            
+      }
+      
+      .message-data {
+      margin-bottom: 15px;
     }
+  
+  
+    .other-message {
+      background: #243C73;
+      
+      
+    }
+    
+    .other-message::after {
+        border-bottom-color: #243C73;
+        left: 93%;
+         margin-left: -18px;
+      }
+
+      .my-message::after {
+          margin-left: -3px;
+      }
+ 
+    
+    
+  
+
+    ul {
+    	list-style-type:none;
+    }
+
+     .align-right {
+    	text-align: right;
+      margin-left: 36.5%;
+    }
+    .float-right{
+    	float: right;
+    }
+    .clearfix:after {
+     
+      display: block;
+      font-size: 0;
+      content: " ";
+      clear: both;
+      height: 0;
+  }
 </style>
 
 <div id="chat_con">
     {#if title} 
     <h3 style="text-align: center">{person.FULL_NAME}</h3>
     {/if}
-
-    {#each chats as chat}
+    <ul>
+        {#each chats as chat}
          <!-- content here -->
         {#if chat.incoming}
-            <div  style="float: left;width: 100%;display: flex;">
-             <img width="25" height="25" src="./assets/spartan_logo.webp" alt="Spartan">
-             <div class="msgBubble" style="margin-left: 10px" >{chat.incoming}</div>
-            </div>
+            <!-- <li>
+               
+                 <div class="message-data">
+                    <span class="message-data-name"><img width="25" height="25" src="./assets/spartan_logo.webp" alt="Spartan">{person.FULL_NAME}</span>
+                    <span class="message-data-time">10:12 AM, Today</span>
+                </div>
+                
+                <div class="msgBubble" style="margin-left: 10px" >{chat.incoming}</div>
+                
+            </li> -->
+            <li >
+                <div class="message-data">
+                        <span class="message-data-name"><i class="fa fa-circle online"></i>{person.FULL_NAME}</span>
+                        <span class="message-data-time">10:12 AM, Today</span>
+                        </div>
+                        <div class="message my-message">
+                            {chat.incoming}
+                        </div>
+    
+            </li>
+           
         {:else if chat.sender}
-           <div class="containerSender">
-                <div class="msgBubble" style="margin-right: 10px;">{chat.sender}</div>
-           </div>
+        
+           <li class="clearfix">
+                <div class="message-data align-right">
+                        <span class="message-data-time" >10:10 AM, Today</span> &nbsp; &nbsp;
+                        <span class="message-data-name" >{isMe.FULL_NAME}</span> <i class="fa fa-circle me"></i>
+                        
+                </div>
+       
+                <div class="message other-message float-right">
+                    {chat.sender}
+                </div>
+    
+            </li>
+               
+
            
         {/if}
           
 
     
     {/each}
+    </ul>
+    
    
 
 </div>
