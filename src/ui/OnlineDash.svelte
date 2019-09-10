@@ -16,8 +16,6 @@
 
 
     function onChat(index) {
-        console.log(index);
-        console.log(ontickets[index]);
         let spartan = ontickets[index];
         if(isMe.user_id != spartan.user_id) {
                 ontickets[index].chat = true;
@@ -37,7 +35,10 @@
     <ul>
         {#each spartans as spartan, i}
              <!-- content here -->
-             <li>
+
+             {#if isMe.UID != spartan.UID}
+                  <!-- content here -->
+                  <li>
                 <div class="card">
                     <div class="card-header">
                         <div class="avatar">
@@ -68,6 +69,8 @@
                 </div>
 
              </li>
+             {/if}
+             
         {/each}
     </ul>
 </div>
