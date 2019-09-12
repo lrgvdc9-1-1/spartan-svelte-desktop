@@ -10,18 +10,25 @@ async function  initDB() {
 			await dns.lookup('911.local', {all: true}, async (err, addresses) =>
 				{
 					if(addresses){
+						console.log("I CAN CONTACT 911.local")
 						client_status = (addresses.length > 0) ? true : false;
 						if(client_status) {
 							try { //Try to connect if fail then tell the app to switch
 								client = new Client(db) //Connect to database...
 								//console.log("SQL Local");
-								await client.connect(); //await to Connect to the database...
+								client.connect(err => {
+									if(err) {
+                                        window.dispatchEvent(new Event('clientfailed'));
+									}else {
+                                        window.dispatchEvent(new Event('clientready'));
+									}
+								}); //await to Connect to the database...
 								
-								window.dispatchEvent(new Event('clientready'));
+								
 
-								client.on('end', (res) => {
-									console.log(`END: ${res}`)
-								})
+								// client.on('end', (res) => {
+								// 	console.log(`END: ${res}`)
+								// })
 
 							} catch (error) {
 								console.log("FAILED")
