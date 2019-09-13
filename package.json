@@ -3,18 +3,18 @@
   "version": "1.0.0",
   "main": "main-electron.js",
   "devDependencies": {
-    "cross-env": "^5.2.0",
-    "electron": "^6.0.2",
-    "electron-packager": "^14.0.5",
+    "cross-env": "^5.2.1",
+    "electron": "^6.0.9",
+    "electron-packager": "^14.0.6",
     "npm-run-all": "^4.1.5",
-    "rollup": "^1.19.4",
+    "rollup": "^1.21.2",
     "rollup-plugin-commonjs": "^9.3.4",
     "rollup-plugin-livereload": "^1.0.1",
     "rollup-plugin-node-resolve": "^4.2.3",
     "rollup-plugin-svelte": "^5.1.0",
     "rollup-plugin-terser": "^4.0.4",
     "sirv-cli": "^0.4.4",
-    "svelte": "^3.8.1"
+    "svelte": "^3.12.1"
   },
   "scripts": {
     "build": "rollup -c",
@@ -22,13 +22,13 @@
     "dev": "run-p start:dev autobuild",
     "start": "sirv public",
     "electron": "cross-env NODE_ENV=development electron .",
-    "electronbuild" : "electron-packager . SpartanPro --overwrite",
-	"package" : "electron-packager . SpartanPro --overwrite",
+    "electronbuild": "electron-packager . SpartanPro --overwrite",
+    "package": "electron-packager . SpartanPro --overwrite",
     "start:dev": "sirv public --dev -s"
   },
   "dependencies": {
     "electron-reload": "^1.5.0",
-    "imask": "^5.2.0",
+    "imask": "^5.2.1",
     "pg": "^7.12.1",
     "svero": "^1.0.0"
   }

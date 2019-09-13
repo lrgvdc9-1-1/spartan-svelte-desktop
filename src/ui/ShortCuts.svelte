@@ -24,7 +24,12 @@
         title = buttons[index].caption;
         src = buttons[index].src;
         trackIndex = index;
-        window.open(src, 'modal')
+        
+        //Create a new browswer window
+         let win = new BrowserWindow({ width: 1200, height: 800 })
+         win.on('close', function () { win = null })
+         win.loadURL(src)
+         win.show()
     }
 
     function reset() {

@@ -1,5 +1,5 @@
 <script>
-    export let message = "TEST"
+    export let message = "ONLINE";
 
 </script>
 

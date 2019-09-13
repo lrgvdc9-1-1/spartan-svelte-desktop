@@ -101,12 +101,15 @@ function createWindow () {
 
 
   mainWindow.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
-    // if (frameName === 'modal') {
-    //   // open window as modal
-    //  // event.preventDefault()
 
-      event.newGuest = new BrowserWindow({frame: true})
-    // }
+    
+    if (frameName === 'modal') {
+    //   // open window as modal
+      event.preventDefault();
+      options.frame = true;
+
+      //event.newGuest = new BrowserWindow({frame: true})
+    }
   })
 }
 
