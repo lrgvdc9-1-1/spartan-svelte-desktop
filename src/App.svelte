@@ -9,7 +9,7 @@
   import svelte from 'svelte/compiler';
   import SQL from './utils/sql';
   import User from './utils/User';
-  import Messages from './ui/modal/Messages.svelte';
+  import StatusBar from './ui/Notifications/StatusBar.svelte';
 
 
   console.log(`CURRENT VERSION OF SVELTE RUNNING: ${svelte.VERSION}v`);
@@ -24,11 +24,11 @@
   let send = false;
   let startApp = false;
   let shMenu = false;
-  let appError = false;
+  let message = 'ONLINE';
 
   $: console.log(`CHANGING: ${spartans.length}`)
   $: username = (isMe) ? `${isMe.first_name} ${isMe.last_name}` : 'SIGN IN - SPARTANS'
-
+  
   //Connection to spartan chat server...
   let socket = io('http://hchapa:3000'); 
   
@@ -251,7 +251,7 @@
   }
 
 </style>
-<svelte:window on:clientfailed={()=>{appError = true; console.log("I FAILEd")}} on:clientready={queryDB}></svelte:window>
+<svelte:window on:clientfailed={()=>{}} on:clientready={queryDB}></svelte:window>
 <div  id="window-username">
               <button on:blur={()=>{shMenu = false;}} style="color:#CAB448; background: transparent; border: 0;" 
                       on:click={()=>{shMenu = (isMe) ? !shMenu : false;}}>
@@ -318,8 +318,8 @@
  <Login bind:this={loginComponent} on:ready={onLoginReady} on:user={onSelectUser}  />
 {/if}
 
-{#if appError} 
-    <Messages message="Database down: Working Offline" />
-{/if}
+
+<StatusBar {message} />
+
 
 <!-- <Ticket /> -->
