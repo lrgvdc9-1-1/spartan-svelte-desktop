@@ -543,7 +543,7 @@
    }
 
    .tabs {
-      height: calc(100vh - 184px);
+      height: calc(100vh - 220px);
    }
 
    .tabs>ul.tabs-list>li>span {
