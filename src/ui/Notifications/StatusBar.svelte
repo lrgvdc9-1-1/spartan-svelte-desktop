@@ -1,5 +1,6 @@
 <script>
     export let message = "ONLINE";
+    export let Audio;
     $: color = (message.includes("ONLINE")) ? "green" : "red";
 </script>
 

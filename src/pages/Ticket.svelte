@@ -128,7 +128,7 @@
       
          
          if(newTicket){
-            
+            loading = false;
             // ticket.fetchTicketNumber(api).then(res => res.json())
             // .then(response => 
             // console.log('Success:', response))

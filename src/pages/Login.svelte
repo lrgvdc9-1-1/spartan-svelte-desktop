@@ -4,6 +4,8 @@
     import {  Link } from '../lib/main';
     import SQL from '../utils/sql';
 
+    export let Audio;
+
     let sql;
     let visible = false;
     let username = "";

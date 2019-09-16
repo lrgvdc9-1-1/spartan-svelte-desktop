@@ -10,6 +10,7 @@
     export let socket;
     export let spartans;
     export let isMe;
+    export let Audio;
 
     let current = 'home'; //This handles the ribbon toolbar..
     let iOS = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform); //What type of platform we are in...
@@ -208,9 +209,9 @@
                                 <button on:click="{() => {action = "DELETE"}}" class="ribbon-button">
                                     <span>
                                         {#if iOS}
-                                            <img loading="lazy" src="./assets/garbage.png" alt="Filter">
+                                            <span class="mif-bin"></span>
                                         {:else}
-                                            <img loading="lazy" src="./assets/garbage.webp" alt="Filter">
+                                            <span class="mif-bin"></span>
                                         {/if}
                                     </span>
                                     <span class="caption">Delete</span>
