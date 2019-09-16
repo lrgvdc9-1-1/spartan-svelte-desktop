@@ -25,6 +25,7 @@
   let startApp = false;
   let shMenu = false;
   let message = 'ONLINE';
+  let Audio;
 
   $: console.log(`CHANGING: ${spartans.length}`)
   $: username = (isMe) ? `${isMe.first_name} ${isMe.last_name}` : 'SIGN IN - SPARTANS'
@@ -34,6 +35,7 @@
   
   onMount(async () => {
       
+     
       socket.on("online", (users) => { // Collect all the users...
           //Reset everythign to no socket id, and online off everyone.
           spartans.forEach(spartan => {
@@ -86,6 +88,8 @@
     spartans = spartans;
 
     if(isMe) {
+        //Let user know I am online...
+        Audio.play();
         startApp = true;
         socket.emit("aboutme", isMe); //Tell Socket about me..
     }
@@ -252,6 +256,11 @@
 
 </style>
 <svelte:window on:clientfailed={()=>{}} on:clientready={queryDB}></svelte:window>
+<audio bind:this={Audio} id="myAudio">
+  <source src="./music-tones/filling-your-inbox.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+
 <div  id="window-username">
               <button on:blur={()=>{shMenu = false;}} style="color:#CAB448; background: transparent; border: 0;" 
                       on:click={()=>{shMenu = (isMe) ? !shMenu : false;}}>
@@ -313,13 +322,13 @@
 <!-- <RibbonToolbar {socket} url={url} /> -->
 {#if startApp}
    <!-- content here -->
-  <RibbonToolbar {socket} {isMe} {spartans} url={url} />
+  <RibbonToolbar {Audio} {socket} {isMe} {spartans} url={url} />
 {:else }
- <Login bind:this={loginComponent} on:ready={onLoginReady} on:user={onSelectUser}  />
+ <Login {Audio} bind:this={loginComponent} on:ready={onLoginReady} on:user={onSelectUser}  />
 {/if}
 
 
-<StatusBar {message} />
+<StatusBar {Audio} {message} />
 
 
 <!-- <Ticket /> -->
