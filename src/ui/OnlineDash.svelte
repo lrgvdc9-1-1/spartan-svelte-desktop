@@ -1,10 +1,13 @@
 <script>
-    import { onMount, onDestroy } from 'svelte';
+    import { onMount, onDestroy, createEventDispatcher } from 'svelte';
     import Chat from './modal/Chat.svelte';
     
     export let ontickets;
     export let isMe;
     export let socket;
+
+    const dispatch = createEventDispatcher();
+    let windowSize = "30%";
 
     $: spartans = ontickets;
     let height = 0;
@@ -22,6 +25,26 @@
         }
         
     }
+
+    function onClose() {
+        dispatch('resize', {
+			size: '98%'
+		});
+        windowSize = "2%";
+    }
+    function onResize() {
+        dispatch('resize', {
+			size: '70%'
+		});
+        windowSize = "30%";
+    }
+
+    function onFullScreen() {
+         dispatch('resize', {
+			size: '100%'
+        });
+        windowSize = "0%";
+    }
 </script>
 <style>
     ul{
@@ -37,18 +60,62 @@
     #close-button:hover {
     background: #E81123;
   }
+
+  #titlebar  {
+    display: grid;
+    grid-template-columns: 85% auto;
+  }
+
+  #titleGrid {
+      grid-column: 1;
+    display: flex;
+  }
+  #grid2{
+      grid-column: 2;
+    display: flex;
+  }
+  h4{
+      margin: auto;
+     
+  }
+  h2 {
+      writing-mode: vertical-lr;
+      width: 100%;
+      height: auto;
+      margin-right: 50px;
+      transform: scale(-1);
+      letter-spacing: 10px;
+  }
 </style>
-<div style="float: right;width: 30%;height:100vh;background: #243C73;overflow:auto;">
-    <div style="width: 100%;height: 40px; background: #051740; border: 2px solid #CAB448;">
-        <div class="toolbar" style="float: right;" data-role="buttongroup"
-        data-mode="multi">
-            <button class="tool-button rounded">
-                  <span class="mif-arrow-up-right"></span>
-            </button>
-            <button class="tool-button rounded" id="close-button">
-                <span class="mif-exit"></span>
-            </button>
-        </div>
+{#if windowSize == "2%"}
+     <!-- content here -->
+     <div style="float: right; width: {windowSize};background: #051740; border-top: 2px solid #CAB448; height:100vh;">
+        <button on:click={onResize} class="button secondary">
+            <span class="mif-arrow-left"></span>
+        </button>
+        <h2>Ticket Viewers</h2>
+     </div>
+{:else}
+    <div style="float: right;width: {windowSize};height:100vh;background: #243C73;overflow:auto;">
+    <div style="width: 100%;height: 40px; background: #051740; border-top: 2px solid #CAB448;">
+        <header id="titlebar">
+                <div id="titleGrid">
+
+                     <h4>Ticket Viewers</h4>
+                </div>
+               
+                <div id="grid2"  data-role="buttongroup"
+                data-mode="multi">
+                    <button  class="tool-button rounded">
+                        <span class="mif-arrow-up-right"></span>
+                    </button>
+                    <button on:click={onClose} class="tool-button rounded" id="close-button">
+                        <span class="mif-exit"></span>
+                    </button>
+                </div>
+        </header>
+
+       
     </div>
     <ul>
         {#each spartans as spartan, i}
@@ -92,3 +159,4 @@
         {/each}
     </ul>
 </div>
+{/if}

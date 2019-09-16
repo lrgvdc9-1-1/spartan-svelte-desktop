@@ -12,11 +12,14 @@
     onMount(async () => {
         // content here
         socket.on("typing", (userName) => {
-            incoming = `... ${userName}`
+            incoming = `${userName} is typing`
         });
 
         socket.on("private", (msg) => {
-             chats = [...chats,{sender: "", incoming: msg}];
+             if(msg.length > 0) {
+                chats = [...chats,{sender: "", incoming: msg}];
+             }
+            
              incoming = "";
         });
     });
@@ -32,6 +35,7 @@
     }
     function onSendMessage(event) {
         console.log(event.keyCode);
+         socket.emit("typing", {userName: isMe.FULL_NAME, socketid: person.socket_id})
         if(message.length < 1) {
             
             return; //Kill Funciton
@@ -53,8 +57,10 @@
             return;
         }       
 
-        socket.emit("typing", {userName: isMe.FULL_NAME, socketid: person.socket_id})
+       
     }
+
+   
 </script>
 
 <style>
@@ -163,7 +169,7 @@
             </li> -->
             <li >
                 <div class="message-data">
-                        <span class="message-data-name"><i class="fa fa-circle online"></i>{person.FULL_NAME}</span>
+                        <span class="message-data-name"><i class="fa fa-circle online"></i>{isMe.FULL_NAME}</span>
                         <span class="message-data-time">10:12 AM, Today</span>
                         </div>
                         <div class="message my-message">
@@ -177,7 +183,7 @@
            <li class="clearfix">
                 <div class="message-data align-right">
                         <span class="message-data-time" >10:10 AM, Today</span> &nbsp; &nbsp;
-                        <span class="message-data-name" >{isMe.FULL_NAME}</span> <i class="fa fa-circle me"></i>
+                        <span class="message-data-name" >{person.FULL_NAME}</span> <i class="fa fa-circle me"></i>
                         
                 </div>
        
@@ -200,7 +206,7 @@
 
 </div>
  <div class="input">
-    <input  on:keypress={onSendMessage} bind:value={message} class="inTicket" data-title="Full Address" data-section="Location Validation" id="full_address" type="text">
+    <input on:focus={onSendMessage} on:keypress={onSendMessage} bind:value={message} class="inTicket" data-title="Full Address" data-section="Location Validation" id="full_address" type="text">
     <div class="button-group">
         <button on:click={onClearMSG}  class="button input-search-button"><span class="mif-bin"></span></button>
         <button on:click={onSendMessage}  class="button input-search-button">
