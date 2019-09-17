@@ -26,7 +26,7 @@
         sql = sqlObject;
     }
     export function authenticateSQL() {
-        sql = new SQL(client, api, client_status)
+        sql = new SQL(pool, api, client_status)
         visible = true;
     }
     export function checkOnSave() {

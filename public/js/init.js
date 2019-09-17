@@ -14,14 +14,16 @@ async function  initDB() {
 						client_status = (addresses.length > 0) ? true : false;
 						if(client_status) {
 							try { //Try to connect if fail then tell the app to switch
-								client = new Client(db) //Connect to database...
+								pool = new Pool(db) //Connect to database...
 								//console.log("SQL Local");
-								client.connect(err => {
+								pool.connect((err, client, release) => {
 									if(err) {
-                                        window.dispatchEvent(new Event('clientfailed'));
-									}else {
-                                        window.dispatchEvent(new Event('clientready'));
+										window.dispatchEvent(new Event('clientfailed'));
+										return;
 									}
+									release();
+                                    window.dispatchEvent(new Event('clientready'));
+									return;
 								}); //await to Connect to the database...
 								
 								
@@ -62,6 +64,14 @@ initDB();
 window.onbeforeunload = function(){
     // Do something
     if(client_status){
-        client.end(); //Close the connection...
+        pool.end(); //Close the connection...
     }
  }
+
+
+window.addEventListener('online',  () =>{
+	console.log("I AM ONLINE");
+});
+window.addEventListener('offline', () => {
+	alert("NO INTERNET");
+});

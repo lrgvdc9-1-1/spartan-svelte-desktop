@@ -18,7 +18,7 @@
 	let url = "https://gis.lrgvdc911.org/php/spartan/api/v2/index.php/";
   let spartans = [];
   let isMe = null;
-  let sql = new SQL(client, api, client_status)
+  let sql = new SQL(pool, api, client_status)
   let login = false;
   let loginComponent;
   let send = false;
@@ -64,14 +64,15 @@
   //Once the application has sign in then this can happen..
   function queryDB() {
       console.timeEnd("init");
-      let sql = new SQL(client, api, client_status)
+      let sql = new SQL(pool, api, client_status)
       loginComponent.setSQL(sql);
       sql.getActiveUsers().then((res) => {
+        
          res.rows.forEach(em => {
             spartans.push(new User(em.user_id, em.first_name, em.middle_name, em.last_name, em.email, em.icon2, em.organization_id, em.work_center));
          });
          console.log(spartans);
-      })
+      }).catch(err => console.log("Error executing query", err.stack));
 
       loginComponent.checkOnSave();
 

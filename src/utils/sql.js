@@ -1,6 +1,6 @@
 export default class SQL {
-    constructor(client, api, client_status) {
-        this.client = client;
+    constructor(pool, api, client_status) {
+        this.pool = pool;
         this.api = api;
         this.client_status = client_status;
     }
@@ -11,7 +11,8 @@ export default class SQL {
 
     getOrganizationTickets(organization_id, url = null) {
         if(this.client_status) {
-            return this.client.query(this.api['tickets']['organization'], [organization_id]);
+            return this.pool.query(this.api['tickets']['organization'], [organization_id]);
+            
         }else{
             return fetch(`${url}addressticket/getAllPendingTicketsByOrga2/?id=${organization_id}`);
         }
@@ -21,16 +22,17 @@ export default class SQL {
 
     getTicketForm(sql, ticketId) {
         if(this.client_status) {
-            return this.client.query(sql, ticketId);
+            return this.pool.query(sql, ticketId);
         }else {
 
         }
     }
 
-    getActiveUsers()
+    async getActiveUsers()
     {
         if(this.client_status) {
-            return this.client.query(this.api.users.active);
+    
+            return this.pool.query(this.api.users.active);
         }else{
             
         }
@@ -38,10 +40,7 @@ export default class SQL {
 
     logMeIn(email) {
         if(this.client_status){
-            if(this.client) {
-                return this.client.query(this.api.users.authenticate, [email])
-            }
-            
+            return this.pool.query(this.api.users.authenticate, [email])            
         }
     }
 

@@ -38,11 +38,12 @@
             window.on('unmaximize', toggleMaxRestoreButtons);
 
             closeButton.addEventListener("click", event => {
-                //Close database ...
-                if(client) {
-                    client.end();
-                }
-                
+                //Close database ...  
+                if(pool)
+                {
+                    //Close the Pool End...
+                    pool.end();
+                } 
                 window = remote.getCurrentWindow();
                 window.close();
             });

@@ -10,7 +10,7 @@
     let listTabs = {'customerData' : true, 'premisesData': true, 'lv': true,
    'db': true, 'gis' : true, 'comment' : true, 'history' : true, 'msg' : true};
    //This is sql transaction handler
-   let sql = new SQL(client, api, client_status);
+   let sql = new SQL(pool, api, client_status);
 
     //First Lets figure out if the page has change or refresh..
     let href = listTabs[window.location.href.split("#")[1]] ? window.location.href.split("#")[1] : 'customerData';

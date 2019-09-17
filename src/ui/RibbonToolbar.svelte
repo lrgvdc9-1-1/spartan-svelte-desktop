@@ -254,12 +254,12 @@
         <section style="width:100%; height: 500px;">
              <Router>
         
-                <Route path="#dashboard" ><DashBoard url={url} /></Route>
-                <Route path="#WalkIns" ><DashBoardCard url={url} path={"addressticket/getAllWalkIn/"} /></Route>
-                <Route path="#AllOpenTickets" ><DashBoardCard url={url} path={"addressticket/getAllPendingTicketsByOrga2/?id=6"} /></Route>
+                <Route path="#dashboard" ><DashBoard {isMe} url={url} /></Route>
+                <Route path="#WalkIns" ><DashBoardCard {isMe} url={url} path={"addressticket/getAllWalkIn/"} /></Route>
+                <Route path="#AllOpenTickets" ><DashBoardCard {isMe} url={url} path={"addressticket/getAllPendingTicketsByOrga2/?id=6"} /></Route>
                 <Route path="#newTicket"  ><Ticket on:toolbar={(event)=>{display = event.detail.text}} {socket} {isMe} {spartans} newTicket={true}  action={action} /></Route>
                 <Route path="#viewTicket/:idTicket/:objectid" let:router><Ticket on:toolbar={(event)=>{display = event.detail.text}} {socket} {isMe} {spartans} {router} newTicket={false}  action={action} /></Route>
-                <Route path="*" ><DashBoard url={url} /></Route>
+                <Route path="*" ><DashBoard {isMe} url={url} /></Route>
             </Router>
         
         </section>

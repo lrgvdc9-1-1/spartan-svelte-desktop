@@ -69,13 +69,13 @@
 	const remote = require('electron').remote;
 	const path = require('path');
 	const BrowserWindow = remote.BrowserWindow;
-    const {Client} = require('pg');
+    const {Pool} = require('pg');
 	const api = require('./configurations/api');
 	const dns = require('dns')
 	const osystem = require('os');
+	let pool;
 	let dirname = __dirname;
 	let db = null;
-	let client = null;
 	let client_status = true;
 
 	var ipc = require('electron').ipcRenderer;	
@@ -85,7 +85,8 @@
 	try {
 		db = require('./configurations/db');
 		client_status = (Object.entries(db).length === 0) ? false : true;
-
+		
+		
 	} catch (error) {
 		client_status = false;
 	}

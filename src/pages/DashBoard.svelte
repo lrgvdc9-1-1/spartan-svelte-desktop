@@ -5,10 +5,10 @@
 
     export let url;
     export let option;
+    export let isMe;
     let available = false;
 
-    console.log(client);
-    let sql = new SQL(client, api, client_status);
+    let sql = new SQL(pool, api, client_status);
 
     let openTickets = [];
 
@@ -20,16 +20,16 @@
         
         //If sql available then get organization tickets
         if(sql.isLocalAvailable()) {
-           sql.getOrganizationTickets(6).then(res => {
             
-              
+           sql.getOrganizationTickets(isMe.ORGANIZATION).then(res => {
+            
                openTickets = res.rows;
                setTimeout(() => {
                    available = true;
                }, 300);
            });
         }else {
-            const res = await sql.getOrganizationTickets(6, url);
+            const res = await sql.getOrganizationTickets(isMe.ORGANIZATION, url);
             let hold = await res.json();
             openTickets = (hold) ? hold['data'] : [];
             setTimeout(() => {
