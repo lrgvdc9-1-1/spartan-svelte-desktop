@@ -87,6 +87,16 @@
       transform: scale(-1);
       letter-spacing: 10px;
   }
+
+  @media only screen and (max-width: 1800px) {
+  #titlebar {
+     grid-template-columns: 75% auto;
+  }
+
+   #grid2{
+       margin-left: 25px;
+   }
+}
 </style>
 {#if windowSize == "2%"}
      <!-- content here -->
