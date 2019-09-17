@@ -70,8 +70,8 @@ window.onbeforeunload = function(){
 
 
 window.addEventListener('online',  () =>{
-	console.log("I AM ONLINE");
+	client_status = true;
 });
 window.addEventListener('offline', () => {
-	alert("NO INTERNET");
+	client_status = false;
 });
