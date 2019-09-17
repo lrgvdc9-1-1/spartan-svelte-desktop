@@ -10,6 +10,7 @@
     let visible = false;
     let username = "";
     let password = "";
+    let remMe = false;
     $: email = username.toUpperCase();
     $: base64 = btoa(password);
 
@@ -18,7 +19,6 @@
 
     onMount(() => {
          dispatch("ready", true);
-       
         
     }); 
 
@@ -28,14 +28,48 @@
     export function authenticateSQL() {
         sql = new SQL(client, api, client_status)
         visible = true;
-        console.log("I AM AWESOME LOL");
     }
-
+    export function checkOnSave() {
+         let account = window.localStorage.getItem("account");
+        
+            if(account)
+            {
+                account = JSON.parse(account);
+                console.log(account);
+                sql.logMeIn(account.email).then((res) => {
+                
+                        if(res.rows.length == 1) {
+                        let found = false;
+                        let user_id = 0;
+                            res.rows.forEach(element => {
+                                if(element.email == account.email && account.pin == 1 && element.pin_pass == account.password) {
+                                    
+                                        found = true;
+                                        user_id = element.user_id;
+                                }else if(element.email == account.email && element.password == account.password){
+                                
+                                    found = true;
+                                    user_id = element.user_id;
+                                }else {
+                                    console.log("NOTIFY USER");
+                                }
+                            });
+                            if(found){
+                                dispatch("user", {user_id: user_id});
+                            }
+                        }
+                    
+                    });
+            }
+    }
 
     async function onAuthenticate() {
         console.log("AUTHENTICATE")
+
         let isPin = false
         let hashHex = "";
+        console.log(`Remember me ${remMe}`);
+    
         if(isNaN(password)) { //Not PIN
             const encoder = new TextEncoder();
             const data = encoder.encode(base64);
@@ -45,15 +79,20 @@
         }else { //IS a pin
             isPin = true;
         }
+
+        if(remMe) {
+            var jsonOb = JSON.stringify({email: email, password: ((isPin) ? password : hashHex), pin: ((isPin) ? 1 : 0)});
+            window.localStorage.setItem("account", jsonOb);
+           
+        }
         
         sql.logMeIn(email).then((res) => {
                 console.log(res);
                 if(res.rows.length == 1) {
                    let found = false;
                    let user_id = 0;
-                    console.log(isPin);
                     res.rows.forEach(element => {
-                        console.log(isPin);
+           
                         
                         if(element.email == email && isPin && element.pin_pass == password) {
                                 console.log("good pin")
@@ -65,6 +104,9 @@
                             user_id = element.user_id;
                         }else {
                             console.log("TELL USER BAD USERNAME ");
+                            
+                             //Clear storage because bad credentials...
+                             window.localStorage.clear();
                             
                         }
                     });
@@ -141,7 +183,7 @@
         <div class="form-group mt-10">
 
             <div class="place-right">
-                <input type="checkbox"  >
+                <input bind:value={remMe} type="checkbox"  >
                 <span style="color: #CAB448;"> Remember Me</span>
                 <br>
                 <Link>Forgot Password</Link>
