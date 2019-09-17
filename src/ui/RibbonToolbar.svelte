@@ -26,7 +26,7 @@
     }
 
     span img  {
-        width: 50px !important;height:50px !important;
+        width: 80px !important;height:80px !important;
     }
     .squeeze {
         width: 92%;
@@ -45,7 +45,7 @@
 <section>
     <ShortCuts></ShortCuts>
 <div class="squeeze">
-        {name}
+
         <nav data-role="ribbonmenu" class="ribbon-menu" data-role-ribbonmenu="true">
             <ul class="tabs-holder">
                     <li class="static">
@@ -53,7 +53,7 @@
                     </li>
                     <li on:click="{() => current = 'home'}" 
                         class:active="{current === 'home'}">
-                        <a href="#ticket">TICKET</a>
+                        <a>TICKET</a>
                     </li>
                     <li on:click="{() => current = 'sub'}" 
                         class:active="{current === 'sub'}">
@@ -83,7 +83,7 @@
                                         {#if iOS}
                                             <img loading="lazy" src="./assets/dashboard.png" alt="dashboard">
                                         {:else}
-                                        <img loading="lazy" src="./assets/dashboard.webp" alt="dashboard">
+                                        <img loading="lazy"  src="./assets/dashboard.webp" alt="dashboard">
                                         {/if}
                                     </span>
                                 </Link>
@@ -208,11 +208,7 @@
                                 </button>
                                 <button on:click="{() => {action = "DELETE"}}" class="ribbon-button">
                                     <span>
-                                        {#if iOS}
-                                            <span class="mif-bin"></span>
-                                        {:else}
-                                            <span class="mif-bin"></span>
-                                        {/if}
+                                        <img loading="lazy" src="./assets/garbage.webp" alt="Filter">
                                     </span>
                                     <span class="caption">Delete</span>
                                 </button>
