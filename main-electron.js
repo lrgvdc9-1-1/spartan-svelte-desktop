@@ -104,11 +104,24 @@ function createWindow () {
 
     
     if (frameName === 'modal') {
-    //   // open window as modal
-      event.preventDefault();
-      options.frame = true;
-
-      //event.newGuest = new BrowserWindow({frame: true})
+      //   // open window as modal
+        //event.preventDefault();
+        options.frame = true;
+        Object.assign(options, {
+          parent: mainWindow,
+          width: 800,
+          height: 800
+        })
+    }else {
+      Object.assign(options, {
+        parent: mainWindow,
+        modal: true,
+        width: 500,
+        height: 700,
+        webPreferences: {
+          nodeIntegration: true
+      }
+      })
     }
   })
 }
