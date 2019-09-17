@@ -73,6 +73,7 @@
   #grid2{
       grid-column: 2;
     display: flex;
+    margin-top: 4px;
   }
   h4{
       margin: auto;
