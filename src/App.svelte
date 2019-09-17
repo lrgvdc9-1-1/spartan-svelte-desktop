@@ -127,7 +127,17 @@
      window.close();
   }
 
-  
+  function onProfile() {
+   
+    let win = window.open(`${dirname}/components/Profile/index.html`, 'profile');
+   
+    var timer = setInterval(function() { 
+        if(win.closed) {
+            clearInterval(timer);
+            alert('closed');
+        }
+    }, 1000);
+  }
 
 
 	
@@ -275,7 +285,7 @@
               
               {#if shMenu} 
                 <ul transition:fade  class="subMenu">
-                    <li>
+                    <li on:click={onProfile}>
                       <span class="mif-profile"></span>
                       Profile
                     </li>
