@@ -15,7 +15,7 @@
         border-top: 2px solid #CAB448;
     }
 </style>
-
+<svelte:window on:offline={()=>{message = "OFFLINE --> NO INTERNET"}} on:online={() => {message = "ONLINE"}}></svelte:window>
 <div id="bottom">
     <span class="mif-database"></span>
     <span style="color: {color}">SERVER STATUS: {message}</span>
