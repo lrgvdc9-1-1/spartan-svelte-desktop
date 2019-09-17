@@ -72,6 +72,10 @@
          });
          console.log(spartans);
       })
+
+      loginComponent.checkOnSave();
+
+      ipc.send('SvelteAlive', {"action" : "ready"});
   }
 
   function onSelectUser(event) {
@@ -100,12 +104,12 @@
   }
 
   function onLoginReady() {
-    if(!login) {
-      login = true;
-      setTimeout(() => {
-          ipc.send('SvelteAlive', {"action" : "ready"});
-      }, 600); 
-    }
+    // if(!login) {
+    //   login = true;
+    //   setTimeout(() => {
+    //       ipc.send('SvelteAlive', {"action" : "ready"});
+    //   }, 600); 
+    // }
     loginComponent.authenticateSQL();
   }
 
