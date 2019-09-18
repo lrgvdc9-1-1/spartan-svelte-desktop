@@ -84,6 +84,7 @@
     spartans.forEach(spartan => {
         if(spartan.user_id === event.detail.user_id) {
           spartan.IsMe = true;
+          spartan.chat = false;
           isMe = spartan;
           return;//stop loop..
         }
