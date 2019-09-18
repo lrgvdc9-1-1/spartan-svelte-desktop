@@ -12,6 +12,7 @@ export default class User {
         this.socket_id = 0;
         this.online = 0;
         this.me = false;
+        this.splash = false;
         this.chat = false;
         this.editing = {form: "", section: "", attribute: ""}
     }
