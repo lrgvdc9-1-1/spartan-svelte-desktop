@@ -14,14 +14,42 @@
    
     onMount(() => {
         // content here
-        height = (document.body.clientHeight - 126) + "px"
+        height = (document.body.clientHeight - 126) + "px";
+        socket.on('notify', (data) => {
+            onUpdate(data);
+           
+        });
     });
+
+    function onUpdate(user) {
+        var lng = ontickets.length;
+        let holdIndex;
+            for(var index = 0; index < lng; index++) {
+                if(ontickets[index].socket_id == isMe.socket_id) {
+                    ontickets[index].chat = false;
+                }
+                if(ontickets[index].socket_id == user.aboutme){
+                    holdIndex = index;
+                    ontickets[index].splash = true;
+                    ontickets[index].chat  = true;
+                     let window = remote.getCurrentWindow();
+                     window.flashFrame(true);
+                    break;
+                }
+            }
+
+            setTimeout(() => {
+                ontickets[holdIndex].splash = false;
+                holdIndex = 0;
+            }, 1000);
+    }
 
 
     function onChat(index) {
         let spartan = ontickets[index];
         if(isMe.user_id != spartan.user_id) {
                 ontickets[index].chat = true;
+                socket.emit("notify", {socketid: spartan.socket_id, aboutme: isMe.socket_id});
         }
         
     }
@@ -88,6 +116,14 @@
       letter-spacing: 10px;
   }
 
+  .blink {
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {  
+  50% { background: red; }
+}
+
   @media only screen and (max-width: 1800px) {
   #titlebar {
      grid-template-columns: 75% auto;
@@ -135,8 +171,8 @@
              {#if isMe.UID != spartan.UID}
                   <!-- content here -->
                   <li>
-                <div class="card">
-                    <div class="card-header">
+                <div class="card" class:blink={spartan.splash}>
+                    <div class="card-header" class:blink={spartan.splash}>
                         <div class="avatar">
                             <img alt="Logo" src="./assets/spartan_logo.webp">
                         </div>
