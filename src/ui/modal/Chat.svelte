@@ -28,6 +28,9 @@
         // content here
         socket.off("typing");
         socket.off("private");
+        person.chat = false;   
+        
+
     });
 
     function onClearMSG() {
@@ -147,9 +150,17 @@
       clear: both;
       height: 0;
   }
+
+  .blink_me {
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {  
+  50% { background: red; }
+}
 </style>
 
-<div id="chat_con">
+<div id="chat_con" >
     {#if title} 
     <h3 style="text-align: center">{person.FULL_NAME}</h3>
     {/if}
@@ -169,7 +180,7 @@
             </li> -->
             <li >
                 <div class="message-data">
-                        <span class="message-data-name"><i class="fa fa-circle online"></i>{isMe.FULL_NAME}</span>
+                        <span class="message-data-name"><i class="fa fa-circle online"></i>{person.FULL_NAME}</span>
                         <span class="message-data-time">10:12 AM, Today</span>
                         </div>
                         <div class="message my-message">
@@ -183,7 +194,7 @@
            <li class="clearfix">
                 <div class="message-data align-right">
                         <span class="message-data-time" >10:10 AM, Today</span> &nbsp; &nbsp;
-                        <span class="message-data-name" >{person.FULL_NAME}</span> <i class="fa fa-circle me"></i>
+                        <span class="message-data-name" >{isMe.FULL_NAME}</span> <i class="fa fa-circle me"></i>
                         
                 </div>
        
