@@ -28,9 +28,9 @@
 
     function onClose() {
         dispatch('resize', {
-			size: '98%'
+			size: '96%'
 		});
-        windowSize = "2%";
+        windowSize = "4%";
     }
     function onResize() {
         dispatch('resize', {
@@ -98,7 +98,7 @@
    }
 }
 </style>
-{#if windowSize == "2%"}
+{#if windowSize == "4%"}
      <!-- content here -->
      <div style="float: right; width: {windowSize};background: #051740; border-top: 2px solid #CAB448; height:100vh;">
         <button on:click={onResize} class="button secondary">

@@ -116,19 +116,21 @@
 
   function onLogOut() {
      isMe = null;
+     shMenu = false;
      startApp = false;
+     window.localStorage.clear();
   }
 
   function onExit() {
-     if(client) {
-                    client.end();
+     if(pool) {
+        pool.end();
     }
      let window = remote.getCurrentWindow();
      window.close();
   }
 
   function onProfile() {
-   
+    shMenu = false;
     let win = window.open(`${dirname}/components/Profile/index.html`, 'profile');
    
     var timer = setInterval(function() { 
@@ -136,7 +138,7 @@
             clearInterval(timer);
             alert('closed');
         }
-    }, 1000);
+    }, 500);
   }
 
 
