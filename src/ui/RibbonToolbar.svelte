@@ -136,7 +136,8 @@
                                 <span class="caption">Archive</span>
                             </button>
                             <button class="ribbon-button">
-                                
+                               <span><img loading="lazy" src="./assets/charts.webp" alt="Charts"></span>
+                              
                                 <span class="caption">Charts</span>
                             </button>
 
