@@ -342,7 +342,7 @@
    <!-- content here -->
   <RibbonToolbar {Audio} {socket} {isMe} {spartans} url={url} />
 {:else }
- <Login {Audio} bind:this={loginComponent} on:ready={onLoginReady} on:user={onSelectUser}  />
+  <Login {Audio} bind:this={loginComponent} on:ready={onLoginReady} on:user={onSelectUser}  />
 {/if}
 
 

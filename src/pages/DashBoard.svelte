@@ -7,13 +7,16 @@
     export let option;
     export let isMe;
     let available = false;
+    let searchOn = false;
 
     let sql = new SQL(pool, api, client_status);
 
     let openTickets = [];
-
+    let searchTck = [];
     let iconURL = url + "users/getUserImage/?pic=";
-    
+    let openValue;
+
+    $: opTickets = (searchTck) ? searchTck : openTickets;
 
     //Once the component is mount will fetch the pending tickets by user.localStorage.
     onMount(async () => {
@@ -61,6 +64,14 @@
         return (image) ? iconURL + image : "./assets/spartan_logo.webp"; 
     }
 
+    function searchTickets(event) {
+        console.log(event);
+  
+        if(event.keyCode == 13) {
+            searchTck = openTickets.filter(el => el['objectid'].includes(openValue))
+        }
+    }
+
 </script>
 <style>
     .listview {
@@ -73,21 +84,44 @@
     .icon {
         cursor: pointer;
     }
+    .bck {
+        background: #CAB448;
+    }
 </style>
 
 {#if available}
      <!-- content here -->
      <div class="container">
-
         <div class="window" style="float: left; width: 400px;">
             <div class="window-caption">
                 <span class="icon mif-windows"></span>
                 <span class="title">Open Ticket's</span>
-                
+                 <div class:input={searchOn}>
+                                {#if searchOn}
+                                     <!-- content here -->
+                                     <input bind:value={openValue} on:keyup={searchTickets} type="text" placeholder="Search Tickets"  >
+                                {/if}
+                                
+                                <div class="button-group">
+                                <button class:bck={!searchOn} on:click={()=>{ searchOn = !searchOn}} class="button">
+                                    {#if searchOn}
+                                         <!-- content here -->
+                                          <span style="color: red;" class="mif-cancel"></span>
+                                         
+                                    {:else}
+                                         <!-- else content here -->
+                                        <img loading="lazy"  src="./assets/search-solid.svg" alt="Search" >
+                                    {/if}
+                                   
+                                    
+                                </button>
+                                </div>
+                                
+                            </div>
             </div>
             <div class="window-content p-2" style="height: 300px;">
                 <ul class="listview view-content">
-                    {#each openTickets as ticket}
+                    {#each opTickets as ticket}
                      <!-- content here -->
                      <li >
                         
