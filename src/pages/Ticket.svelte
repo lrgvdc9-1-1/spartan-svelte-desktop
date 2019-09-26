@@ -34,6 +34,7 @@
     export let isMe;
    let viewers = [];
    let windowSize = "70%";
+   let totalFeed = 0;
    const dispatch = createEventDispatcher();
  
     //Handle action for the riboon and other actions..
@@ -67,8 +68,7 @@
    
 
      onMount(async () => {
-         console.log(spartans);
-         console.log(`${Date()} ${isMe}`);
+        
          ticket.SQL = sql;
          dispatch('toolbar', {text: 'TICKET'});
          ticket.setUpInputsEvent();
@@ -147,7 +147,11 @@
 
             if(client_status) {
                console.log("LOCAL DATABASE ACCESS");
-               
+
+                  sql.getTicketComFeedTotal([ticket.id_ticket]).then(res => {
+                      
+                      totalFeed = parseInt(res.rows[0].count);
+                  });
                   sql.getTicketForm(ticket.getSQL(), [ticket.objectid]).then(res => {
                      ticket.setOriginal(res)
                      ticket.updateForm(res.rows);
@@ -262,7 +266,7 @@
                </li>
                <li on:click="{() => active = 'comment'}" 
                         class:active="{active === 'comment'}">
-                        <span>Comments Feed - </span>
+                        <span>Comments Feed - {totalFeed}</span>
                </li>
                <li on:click="{() => active = 'history'}" 
                         class:active="{active === 'history'}" >
@@ -540,8 +544,11 @@
                      <!-- END OF GIS -->
                      <!-- Start of COmment Feed -->
                      <div style="display: {comment}" id="comment">
+                        {#if comment == ''}
+                            <!-- content here -->
+                            <CommentFeed on:totalMSG={(event) => {totalFeed = event.detail;}} {socket} {sql} ticketId={ticket.id_ticket}></CommentFeed>
+                        {/if}
                         
-                        <CommentFeed {socket} {sql} ticketId={ticket.id_ticket}></CommentFeed>
                      </div>
                      
             </div>
