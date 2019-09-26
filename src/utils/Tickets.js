@@ -16,9 +16,13 @@ export default class Tickets {
       this.alt2_object;
       this.ogData;
       this.full_address;
+      this.sql;
       _self = this;
     }
 
+    set SQL(sql) {
+      this.sql = sql;
+    }
     set SOCKET(socket) {
 
       this.socket = socket;
@@ -67,7 +71,6 @@ export default class Tickets {
       onKeyPressElement(e) {
         //console.log(e);
         let element = e.target;
-        console.log(e);
         if(element.tagName == "INPUT" || element.tagName == "SELECT") {
           var attribute = element.getAttribute("id");
           var section   = element.dataset.section;
@@ -89,6 +92,10 @@ export default class Tickets {
             var section   = element.dataset.section;
             var title     = element.dataset.title;
             var value = e.target.value;
+            let statement = `UPDATE addressticket SET ${attribute} = $1 where objectid = $2`;
+            let sql = {statement: statement, values: [value, _self.objectid]};
+            _self.sql.updateTicket(sql); //Send the query to update on blur...
+
             if(_self.socket) {
               console.log(_self.objectid);
               _self.socket.emit("ticketViewer", {room: _self.objectid, locked: false, value: value, title: title, section: section, elemID: attribute});
