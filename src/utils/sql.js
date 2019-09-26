@@ -28,13 +28,36 @@ export default class SQL {
         }
     }
 
-    async getActiveUsers()
+    getTicketComFeedTotal(whereInfo) {
+        if(this.client_status) {
+            return this.pool.query(this.api['tickets']['feedTotal'], whereInfo);
+        }else{
+
+        }
+    }
+
+    getTicketComFeed(whereInfo) {
+        if(this.client_status) {
+            return this.pool.query(this.api['tickets']['feed'], whereInfo)
+        }else {
+
+        }
+    }
+
+     getActiveUsers()
     {
         if(this.client_status) {
     
             return this.pool.query(this.api.users.active);
         }else{
             
+        }
+    }
+
+    updateTicket(sql) {
+
+        if(this.client_status) {
+            return this.pool.query(sql.statement, sql.values);
         }
     }
 
