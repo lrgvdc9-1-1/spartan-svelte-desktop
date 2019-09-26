@@ -6,6 +6,8 @@
    import OnlineDash from "../ui/OnlineDash.svelte";
    import Ticket from "../utils/Tickets";
    import DatePicker from "../ui/DatePicker.svelte";
+   import CommentFeed from "../ui/Ticket/Form/CommentFeed.svelte";
+
 
     let listTabs = {'customerData' : true, 'premisesData': true, 'lv': true,
    'db': true, 'gis' : true, 'comment' : true, 'history' : true, 'msg' : true};
@@ -67,7 +69,7 @@
      onMount(async () => {
          console.log(spartans);
          console.log(`${Date()} ${isMe}`);
-         
+         ticket.SQL = sql;
          dispatch('toolbar', {text: 'TICKET'});
          ticket.setUpInputsEvent();
          ticket.setUpMask();
@@ -536,6 +538,12 @@
                            </div>
                      </div>
                      <!-- END OF GIS -->
+                     <!-- Start of COmment Feed -->
+                     <div style="display: {comment}" id="comment">
+                        
+                        <CommentFeed {socket} {sql} ticketId={ticket.id_ticket}></CommentFeed>
+                     </div>
+                     
             </div>
          </div>
       <OnlineDash on:resize={onResize} {isMe} {socket} {ontickets}/>
