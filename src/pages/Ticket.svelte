@@ -267,7 +267,7 @@
                </li>
                <li on:click="{() => active = 'comment'}" 
                         class:active="{active === 'comment'}">
-                        <span>Comments Feed - {totalFeed}</span>
+                        <span>COMMENTS FEED - {totalFeed}</span>
                </li>
                <li on:click="{() => active = 'history'}" 
                         class:active="{active === 'history'}" >

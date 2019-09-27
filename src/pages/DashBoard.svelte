@@ -18,15 +18,24 @@
     $: opTickets = searchTck;
 
     //Once the component is mount will fetch the pending tickets by user.localStorage.
-    onMount(async () => {
+    onMount( () => {
         
         //If sql available then get organization tickets
-        if(sql.isLocalAvailable()) {
+        getData();
+	});
+    
+    onDestroy(async () => {
+        //End of component life. 
+        console.log("component desroyed...");
+        openTickets = [];
+    });
+
+    async function getData()  {
+         if(sql.isLocalAvailable()) {
             
            sql.getOrganizationTickets(isMe.ORGANIZATION).then(res => {
             
                searchTck = openTickets = res.rows;
-               console.log(searchTck);
                setTimeout(() => {
                    available = true;
                }, 300);
@@ -39,13 +48,8 @@
                    available = true;
                }, 300);
         }
-	});
-    
-    onDestroy(async () => {
-        //End of component life. 
-        console.log("component desroyed...");
-        openTickets = [];
-    });
+    }
+
 
     function getDateFormat(date) {
         let dateFormat = "";
@@ -70,6 +74,11 @@
         let search_value = event.target.value.toUpperCase();
         searchTck = openTickets.filter(el => el['init'].includes(search_value) || el['staff'].includes(search_value) || el['objectid'].includes(search_value) ||el['cfirst_name'].includes(search_value) || el['clast_name'].includes(search_value) )
         
+    }
+
+    function inFocus()  {
+
+        setTimeout(() => { document.getElementById("inTXT").focus() }, 250)
     }
 
 </script>
@@ -99,11 +108,11 @@
                  <div class:input={searchOn}>
                                 {#if searchOn}
                                      <!-- content here -->
-                                     <input  on:keyup={searchTickets} type="text" placeholder="Search Tickets"  >
+                                     <input id="inTXT"  on:keyup={searchTickets} type="text" placeholder="Search Tickets"  >
                                 {/if}
                                 
                                 <div class="button-group">
-                                <button class:bck={!searchOn} on:click={()=>{ searchOn = !searchOn}} class="button">
+                                <button class:bck={!searchOn} on:click={()=>{ searchOn = !searchOn; (searchOn) ? inFocus() : getData();}} class="button">
                                     {#if searchOn}
                                          <!-- content here -->
                                           <span style="color: red;" class="mif-cancel"></span>
