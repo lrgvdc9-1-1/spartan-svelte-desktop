@@ -1,8 +1,10 @@
 {
     "tickets" : {
-        "feed": "SELECT * FROM ticket_comments WHERE ticket_number = $1",
+        "feed": "SELECT *, false::boolean as edit, false::boolean as confirm FROM ticket_comments WHERE ticket_number = $1 order by time_track desc",
         "feedTotal" : "SELECT count(*) FROM ticket_comments WHERE ticket_number = $1",
-        "organization" : "SELECT true::text as view,ST_Y(a.point) as y, ST_X(a.point) as x,a.lat, a.longy, a.id_ticket,a.walk_in, a.objectid, u.initials as init ,(select icon2 from users where user_id = a.started_ticket::int) as icon, (select icon2 from users where user_id = a.sentto::int) as icon_transfer, (select (initials) from users where user_id = a.started_ticket::int) as staff, a.cfull_name, a.cfirst_name, a.clast_name,  a.created_date::date as created_date from addressticket as a join users as u on NULLIF(a.sentto, '')::int = u.user_id where u.organization_id = $1 order  by created_date desc"
+        "organization" : "SELECT true::text as view,ST_Y(a.point) as y, ST_X(a.point) as x,a.lat, a.longy, a.id_ticket,a.walk_in, a.objectid, u.initials as init ,(select icon2 from users where user_id = a.started_ticket::int) as icon, (select icon2 from users where user_id = a.sentto::int) as icon_transfer, (select (initials) from users where user_id = a.started_ticket::int) as staff, a.cfull_name, a.cfirst_name, a.clast_name,  a.created_date::date as created_date from addressticket as a join users as u on NULLIF(a.sentto, '')::int = u.user_id where u.organization_id = $1 order  by created_date desc",
+        "insertComment" : "INSERT INTO ticket_comments (user_id, first_name, last_name, ticket_number, ticket_comments, time_track) VALUES ($1, $2, $3, $4, $5,NOW()) RETURNING id_com",
+        "deleteComment" : "DELETE FROM ticket_comments where id_com = $1"
     },
     "users" : {
         "active" : "SELECT user_id, first_name, middle_name, last_name, email, icon2,organization_id, work_center FROM users where active = 1 order by email",

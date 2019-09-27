@@ -54,10 +54,23 @@ export default class SQL {
         }
     }
 
+
+    ticketInsertComment(values) {
+        if(this.client_status) {
+            return this.pool.query(this.api.tickets.insertComment, values);
+        }
+    }
+
     updateTicket(sql) {
 
         if(this.client_status) {
             return this.pool.query(sql.statement, sql.values);
+        }
+    }
+
+    delTicketCom(value) {
+        if(this.client_status) {
+            return this.pool.query(this.api.tickets.deleteComment, value);
         }
     }
 

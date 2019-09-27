@@ -14,9 +14,8 @@
     let openTickets = [];
     let searchTck = [];
     let iconURL = url + "users/getUserImage/?pic=";
-    let openValue;
 
-    $: opTickets = (searchTck) ? searchTck : openTickets;
+    $: opTickets = searchTck;
 
     //Once the component is mount will fetch the pending tickets by user.localStorage.
     onMount(async () => {
@@ -26,7 +25,8 @@
             
            sql.getOrganizationTickets(isMe.ORGANIZATION).then(res => {
             
-               openTickets = res.rows;
+               searchTck = openTickets = res.rows;
+               console.log(searchTck);
                setTimeout(() => {
                    available = true;
                }, 300);
@@ -65,11 +65,11 @@
     }
 
     function searchTickets(event) {
-        console.log(event);
-  
-        if(event.keyCode == 13) {
-            searchTck = openTickets.filter(el => el['objectid'].includes(openValue))
-        }
+
+        //Grab the value from the input. the input is return from the event..
+        let search_value = event.target.value.toUpperCase();
+        searchTck = openTickets.filter(el => el['init'].includes(search_value) || el['staff'].includes(search_value) || el['objectid'].includes(search_value) ||el['cfirst_name'].includes(search_value) || el['clast_name'].includes(search_value) )
+        
     }
 
 </script>
@@ -99,7 +99,7 @@
                  <div class:input={searchOn}>
                                 {#if searchOn}
                                      <!-- content here -->
-                                     <input bind:value={openValue} on:keyup={searchTickets} type="text" placeholder="Search Tickets"  >
+                                     <input  on:keyup={searchTickets} type="text" placeholder="Search Tickets"  >
                                 {/if}
                                 
                                 <div class="button-group">
