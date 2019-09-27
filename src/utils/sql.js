@@ -68,6 +68,12 @@ export default class SQL {
         }
     }
 
+    updateTicketFeed(values) {
+        if(this.client_status) {
+            return this.pool.query(this.api.tickets.updateComment, values);
+        }
+    }
+
     delTicketCom(value) {
         if(this.client_status) {
             return this.pool.query(this.api.tickets.deleteComment, value);

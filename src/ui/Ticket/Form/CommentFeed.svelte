@@ -15,14 +15,13 @@
     let shwInput = false;
     let eleInput;
     let clsConfirm = false;
+    let txtarea;
 
 
     onMount(async() => {
-        console.log(ticketId)
-
         //Download the feed...
         sql.getTicketComFeed([ticketId]).then((res) => {
-                console.log(res);
+
                 messages = res.rows;
                 dispatch('totalMSG', res.rowCount);
         });
@@ -96,6 +95,23 @@
         messages = messages.filter(msg => msg.id_com != feed.id_com);
         sql.delTicketCom([feed.id_com]);
     }
+    function handleMSG(event) {
+            let el = event.target;
+            if(event.keyCode == 13) {
+                let comID = el.dataset.id;
+                let index = el.dataset.index;
+                messages[index].edit = false;
+                messages[index].ticket_comments = el.value.toUpperCase();
+                
+                sql.updateTicketFeed([el.value.toUpperCase(), comID]);
+            }
+            
+    }
+    function  handleEdit() {
+            setTimeout(() => {
+                txtarea.focus();
+            }, 200);
+    }
 
 
 </script>
@@ -133,7 +149,7 @@
 </style>
 <ul>
 
-    {#each messages as feed (feed.id_com)}
+    {#each messages as feed, i (feed.id_com)}
          <li>
             <div class="grid-container" class:highlight={feed.confirm}>
                 <div class="grid-item" id="accountInfo">
@@ -145,7 +161,7 @@
                     <span class="mif-alarm"></span>
                     <span>{formatDate(feed.time_track)}</span>
                     {#if feed.user_id == isMe.UID}
-                         <button class="action-button"><span class="mif-pencil"></span></button>
+                         <button on:click="{()=> { feed.edit = true; handleEdit()}}" class="action-button"><span class="mif-pencil"></span></button>
 
                         <button on:click="{()=> {feed.confirm = true}}" class="action-button rotate-minus bg-red fg-white">
                             <span class="icon">
@@ -159,7 +175,13 @@
                         clsSmall={true} clsBig={false} on:confirm={() => handleDelete(feed)} on:close="{(event) => {feed.confirm = event.detail;}}" />
                     {/if}
                 </div>
-                <div id="msg">{feed.ticket_comments}</div>
+                <div id="msg">
+                    {#if feed.edit}
+                         <textarea bind:this={txtarea} data-index="{i}" data-id="{feed.id_com}" on:keypress={handleMSG} rows="4" cols="50">{feed.ticket_comments}</textarea>
+                    {:else}
+                          {feed.ticket_comments}
+                    {/if}
+                </div>
             </div>
             <hr>
          </li>
