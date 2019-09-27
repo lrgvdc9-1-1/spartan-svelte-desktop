@@ -32,6 +32,7 @@
     export let spartans;
     export let router;
     export let isMe;
+    export let url;
    let viewers = [];
    let windowSize = "70%";
    let totalFeed = 0;
@@ -546,14 +547,14 @@
                      <div style="display: {comment}" id="comment">
                         {#if comment == ''}
                             <!-- content here -->
-                            <CommentFeed on:totalMSG={(event) => {totalFeed = event.detail;}} {socket} {sql} ticketId={ticket.id_ticket}></CommentFeed>
+                            <CommentFeed on:totalMSG={(event) => {totalFeed = event.detail;}} {url} {isMe} {spartans} {socket} {sql} ticketId={ticket.id_ticket}></CommentFeed>
                         {/if}
                         
                      </div>
                      
             </div>
          </div>
-      <OnlineDash on:resize={onResize} {isMe} {socket} {ontickets}/>
+      <OnlineDash on:resize={onResize} {url} {isMe} {socket} {ontickets}/>
 </div>
 
 
