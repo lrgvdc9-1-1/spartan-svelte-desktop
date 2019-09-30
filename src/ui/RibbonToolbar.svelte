@@ -40,6 +40,10 @@
         height: 100%;
     }
 
+    .content-holder {
+        overflow-x: auto;
+    }
+
 </style>
 
 <section>
