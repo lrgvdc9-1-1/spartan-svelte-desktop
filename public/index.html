@@ -66,13 +66,36 @@
 <script>
 
     //Here add all the global node requirements..
-	const remote = require('electron').remote;
+	const {remote} = require('electron');
+
 	const path = require('path');
 	const BrowserWindow = remote.BrowserWindow;
     const {Pool} = require('pg');
 	const api = require('./configurations/api');
 	const dns = require('dns')
 	const osystem = require('os');
+
+
+	const {Menu, MenuItem} = remote;
+
+
+	let rightClickPosition = null
+
+	const menu = new Menu()
+	const menuItem = new MenuItem({
+			label: 'Inspect Element',
+			click: () => {
+				remote.getCurrentWindow().inspectElement(rightClickPosition.x, rightClickPosition.y)
+			}
+	})
+	menu.append(menuItem)
+
+	window.addEventListener('contextmenu', (e) => {
+		e.preventDefault()
+		rightClickPosition = {x: e.x, y: e.y}
+		menu.popup(remote.getCurrentWindow())
+	}, false)
+
 	let pool;
 	let dirname = __dirname;
 	let db = null;
