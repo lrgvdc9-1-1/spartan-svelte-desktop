@@ -48,7 +48,7 @@ function createSplash() {
 ipc.on('SvelteAlive', function(event, data){
 
     console.log(data);
-    const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
+    
     
     if(data.action == 'ready') {
       mainWindow.show();
@@ -62,11 +62,11 @@ ipc.on('SvelteAlive', function(event, data){
 
 function createWindow () {
   // Create the browser window.
-  
+  const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
  
   mainWindow = new BrowserWindow({
-    width: 1300,
-    height: 850,
+    width: width,
+    height: height,
     show: false,
     frame: false,
     webPreferences: {
