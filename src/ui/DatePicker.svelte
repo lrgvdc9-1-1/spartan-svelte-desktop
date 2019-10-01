@@ -174,7 +174,7 @@
 
 
 <div class="input">
-    <slot sl={sl}></slot>                               
+    <slot></slot>                               
     <div class="button-group">
         {#if choosen}   
             <button class:btn={enable} on:click="{() => {enable = !enable;reDrawFromBeg();}}" 
