@@ -78,12 +78,15 @@
                 if(res.rows.length == 1) { //Get the id_com from the new save transaction from DB..
                     object.id_com =  res.rows[0].id_com;
                     messages = [object].concat(messages);
+
+                    dispatch('totalMSG', messages.length);
                 }
             })
             //This is tips future me: user_id, first_name, last_name, ticket_number, ticket_comments, time_track, id_com, unshift
             
             //Reset the inserting comments..
             clearMSG();
+            
         }
         
 
@@ -93,7 +96,11 @@
     function handleDelete(feed) {
 
         messages = messages.filter(msg => msg.id_com != feed.id_com);
+        dispatch('totalMSG', messages.length); //Tell outer component new change...
         sql.delTicketCom([feed.id_com]);
+
+        
+
     }
     function handleMSG(event) {
             let el = event.target;
