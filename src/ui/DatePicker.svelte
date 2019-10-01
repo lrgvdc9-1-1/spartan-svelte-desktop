@@ -1,53 +1,10 @@
-{#if choosen}   
-<button class:btn={enable} on:click="{() => {enable = !enable;reDrawFromBeg();}}" 
-class="button primary  outline large">{formatDate}</button>
-{:else }
-<button class:btn={enable} on:click="{() => {enable = !enable;reDraw();}}" 
-class="button primary  outline large">Choose Date</button>
-{/if}
-{#if enable}
-    <div bind:this={element} class:wrapperUp={moveUp} transition:fade class="wrapper contents">
-
-        <div class="cal">
-             <div class="heading-section">
-            <div class="control">
-                <span on:click={clickGoBackWards} class="mif-chevron-thin-left"></span>
-            </div>
-            <div class="label">{MonthTitle}</div> 
-            <div class="control">
-                    <span on:click={clickGoFoward} class="mif-chevron-thin-right"></span>
-            </div>
-            </div>
-            <div class="legend">
-                <div class="week">
-                    {#each WeekDays as day}
-                        <div class="week-day">{day}</div>
-                    {/each}
-                </div>
-            </div>
-            {#if redrawing}
-                 <div class="month-container">
-                    {#each calendars as page, i}
-                        <!-- content here -->
-                        <Week on:selected="{(event)=> {handleChoosen(i, event)}}"  days={page} />
-                    {/each}
-                </div>
-            {/if}
-            
-        </div>
-       
-        
-    </div>
-{/if}
-
-
 <script>
-    
+    import {onMount} from "svelte";
     import {Months, WeekDays, CalendarPage} from '../utils/Months.js';
     import Week from './Week.svelte';
     import { fade } from 'svelte/transition';
 
-    export let selection;
+    export let eleId;
     
     let enable = false;
     let today = new Date();
@@ -55,6 +12,7 @@ class="button primary  outline large">Choose Date</button>
     let redrawing = false;
     let calendars = [];
     let element;
+    let slotElement;
 
     let moveUp = false;
     
@@ -62,9 +20,24 @@ class="button primary  outline large">Choose Date</button>
 
     $: formatDate = (choosen) ? format(): null;
     $: MonthTitle = Months[today.getMonth()] + " " + today.getFullYear();
-
-
    
+   
+    onMount(()=> {
+        
+        if(eleId) {
+            slotElement = document.getElementById(eleId);
+            setTimeout(() => {
+                
+                if(slotElement.value) {
+                    let splits = slotElement.value.split("-");
+                    console.log(splits);
+                    choosen = (splits.length == 3)  ? new Date(parseInt(splits[0]), 
+                    parseInt(splits[1]), parseInt(splits[2])) : null;
+                    console.log(choosen);
+                }
+            }, 200);
+        }
+    });
 
 
     function format() {
@@ -200,9 +173,55 @@ class="button primary  outline large">Choose Date</button>
 </script>
 
 
+<div class="input">
+    <slot sl={sl}></slot>                               
+    <div class="button-group">
+        {#if choosen}   
+            <button class:btn={enable} on:click="{() => {enable = !enable;reDrawFromBeg();}}" 
+            class="button primary  outline">{formatDate}</button>
+        {:else }
+            <button class:btn={enable} on:click="{() => {enable = !enable;reDraw();}}" 
+            class="button primary  outline">Choose Date</button>
+        {/if}                         
+    </div>
+                                
+</div>
 
 
+{#if enable}
+    <div bind:this={element} class:wrapperUp={moveUp} transition:fade class="wrapper contents">
 
+        <div class="cal">
+             <div class="heading-section">
+            <div class="control">
+                <span on:click={clickGoBackWards} class="mif-chevron-thin-left"></span>
+            </div>
+            <div class="label">{MonthTitle}</div> 
+            <div class="control">
+                    <span on:click={clickGoFoward} class="mif-chevron-thin-right"></span>
+            </div>
+            </div>
+            <div class="legend">
+                <div class="week">
+                    {#each WeekDays as day}
+                        <div class="week-day">{day}</div>
+                    {/each}
+                </div>
+            </div>
+            {#if redrawing}
+                 <div class="month-container">
+                    {#each calendars as page, i}
+                        <!-- content here -->
+                        <Week on:selected="{(event)=> {handleChoosen(i, event)}}"  days={page} />
+                    {/each}
+                </div>
+            {/if}
+            
+        </div>
+       
+        
+    </div>
+{/if}
 
 <style>
     .wrapper {

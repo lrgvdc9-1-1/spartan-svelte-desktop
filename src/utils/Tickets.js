@@ -94,7 +94,8 @@ export default class Tickets {
             var value = e.target.value;
             let statement = `UPDATE addressticket SET ${attribute} = $1 where objectid = $2`;
             let sql = {statement: statement, values: [value, _self.objectid]};
-            _self.sql.updateTicket(sql); //Send the query to update on blur...
+            _self.sql.updateTicket(sql).then(res => {}) // brianc
+            .catch(err => console.error('Error executing query', err.stack))
 
             if(_self.socket) {
               console.log(_self.objectid);
@@ -159,7 +160,7 @@ export default class Tickets {
   formatDate(data) {
     if(data instanceof Date) {
 
-      return `${data.getFullYear()}-${((data.getMonth() + 1) < 10 ? '0' + (data.getMonth() + 1) : (data.getMonth() + 1))}-${((data.getDate() < 10) ? '0' + data.getDate() : data.getDate())} `
+      return `${data.getFullYear()}-${((data.getMonth() + 1) < 10 ? '0' + (data.getMonth() + 1) : (data.getMonth() + 1))}-${((data.getDate() < 10) ? '0' + data.getDate() : data.getDate())}`
     }
 
     return data;

@@ -509,7 +509,7 @@
                               <label>
                                  Verified Date
                               </label>
-                              <input class="inTicket" id="date_verified" data-title="Verified Date"  data-section="Database"   type="text" />
+                                 <input  class="inTicket" id="date_verified" data-title="Verified Date"  data-section="Database"   type="date" />
                               <span id="date_verified_span"></span>
                            </div>
                      </div>
