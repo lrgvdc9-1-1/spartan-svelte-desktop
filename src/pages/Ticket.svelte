@@ -147,8 +147,6 @@
             socket.emit("joinTicketRoom", {rmName: ticket.objectid, username: isMe.EMAIL});
 
             if(client_status) {
-               console.log("LOCAL DATABASE ACCESS");
-
                   sql.getTicketComFeedTotal([ticket.id_ticket]).then(res => {
                       
                       totalFeed = parseInt(res.rows[0].count);
@@ -156,6 +154,16 @@
                   sql.getTicketForm(ticket.getSQL(), [ticket.objectid]).then(res => {
                      ticket.setOriginal(res)
                      ticket.updateForm(res.rows);
+
+                     //Clean Some Stuff up...
+                
+                     spartans.forEach(spartan => {
+                           if(spartan.UID == ticket.address_by.value) {
+                              ticket.address_by.value = spartan.FULL_NAME;
+                              ticket.address_by.disabled  = true;
+                              return;
+                           }
+                     });
                      loading = false;
 
                      
@@ -461,7 +469,7 @@
                            </div>
                            <div class="form-group">
                               <label>Address By</label>
-                              <input id="address_by" data-title="Address By" data-section="Location Validation" class="inTicket"  placeholder="CLICK HERE TO STAMP" type="text" />
+                              <input id="address_by" style="cursor: pointer;" bind:this={ticket.address_by} data-title="Address By" data-section="Location Validation" class="inTicket"  placeholder="CLICK HERE TO STAMP" type="text" />
                               <span id="address_by_span"></span>
                            </div>
                            <div class="form-group">
@@ -509,7 +517,7 @@
                               <label>
                                  Verified Date
                               </label>
-                                 <input  class="inTicket" id="date_verified" data-title="Verified Date"  data-section="Database"   type="date" />
+                              <input class="inTicket" id="date_verified" data-title="Verified Date"  data-section="Database"   type="date" />
                               <span id="date_verified_span"></span>
                            </div>
                      </div>
@@ -596,4 +604,24 @@ input:disabled {
   color:  #D55441;
   cursor: wait !important;
 }
+input[type=date] {
+
+       -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    position: relative;
+    border: 1px #d9d9d9 solid;
+    color: #1d1d1d;
+    width: 100%;
+    /* display: block; */
+    padding: 0 .75rem;
+    font-family: -apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,Ubuntu,"Helvetica Neue",sans-serif;
+    font-size: 1rem;
+    height: 36px;
+    line-height: 36px;
+    background: #fff none;
+    background-clip: padding-box;
+    min-width: 0;
+}
+
 </style>
