@@ -17,6 +17,8 @@ export default class Tickets {
       this.ogData;
       this.full_address;
       this.sql;
+      this.address_by;
+      
       _self = this;
     }
 
@@ -93,9 +95,21 @@ export default class Tickets {
             var title     = element.dataset.title;
             var value = e.target.value;
             let statement = `UPDATE addressticket SET ${attribute} = $1 where objectid = $2`;
-            let sql = {statement: statement, values: [value, _self.objectid]};
-            _self.sql.updateTicket(sql).then(res => {}) // brianc
-            .catch(err => console.error('Error executing query', err.stack))
+            
+            //for date it can't be empty...
+            if(attribute.includes("date")) { 
+              if(value) {
+                let sql = {statement: statement, values: [value, _self.objectid]};
+                _self.sql.updateTicket(sql).then(res => {}) // brianc
+                .catch(err => console.error('Error executing query', err.stack))
+              }
+            }else { //Anything else we can send it...
+                let sql = {statement: statement, values: [value, _self.objectid]};
+                _self.sql.updateTicket(sql).then(res => {}) // brianc
+                .catch(err => console.error('Error executing query', err.stack))
+            }
+            
+           
 
             if(_self.socket) {
               console.log(_self.objectid);
