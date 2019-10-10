@@ -5,7 +5,15 @@
         "organization" : "SELECT true::text as view,ST_Y(a.point) as y, ST_X(a.point) as x,a.lat, a.longy, a.id_ticket,a.walk_in, a.objectid, u.initials as init ,(select icon2 from users where user_id = a.started_ticket::int) as icon, (select icon2 from users where user_id = a.sentto::int) as icon_transfer, (select (initials) from users where user_id = a.started_ticket::int) as staff, a.cfull_name, a.cfirst_name, a.clast_name,  a.created_date::date as created_date from addressticket as a join users as u on NULLIF(a.sentto, '')::int = u.user_id where u.organization_id = $1 order  by created_date desc",
         "insertComment" : "INSERT INTO ticket_comments (user_id, first_name, last_name, ticket_number, ticket_comments, time_track) VALUES ($1, $2, $3, $4, $5,NOW()) RETURNING id_com",
         "updateComment" : "UPDATE ticket_comments SET ticket_comments = $1 WHERE id_com = $2",
-        "deleteComment" : "DELETE FROM ticket_comments where id_com = $1"
+        "deleteComment" : "DELETE FROM ticket_comments where id_com = $1",
+        "routed" :  "SELECT * FROM addressticket where sentto = $1 order by created_date desc",
+        "status" : "SELECT * FROM addressticket where status = $1",
+        "attachments" : "SELECT * FROM attachment_ticket where id_ticket = $1",
+        "DISTINCT_VALUE" : "SELECT DISTINCT $1 FROM addressticket",
+        "connections" : {
+            "propertyId" : "SELECT *, 'Property ID'::text as relation FROM addressticket WHERE objectid != $1 and property_id = $2 order by created_date desc",
+            "telephone"  : "SELECT *, 'Telehpone'::text as relation FROM addressticket WHERE objectid != $1 and telephone_land_line like $2 or objectid != $1 and alt_telephone like $2 or objectid != $1 and alt2_telephone like $2 order by created_date desc"
+        }
     },
     "users" : {
         "active" : "SELECT user_id, first_name, middle_name, last_name, email, icon2,organization_id, work_center FROM users where active = 1 order by email",
