@@ -1,9 +1,15 @@
 // Modules to control application life and create native browser window
-const electron = require('electron')
+const electron = require('electron');
 const { app, BrowserWindow } = electron
 const path = require('path')
 const url  = require('url')
+const fs = require('fs');
+const Shell = require('node-powershell');
 
+const ps = new Shell({
+  executionPolicy: 'Bypass',
+  noProfile: true
+});
 
 
 
@@ -11,10 +17,10 @@ var ipc = require('electron').ipcMain;
 
 
 // enabled live reload for all the files inside your project
-require('electron-reload')(`${__dirname}\\public`, {
-  electron: path.join(__dirname, 'node_modules', '.bin', 'electron'),
-  hardResetMethod: 'exit'
-});
+// require('electron-reload')(`${__dirname}\\public`, {
+//   electron: path.join(__dirname, 'node_modules', '.bin', 'electron'),
+//   hardResetMethod: 'exit'
+// });
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -44,12 +50,14 @@ function createSplash() {
    
 }
 
+function openApp(cmd) {
+        ps.addCommand(cmd);
+        ps.invoke().then(output => {}).catch(error = {});
+}
+
 
 ipc.on('SvelteAlive', function(event, data){
-
-    console.log(data);
-    
-    
+  
     if(data.action == 'ready') {
       mainWindow.show();
       if(winSplash){
@@ -57,6 +65,13 @@ ipc.on('SvelteAlive', function(event, data){
         winSplash.destroy();
         winSplash = null;
       }
+    }else if(data.action == 'open') {
+
+        let fileDest = __dirname + `/public/files/${data.fname}`;
+        let cmd  = `Start-Process ((Resolve-Path "${fileDest}").Path)`;
+        fs.writeFileSync(fileDest, data.content, {encoding: 'base64'});
+        openApp(cmd);
+       
     }
 });
 
@@ -116,14 +131,14 @@ function createWindow () {
           height: 800
         })
     }else {
-      Object.assign(options, {
-        parent: mainWindow,
-        modal: true,
-        width: 500,
-        height: 700,
-        webPreferences: {
-          nodeIntegration: true
-      }
+        Object.assign(options, {
+          parent: mainWindow,
+          modal: true,
+          width: 500,
+          height: 700,
+          webPreferences: {
+            nodeIntegration: true
+        }
       })
     }
   })
