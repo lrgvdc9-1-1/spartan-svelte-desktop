@@ -2,6 +2,20 @@ export const  Months = [ "January", "February", "March", "April", "May", "June",
 "July", "August", "September", "October", "November", "December" ];
 export const WeekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
+export const  FormatDate = function(date) {
+
+        if(!date) {
+            return 'NO DATE FOUND';
+        }
+
+        let month = ((date.getMonth() + 1) < 10) ? '0' + (date.getMonth() + 1) : date.getMonth() + 1;
+        let day   = (date.getDate() < 10) ? '0' + date.getDate() : date.getDate();
+        let year  = date.getFullYear();
+
+        return `${month} - ${day} - ${year}`;
+   
+    
+}
 
 export const CalendarPage = function(date, currentMonth) {
     this.date = date;
