@@ -11,6 +11,21 @@ const ps = new Shell({
   noProfile: true
 });
 
+//Delete all the files on the file directory...
+const directory = `${__dirname}/public/files/`;
+
+fs.readdir(directory, (err, files) => {
+  if (err) throw err;
+
+  for (const file of files) {
+    fs.unlink(path.join(directory, file), err => {
+      if (err) throw err;
+    });
+  }
+});
+
+//Done Cleaning UP...
+
 
 
 var ipc = require('electron').ipcMain;
@@ -70,6 +85,7 @@ ipc.on('SvelteAlive', function(event, data){
         let fileDest = __dirname + `/public/files/${data.fname}`;
         let cmd  = `Start-Process ((Resolve-Path "${fileDest}").Path)`;
         fs.writeFileSync(fileDest, data.content, {encoding: 'base64'});
+        
         openApp(cmd);
        
     }
