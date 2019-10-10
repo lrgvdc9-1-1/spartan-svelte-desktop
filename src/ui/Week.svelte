@@ -7,8 +7,8 @@
 <style>
     .week {
       display: grid;
-      grid-gap: 10px;
-      grid-template-columns: repeat(7, 50px);
+      grid-gap: 8px;
+      grid-template-columns: repeat(7, 100px);
     }
     .day {
         margin: 2px;
@@ -20,6 +20,7 @@
         height: auto;
         display: flex;
         flex-basis: 0;
+        border: 1px solid;
     }
 
     .day-label {
@@ -44,15 +45,14 @@
     .isToday {
         opacity: 1;
         background: none;
-        border-color: #f7901e;
-        color: #000;
+        color:#f7901e;
     }
 
     
 
-    .day-label:hover{
+    .isToday:hover{
         background-color: #f7901e;
-        border-color: #f7901e;
+        
         color: #fff
     }
     
@@ -61,7 +61,7 @@
   out:fade class="week">
     {#each days as day, i}
          <div  class:outSideMonth={day.outside} class="day">
-            <button on:click="{()=> {day.index = i; dispatch("selected",day)}}" class:primary={day.choosen} class:outline={day.choosen} class:isToday={day.today} class="button day-label">
+            <button on:click="{()=> {day.index = i; dispatch("selected",day)}}" class:primary={day.choosen} class:outline={day.choosen}  class:isToday={day.today} class="button  day-label">
                 {day.getDay()}
             </button>
          </div>

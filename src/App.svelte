@@ -340,7 +340,7 @@
 <!-- <RibbonToolbar {socket} url={url} /> -->
 {#if startApp}
    <!-- content here -->
-  <RibbonToolbar {Audio} {socket} {isMe} {spartans} {url} />
+  <RibbonToolbar {Audio} {sql} {socket} {isMe} {spartans} {url} />
 {:else }
   <Login {Audio} bind:this={loginComponent} on:ready={onLoginReady} on:user={onSelectUser}  />
 {/if}

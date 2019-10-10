@@ -3,6 +3,7 @@
     import {onMount, createEventDispatcher} from "svelte";
     import { fade } from 'svelte/transition';
     import Confirm from '../../modal/Confirm.svelte';
+    import {FormatDate} from '../../../utils/Months.js';
     const dispatch = createEventDispatcher();
     export let ticketId;
     export let sql;
@@ -27,13 +28,13 @@
         });
     });
 
-    function formatDate(date) {
-        let month = (date.getMonth() < 10) ? '0' + (date.getMonth() + 1) : date.getMonth() + 1;
-        let day = date.getDate();
-        let year = date.getFullYear();
+    // function formatDate(date) {
+    //     let month = ((date.getMonth() + 1) < 10) ? '0' + (date.getMonth() + 1) : date.getMonth() + 1;
+    //     let day = date.getDate();
+    //     let year = date.getFullYear();
 
-        return `${month} - ${day} - ${year}`;
-    }
+    //     return `${month} - ${day} - ${year}`;
+    // }
 
     function getImg(msg){
         let spartan = spartans.filter(spartan => spartan['user_id'] == msg.user_id)[0];
@@ -166,7 +167,7 @@
                 
                 <div class="grid-item" id="date">
                     <span class="mif-alarm"></span>
-                    <span>{formatDate(feed.time_track)}</span>
+                    <span>{FormatDate(feed.time_track)}</span>
                     {#if feed.user_id == isMe.UID}
                          <button on:click="{()=> { feed.edit = true; handleEdit()}}" class="action-button"><span class="mif-pencil"></span></button>
 

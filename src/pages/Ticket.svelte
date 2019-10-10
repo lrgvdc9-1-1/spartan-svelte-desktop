@@ -6,7 +6,9 @@
    import OnlineDash from "../ui/OnlineDash.svelte";
    import Ticket from "../utils/Tickets";
    import DatePicker from "../ui/DatePicker.svelte";
+   import Attachments from "../ui/Ticket/Form/Attachments.svelte";
    import CommentFeed from "../ui/Ticket/Form/CommentFeed.svelte";
+   import Connections from "../ui/Ticket/Form/Connections.svelte";
 
 
     let listTabs = {'customerData' : true, 'premisesData': true, 'lv': true,
@@ -36,6 +38,10 @@
    let viewers = [];
    let windowSize = "70%";
    let totalFeed = 0;
+   let totalAttachments = 0;
+   let totalConnections = 0;
+   let totalMessages = 0;
+   let comConnection;
    const dispatch = createEventDispatcher();
  
     //Handle action for the riboon and other actions..
@@ -44,11 +50,12 @@
     $: premisesData = (active === 'premisesData') ? '' : 'none';
     $: lv      = (active === 'lv') ? '' : 'none';
     $: db      = (active === 'db') ? '' : 'none';
-    $: gis     = (active === 'gis') ? '' : 'none';
-    $: comment = (active === 'comment') ? '' : 'none';
-    $: history = (active === 'history') ? '' : 'none';
-    $: msg     = (active === 'msg') ? ''     : 'none';
-    $: ontickets = viewers;
+    $: gis        = (active === 'gis') ? '' : 'none';
+    $: attachment = (active === 'attach') ? '' : 'none';
+    $: comment    = (active === 'comment') ? '' : 'none';
+    $: history    = (active === 'history') ? '' : 'none';
+    $: msg        = (active === 'msg') ? ''     : 'none';
+    $: ontickets  = viewers;
     //Decide Action is when ribbon press something happens in the ticket form...
 
     function decideAction(key) {
@@ -164,6 +171,9 @@
                               return;
                            }
                      });
+                     //Notify Window For Getting Connections.
+                     window.dispatchEvent(new Event('queryForm'));
+
                      loading = false;
 
                      
@@ -226,6 +236,11 @@
 
      }
 
+     function onLookUp() {
+        console.log(comConnection);
+        comConnection.onLookUp();
+     }
+
 
 </script>
 
@@ -273,17 +288,22 @@
                         GIS VALIDATION PROCESS
                      </span> 
                </li>
+               <li on:click="{() => active = 'attach'}" class:active="{active === 'attach'}">
+                  <span>
+                     ATTACHMENTS - {totalAttachments}
+                  </span>
+               </li>
                <li on:click="{() => active = 'comment'}" 
                         class:active="{active === 'comment'}">
                         <span>COMMENTS FEED - {totalFeed}</span>
                </li>
-               <li on:click="{() => active = 'history'}" 
+               <li class:highlight={(totalConnections > 0)} on:click="{() => active = 'history'}" 
                         class:active="{active === 'history'}" >
-                        <span>CONNECTIONS - </span> 
+                        <span>CONNECTIONS - {totalConnections}</span> 
                </li>
                <li on:click="{() => active = 'msg'}" 
                         class:active="{active === 'msg'}">
-                        <span>MESSAGES - </span> 
+                        <span>MESSAGES - {totalMessages}</span> 
                   </li>
             </ul>    
 
@@ -394,7 +414,7 @@
                            </div>
                            <div class="form-group">
                               <label>Property Id</label>
-                              <input class="inTicket" data-title="Property Id" data-section="Premises Data" id="property_id" type="text" />
+                              <input on:blur={onLookUp} class="inTicket" bind:this={ticket.property_id} data-title="Property Id" data-section="Premises Data" id="property_id" type="text" />
                               <span id="property_id_span"></span>
                            </div>
                            <div class="form-group">
@@ -551,6 +571,10 @@
                            </div>
                      </div>
                      <!-- END OF GIS -->
+                     <!-- Start of Attachments -->
+                     <div style="display: {attachment}" id="attach">
+                           <Attachments on:totalMSG="{(event)=> {totalAttachments = event.detail;}}" {sql} ticketId={ticket.id_ticket} />
+                     </div>
                      <!-- Start of COmment Feed -->
                      <div style="display: {comment}" id="comment">
                         {#if comment == ''}
@@ -558,6 +582,10 @@
                             <CommentFeed on:totalMSG={(event) => {totalFeed = event.detail;}} {url} {isMe} {spartans} {socket} {sql} ticketId={ticket.id_ticket}></CommentFeed>
                         {/if}
                         
+                     </div>
+                     <div style="display: {history}" id="connections">
+                        
+                             <Connections bind:this={comConnection} on:totalMSG={(event) => {totalConnections = event.detail;}} {sql} phoneNumTwo={ticket.alt2_object} phoneNumOne={ticket.alt_object} ticketNum={ticket.objectid} elePropId={ticket.property_id} />
                      </div>
                      
             </div>
@@ -623,5 +651,20 @@ input[type=date] {
     background-clip: padding-box;
     min-width: 0;
 }
+
+ @keyframes shadow-pulse
+    {
+    0% {
+        box-shadow: 0 0 0 0px rgba(0, 0, 0, 0.2);
+    }
+    100% {
+        box-shadow: 0 0 0 35px rgba(0, 0, 0, 0);
+    }
+    }
+
+    .highlight {
+        color: #C3073F !important;
+        animation: shadow-pulse 1s infinite;
+    }
 
 </style>

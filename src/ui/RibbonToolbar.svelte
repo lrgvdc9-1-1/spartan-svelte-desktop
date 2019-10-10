@@ -3,6 +3,8 @@
     import { fade, fly } from 'svelte/transition';
     import DashBoard from '../pages/DashBoard.svelte';
     import DashBoardCard from '../pages/DashBoardCard.svelte';
+    import CalendarPage from '../pages/CalendarPage.svelte';
+    import ArchiveTicketPage from '../pages/ArchiveTicketPage.svelte';
     import Ticket from '../pages/Ticket.svelte';
     import ShortCuts from '../ui/ShortCuts.svelte';
   
@@ -11,6 +13,7 @@
     export let spartans;
     export let isMe;
     export let Audio;
+
 
     let current = 'home'; //This handles the ribbon toolbar..
     let iOS = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform); //What type of platform we are in...
@@ -95,7 +98,7 @@
                                 </button>
                                 <span  on:click="{()=> {dashboardOp = !dashboardOp; display = "NONE"}}" 
                                 class="ribbon-split dropdown-toggle">More Options</span>
-                                <ul style="display: {showOptionsDashBoard}" class="ribbon-dropdown" >
+                                <ul style="display: {showOptionsDashBoard}; position: relative; z-index: 2;" class="ribbon-dropdown" >
                                     <li on:click={()=>{dashboardDropDown.alltickets = true; dashboardOp = !dashboardOp; display = "NONE";
                                         dashboardDropDown.walkins = false; 
                                         dashboardDropDown.mytickets = false}} 
@@ -117,6 +120,7 @@
                             </div>
 
                             <button class="ribbon-button">
+                                  <Link href="#TicketCalendarPage/{isMe.ORGANIZATION}" className="btn">
                                     <span >
                                         {#if iOS}
                                             <img loading="lazy" src="./assets/calendar.png" alt="Calendar">
@@ -124,10 +128,11 @@
                                         <img loading="lazy" src="./assets/calendar.webp" alt="Calendar">
                                         {/if}
                                     </span>
+                                 </Link>
                                 <span class="caption">Calendar</span>
                             </button>
                             <button class="ribbon-button">
-
+                                    <Link href="#ArchiveTicketPage">
                                     
                                         <span  >
                                         {#if iOS}
@@ -136,7 +141,7 @@
                                         <img loading="lazy" src="./assets/cabinet.webp" alt="Archive">
                                         {/if} 
                                         </span>
-                                    
+                                    </Link>
                                 <span class="caption">Archive</span>
                             </button>
                             <button class="ribbon-button">
@@ -258,7 +263,8 @@
 
         <section style="width:100%; height: 500px;">
              <Router>
-        
+                <Route path="#ArchiveTicketPage"><ArchiveTicketPage {isMe}  {Audio} {spartans} {url} /></Route>
+                <Route path="#TicketCalendarPage/:organizationId" let:router><CalendarPage {router} /></Route>
                 <Route path="#dashboard" ><DashBoard {isMe} {url} /></Route>
                 <Route path="#WalkIns" ><DashBoardCard {isMe} {url} path={"addressticket/getAllWalkIn/"} /></Route>
                 <Route path="#AllOpenTickets" ><DashBoardCard {isMe} {url} path={"addressticket/getAllPendingTicketsByOrga2/?id=6"} /></Route>
