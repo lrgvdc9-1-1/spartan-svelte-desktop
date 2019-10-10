@@ -18,6 +18,7 @@ export default class Tickets {
       this.full_address;
       this.sql;
       this.address_by;
+      this.property_id;
       
       _self = this;
     }
@@ -188,6 +189,8 @@ export default class Tickets {
           
             document.getElementById(x).value = this.formatDate(attribute[x]);
          }
+
+         window.dispatchEvent(new Event('onTicketUpdate'));
       }
 
   }
