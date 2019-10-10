@@ -3,4 +3,5 @@ node_modules
 SpartanPro-win32-x64
 SpartanPro-win32-x64.*
 public/bundle.*
+public/files/*.*
 public/configurations/db.*
