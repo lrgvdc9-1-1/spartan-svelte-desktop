@@ -36,6 +36,14 @@ export default class SQL {
         }
     }
 
+    getTicketConnPropertyId(whereInfo) {
+        if(this.client_status) {
+            console.log(whereInfo);
+            console.log(this.api['tickets']['connections']['propertyId'])
+            return this.pool.query(this.api['tickets']['connections']['propertyId'], whereInfo);
+        }
+    }
+
     getTicketComFeed(whereInfo) {
         if(this.client_status) {
             return this.pool.query(this.api['tickets']['feed'], whereInfo)
@@ -51,6 +59,25 @@ export default class SQL {
             return this.pool.query(this.api.users.active);
         }else{
             
+        }
+    }
+
+    getAttachments(whereInfo) {
+
+        if(this.client_status) {
+            return this.pool.query(this.api.tickets.attachments, whereInfo);
+        }
+    }
+
+    getTicketStatus(whereInfo) {
+        if(this.client_status) {
+            return this.pool.query(this.api.tickets.routed, whereInfo)
+        }
+    }
+
+    getRelTelePhone(whereInfo) {
+        if(this.client_status) {
+            return this.pool.query(this.api.tickets.connections.telephone, whereInfo);
         }
     }
 
