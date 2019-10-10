@@ -573,7 +573,7 @@
                      <!-- END OF GIS -->
                      <!-- Start of Attachments -->
                      <div style="display: {attachment}" id="attach">
-                           <Attachments on:totalMSG="{(event)=> {totalAttachments = event.detail;}}" {sql} ticketId={ticket.id_ticket} />
+                           <Attachments on:loading="{(event)=>{loading=event.detail}}" on:totalMSG="{(event)=> {totalAttachments = event.detail;}}" {sql} ticketId={ticket.id_ticket} />
                      </div>
                      <!-- Start of COmment Feed -->
                      <div style="display: {comment}" id="comment">

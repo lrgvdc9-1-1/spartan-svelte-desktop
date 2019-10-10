@@ -1,4 +1,5 @@
 <script>
+    import {  navigateTo  } from '../lib/main';
     import { fade, fly } from 'svelte/transition';
     import CheckBox from './CheckBox.svelte';
     import EsriMap from './EsriMap.svelte';  
@@ -53,13 +54,13 @@
                 {#if MapView}  
                     <EsriMap on:MapError={MapError} pictureURLMarker={"../../assets/PurpleShinyPin.png"} center={[x, y]} />
                 {:else}
-                    <img  src="../../assets/globe-map-icon.webp" alt="Map Preview">
+                    <img  src="./assets/globe-map-icon.webp" alt="Map Preview">
                 {/if}       
             </div>
             <div class="card-footer">
                     <CheckBox checkDefaultValue={MapView} on:checkmark={(event)=>{toggleMapView(event.detail.value)}}></CheckBox>
                     <button class="button secondary mif-file-archive"></button>
-                    <button class="button secondary mif-folder-open"></button>
+                    <button on:click="{()=> {navigateTo(`#viewTicket/${id_ticket}/${objectid}`)}}" class="button secondary mif-folder-open"></button>
                     <button class="button secondary mif-share"></button>
             </div>
 </div>

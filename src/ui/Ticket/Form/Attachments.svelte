@@ -1,6 +1,6 @@
 <script>
     import {onMount, createEventDispatcher} from 'svelte';
-    
+    import Confirm from '../../modal/Confirm.svelte';
     
     export let ticketId;
     export let url;
@@ -9,6 +9,9 @@
      const dispatch = createEventDispatcher();
 
     let attachments = [];
+    let confirm = false;
+    let select = null;
+    
 
 
     onMount(() => {
@@ -16,7 +19,7 @@
     });
 
     function onFetch() {
-       console.log(ticketId);
+     
         sql.getAttachments([ticketId]).then((res) => {
                attachments= res.rows;
                dispatch('totalMSG', res.rowCount);
@@ -32,7 +35,18 @@
     async function onOpen(file) {
           const response = await fetch(`https://gis.lrgvdc911.org/php/spartan/api/v2/index.php/addressticket/getFileBase64/?path=${file}`);
           const result = await response.json();
-          await ipc.send('SvelteAlive', {"action" : "open","fname": file, "content" : result['content']});   
+          await ipc.send('SvelteAlive', {"action" : "open","fname": file, "content" : result['content']});
+          
+          setTimeout(() => {
+               dispatch('loading', false);
+         
+          }, 200);
+         
+    }
+
+    function onDelete() {
+        console.log(select);
+        confirm = false;
     }
 
 </script>
@@ -55,9 +69,11 @@
     }
 </style>
 <svelte:window on:onTicketUpdate={onFetch}></svelte:window>
-
-<h3>Attachments</h3>
 <div class="container gridDash">
+
+    {#if confirm}
+         <Confirm on:close="{()=> {confirm = false;}}" on:confirm={onDelete} title="Delete File" msg="Are you sure!!!" />
+    {/if}
     {#each attachments as ticket, i}
         <div class="info-panel rounded no-overflow shadow-3">
                         <div class:breakWord={ticket.file_name.length > 25} style="background: #243C73" class="info-panel-header fg-white">{ticket.file_name}</div>
@@ -69,8 +85,11 @@
                            
                         </div>
                         <div class="info-panel-footer">
-                             <button type="button" on:click="{(event)=> {console.log(event); onOpen(ticket.file_name)}}" class="button large outline success rounded">Open</button>
-                             <button class="button large outline alert rounded">Delete</button>
+                             <button type="button" on:click="{(event)=> { dispatch('loading', true); onOpen(ticket.file_name)}}" 
+                                class="button large outline success rounded">
+                                   Open
+                                </button>
+                             <button on:click="{()=>{confirm= true;select = ticket;}}" class="button large outline alert rounded">Delete</button>
                         </div>
                     </div>
     {/each}

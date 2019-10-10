@@ -37,6 +37,6 @@
 <div class="contanier-fluid gridDash">
     
     {#each Tickets as ticket, i}
-        <Card cfirst_name={ticket.cfirst_name} x={ticket.longy} y={ticket.lat} created_date={ticket.created_date} clast_name={ticket.clast_name} />
+        <Card id_ticket={ticket.id_ticket} objectid={ticket.objectid} cfirst_name={ticket.cfirst_name} x={ticket.longy} y={ticket.lat} created_date={ticket.created_date} clast_name={ticket.clast_name} />
     {/each}
 </div>
