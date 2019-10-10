@@ -1,5 +1,5 @@
 <script>
-    import {onMount, createEventDispatcher} from 'svelte';
+    import { createEventDispatcher} from 'svelte';
     import Confirm from '../../modal/Confirm.svelte';
     
     export let ticketId;
@@ -11,12 +11,7 @@
     let attachments = [];
     let confirm = false;
     let select = null;
-    
 
-
-    onMount(() => {
-       
-    });
 
     function onFetch() {
      
@@ -44,9 +39,22 @@
          
     }
 
-    function onDelete() {
-        console.log(select);
+    async function onDelete() {
+        dispatch('loading', true)
         confirm = false;
+        let data = {"data" : select['file_name']};
+        const response = await fetch(`https://gis.lrgvdc911.org/php/spartan/api/v2/index.php/addressticket/deleteAttachment`, {
+            method: 'POST',
+            headers: {
+                'Content-Type' : 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+
+
+        dispatch('loading', false)
+        onFetch();
+        
     }
 
 </script>
