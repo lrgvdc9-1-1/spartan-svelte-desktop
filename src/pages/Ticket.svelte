@@ -56,6 +56,8 @@
     $: history    = (active === 'history') ? '' : 'none';
     $: msg        = (active === 'msg') ? ''     : 'none';
     $: ontickets  = viewers;
+
+    $: gispeeps = spartans.filter(spartan => spartan.work_center == 'GIS' || spartan.work_center == "ADMIN") || [];
     //Decide Action is when ribbon press something happens in the ticket form...
 
     function decideAction(key) {
@@ -76,7 +78,8 @@
    
 
      onMount(async () => {
-        
+         console.table(gispeeps);
+         console.table(spartans);
          ticket.SQL = sql;
          dispatch('toolbar', {text: 'TICKET'});
          ticket.setUpInputsEvent();
@@ -241,6 +244,18 @@
         comConnection.onLookUp();
      }
 
+     function addressByCheckMark(event) {
+        var elem = event.target || event.srcElement;
+        
+         if(elem.value.length <= 0) {
+               elem.dataset.userid = isMe.UID;
+               elem.value = isMe.FULL_NAME;
+               ticket.onUpdate(elem, isMe.UID);
+              
+         }
+
+     }
+
 
 </script>
 
@@ -350,7 +365,7 @@
                            <div class="form-group">
                               <label>Prefered Language</label>
                               <span id="prf_language_span"></span>
-                              <select class="inTicket" data-title="Prefered Language" data-section="Customer Data" id="prf_language"  section="customer-data" >
+                              <select class="inTicket" data-title="Prefered Language" data-section="Customer Data" id="prf_language"  >
                                  <option></option>
                                  <option>English</option>
                                  <option>Spanish</option>
@@ -471,11 +486,11 @@
                               <input class="inTicket" data-title="MSAG Comm" data-section="Location Validation"  id="msag_comm" type="text" />
                               <span id="msag_comm_span"></span>
                            </div>
-                           <div class="form-group">
+                           <!-- <div class="form-group">
                               <label>Postal Comm</label>
                               <input class="inTicket" data-title="Postal Comm" data-section="Location Validation" id="postal_comm" type="text" />
                               <span id="postal_comm_span"></span>
-                           </div>
+                           </div> -->
                            <div class="form-group">
                               <label>Full Address</label>
                               <div class="input">
@@ -489,12 +504,25 @@
                            </div>
                            <div class="form-group">
                               <label>Address By</label>
-                              <input id="address_by" style="cursor: pointer;" bind:this={ticket.address_by} data-title="Address By" data-section="Location Validation" class="inTicket"  placeholder="CLICK HERE TO STAMP" type="text" />
+                              <input id="address_by" on:click={addressByCheckMark} style="cursor: pointer;" bind:this={ticket.address_by} data-trigger="1" data-check="1" data-title="Address By" data-section="Location Validation" class="inTicket"  placeholder="CLICK HERE TO STAMP" type="text" />
                               <span id="address_by_span"></span>
                            </div>
                            <div class="form-group">
-                              <DatePicker />
+                              <label>Date Addressed</label>
+                              <input  type="date" data-title="Date Addressed" data-section="Location Validation" class="inTicket" id="date_addressed"  >
                            </div>
+
+                           <div class="form-group">
+                               
+                              <label class="switch transition-on">
+                                 <input type="checkbox" class="inTicket" id="address_issued" />
+                                 <span class="check"></span>
+                                 <span class="caption">Address Issued</span>
+                              </label>
+
+
+                           </div>
+                           
                      </div>
                      <!-- END OF LV -->
                      <div  style="display: {db}"  id="db">
@@ -540,6 +568,9 @@
                               <input class="inTicket" id="date_verified" data-title="Verified Date"  data-section="Database"   type="date" />
                               <span id="date_verified_span"></span>
                            </div>
+                           <div class="form-group">
+                              
+                           </div>
                      </div>
                      <!-- END OF DB -->
                      <div style="display: {gis}" id="gis">
@@ -548,11 +579,16 @@
                               <label>
                                  Staff Initials
                               </label>
-                              <input class="inTicket" data-title="Staff Initials" data-section="GIS" id="initials_mapping" type="text" />
+                              <!-- <input class="inTicket" data-title="Staff Initials" data-section="GIS" id="initials_mapping" type="text" /> -->
+                              <select class="inTicket" data-title="Staff Initials" data-section="GIS" id="initials_mapping"  >
+                                 {#each gispeeps as team}
+                                     <option value="{team.user_id}">{team.first_name + " " + team.last_name}</option>
+                                 {/each}
+                              </select>
                               <span id="initials_mapping_span"></span>
                            </div>
                            <div class="form-group">
-                              <input type="text" data-title="Date" data-section="GIS" id="mapping_verified_date" class="inTicket">
+                              <input type="date" data-title="Date" data-section="GIS" id="mapping_verified_date" class="inTicket">
                               <span id="mapping_verified_date_span"></span>
                            </div>
                            <br>
@@ -562,11 +598,16 @@
                               <label>
                                  Staff Initials
                               </label>
-                              <input class="inTicket" data-title="Staff Initials" data-section="GIS" id="initials_geocoding" type="text" />
+                              <!-- <input class="inTicket" data-title="Staff Initials" data-section="GIS" id="initials_geocoding" type="text" /> -->
+                              <select class="inTicket" data-title="Staff Initials" data-section="GIS" id="initials_geocoding"  >
+                                 {#each gispeeps as team}
+                                     <option value="{team.user_id}">{team.first_name + " " + team.last_name}</option>
+                                 {/each}
+                              </select>
                               <span id="initials_geocoding_span"></span>
                            </div>
                            <div class="form-group">
-                              <input type="text" data-title="Geocoding Date" data-section="GIS" id="geocoding_date" class="inTicket">4
+                              <input type="date" data-title="Geocoding Date" data-section="GIS" id="geocoding_date" class="inTicket">
                               <span id="geocoding_date_span"></span>
                            </div>
                      </div>
