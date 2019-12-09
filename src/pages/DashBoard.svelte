@@ -34,7 +34,7 @@
          if(sql.isLocalAvailable()) {
             
            sql.getOrganizationTickets(isMe.ORGANIZATION).then(res => {
-            
+               console.log(res);
                searchTck = openTickets = res.rows;
                setTimeout(() => {
                    available = true;
@@ -79,6 +79,24 @@
     function inFocus()  {
 
         setTimeout(() => { document.getElementById("inTXT").focus() }, 250)
+    }
+
+    function viewProfile(e) {
+        console.log(e);
+        console.log(isMe);
+        let element = e.target;
+        let data = element.dataset;
+
+
+        let edit = (isMe.work_center == "ADMIN") ? "edit" : "view";
+        let win = window.open(`${dirname}/components/Profile/index.html#${data['id']}#${edit}#${isMe.work_center}`, 'profile');
+   
+    var timer = setInterval(function() { 
+        if(win.closed) {
+            clearInterval(timer);
+            alert('closed');
+        }
+    }, 500);
     }
 
 </script>
@@ -128,7 +146,7 @@
                                 
                             </div>
             </div>
-            <div class="window-content p-2" style="height: 300px;">
+            <div class="window-content p-2" style="height: 340px;">
                 <ul class="listview view-content">
                     {#each opTickets as ticket}
                      <!-- content here -->
@@ -138,7 +156,7 @@
                             <div class="card">
                                 <div class="card-header">
                                     <span class="icon">
-                                    <img width="50" height="50" src="{getIMAGE(ticket.icon)}" alt="" id="src">
+                                    <img loading="lazy" on:click={viewProfile} data-id={ticket.started_ticket} width="50" height="50" src="{getIMAGE(ticket.icon)}" alt="" id="src">
                                     </span>
                                     {ticket.staff} | <b> {getDateFormat(ticket.created_date)}</b>
                                 </div>
