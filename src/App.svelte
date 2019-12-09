@@ -34,8 +34,10 @@
   let socket = io('http://hchapa:3000'); 
   
   onMount(async () => {
+      //alert(dirname);
+
       
-     
+
       socket.on("online", (users) => { // Collect all the users...
           //Reset everythign to no socket id, and online off everyone.
           spartans.forEach(spartan => {
@@ -86,6 +88,7 @@
           spartan.IsMe = true;
           spartan.chat = false;
           isMe = spartan;
+          console.log(isMe);
           return;//stop loop..
         }
     });
@@ -132,7 +135,7 @@
 
   function onProfile() {
     shMenu = false;
-    let win = window.open(`${dirname}/components/Profile/index.html`, 'profile');
+    let win = window.open(`${dirname}/components/Profile/index.html#${isMe.icon2}#${isMe.UID}#edit#${isMe.work_center}`, 'profile');
    
     var timer = setInterval(function() { 
         if(win.closed) {
