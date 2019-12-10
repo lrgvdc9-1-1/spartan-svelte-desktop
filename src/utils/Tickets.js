@@ -92,33 +92,55 @@ export default class Tickets {
         let element = e.target;
         if(element.tagName == "INPUT" || element.tagName == "SELECT") {
             var attribute = element.getAttribute("id");
+            var type      = element.type;
             var section   = element.dataset.section;
             var title     = element.dataset.title;
+            var trigger   = element.dataset.trigger;
             var value = e.target.value;
             let statement = `UPDATE addressticket SET ${attribute} = $1 where objectid = $2`;
             
+           if(type == "checkbox") {
+             value = (element.checked) ? 1 : 0;
+           }
+
             //for date it can't be empty...
-            if(attribute.includes("date")) { 
-              if(value) {
-                let sql = {statement: statement, values: [value, _self.objectid]};
-                _self.sql.updateTicket(sql).then(res => {}) // brianc
-                .catch(err => console.error('Error executing query', err.stack))
+            if(!trigger) {
+              if(attribute.includes("date")) { 
+                if(value) {
+                  let sql = {statement: statement, values: [value, _self.objectid]};
+                  _self.sql.updateTicket(sql).then(res => {console.log(`VALUE UPDATED ${attribute}`)}) // brianc
+                  .catch(err => console.error('Error executing query', err.stack))
+                }
+              }else { //Anything else we can send it...
+                  let sql = {statement: statement, values: [value, _self.objectid]};
+                  _self.sql.updateTicket(sql).then(res => {console.log(`VALUE UPDATED ${attribute}`)}) // brianc
+                  .catch(err => console.error('Error executing query', err.stack))
               }
-            }else { //Anything else we can send it...
-                let sql = {statement: statement, values: [value, _self.objectid]};
-                _self.sql.updateTicket(sql).then(res => {}) // brianc
-                .catch(err => console.error('Error executing query', err.stack))
+
             }
+            
             
            
 
             if(_self.socket) {
               console.log(_self.objectid);
+              value = (type == "checkbox") ? element.checked : value
               _self.socket.emit("ticketViewer", {room: _self.objectid, locked: false, value: value, title: title, section: section, elemID: attribute});
               console.log(`lost focus VALUE IS ${value} and attribute is ${attribute}`);
             }
         }
          
+    }
+
+    onUpdate(elem, value) {
+      var attribute = elem.getAttribute("id");
+     
+      let statement = `UPDATE addressticket SET ${attribute} = $1 where objectid = $2`;
+      let sql = {statement: statement, values: [value, _self.objectid]};
+
+      this.sql.updateTicket(sql).then(res => {}) // brianc
+      .catch(err => console.error('Error executing query', err.stack))
+    
     }
 
 
@@ -166,6 +188,7 @@ export default class Tickets {
         }
         sql = sql.slice(0, -2);
         sql += " FROM addressticket where objectid = $1";
+        console.log(sql);
         this.selectTicket = sql;
         return this.selectTicket;
       }
@@ -187,7 +210,30 @@ export default class Tickets {
          let attribute = row[0]
          for(var x in attribute) {
           
-            document.getElementById(x).value = this.formatDate(attribute[x]);
+            var elem = document.getElementById(x);
+            var type = elem.type;
+           
+            var skip = false;
+            if(elem.dataset.check == 1) {
+               skip = true;
+            }
+
+            if(type == "checkbox") {
+              //if(x == "address_issued" || x == "letter_generated" || x == "plack_generated" || x == "called_cust"){
+           
+               elem.checked = (attribute[x] == 1) ? true : false;
+               skip = true;
+             // }
+            }
+          
+            if(!skip) {
+              elem.value = this.formatDate(attribute[x]);
+            }else {
+              if(attribute[x] != -1) {
+                elem.value = this.formatDate(attribute[x]);
+              }
+            }
+           
          }
 
          window.dispatchEvent(new Event('onTicketUpdate'));
