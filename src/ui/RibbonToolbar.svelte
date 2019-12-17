@@ -261,13 +261,13 @@
         </nav>
 
 
-        <section style="width:100%; height: 500px;">
+        <section style="width:100%; height: auto; overflow: auto;">
              <Router>
                 <Route path="#ArchiveTicketPage"><ArchiveTicketPage {isMe}  {Audio} {spartans} {url} /></Route>
                 <Route path="#TicketCalendarPage/:organizationId" let:router><CalendarPage {router} /></Route>
                 <Route path="#dashboard" ><DashBoard {isMe} {url} /></Route>
                 <Route path="#WalkIns" ><DashBoardCard {isMe} {url} path={"addressticket/getAllWalkIn/"} /></Route>
-                <Route path="#AllOpenTickets" ><DashBoardCard {isMe} {url} path={"addressticket/getAllPendingTicketsByOrga2/?id=6"} /></Route>
+                <Route path="#AllOpenTickets" ><DashBoardCard {isMe} {url} path={`addressticket/getAllPendingTicketsByOrga2/?id=${isMe.ORGANIZATION}`} /></Route>
                 <Route path="#newTicket"  ><Ticket on:toolbar={(event)=>{display = event.detail.text}} {url} {socket} {isMe} {spartans} newTicket={true}  action={action} /></Route>
                 <Route path="#viewTicket/:idTicket/:objectid" let:router><Ticket on:toolbar={(event)=>{display = event.detail.text}} {url} {socket} {isMe} {spartans} {router} newTicket={false}  action={action} /></Route>
                 <Route path="*" ><DashBoard {isMe} {url} /></Route>
