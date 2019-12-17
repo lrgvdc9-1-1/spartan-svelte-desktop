@@ -45,7 +45,7 @@
 <div  in:fly={{ y: 200, duration: 2000 }} out:fade class="card">
             <div class="card-header">
                 <div class="avatar">
-                    <img src="../../assets/globe-map-icon.webp" alt="Map Preview">
+                    <img src="./assets/globe-map-icon.webp" alt="Map Preview">
                 </div>
                 <div class="name">{cfirst_name + " " + clast_name}</div>
                 <div class="date">{created_date}</div>
