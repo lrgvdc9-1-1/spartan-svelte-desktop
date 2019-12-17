@@ -1,3 +1,4 @@
+//The SQL file class is to handle all the local transactions with database.
 export default class SQL {
     constructor(pool, api, client_status) {
         this.pool = pool;
@@ -16,8 +17,10 @@ export default class SQL {
         }else{
             return fetch(`${url}addressticket/getAllPendingTicketsByOrga2/?id=${organization_id}`);
         }
-       
-        
+    }
+
+    getMyTickets(userId) {
+        return this.pool.query(this.api['tickets']['mine'], [userId]);
     }
 
     getTicketForm(sql, ticketId) {
@@ -38,8 +41,8 @@ export default class SQL {
 
     getTicketConnPropertyId(whereInfo) {
         if(this.client_status) {
-            console.log(whereInfo);
-            console.log(this.api['tickets']['connections']['propertyId'])
+            // console.log(whereInfo);
+            // console.log(this.api['tickets']['connections']['propertyId'])
             return this.pool.query(this.api['tickets']['connections']['propertyId'], whereInfo);
         }
     }
