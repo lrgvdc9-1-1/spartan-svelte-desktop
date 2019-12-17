@@ -18,10 +18,11 @@
 
            redrawing = false;
         setTimeout(() => {
+            console.log(today);
             today = new Date(today.getFullYear(), today.getMonth(), 1);
             calendars =  getDaysInMonth(today, new Date(today.getFullYear(), today.getMonth(), daysInMonth(today.getMonth(), today.getFullYear())));
             redrawing = true;
-
+            console.log(calendars);
             console.log(`calendars size = ${calendars.length}`);
            
         }, 50);
@@ -116,7 +117,8 @@
 
 
 </script>
-    <div class="container">
+    <h2>HELLOW</h2>
+    <div class="container" style="height:100vh;">
              <div bind:this={element} class:wrapperUp={moveUp} transition:fade class="wrapper contents">
 
         <div class="cal">
