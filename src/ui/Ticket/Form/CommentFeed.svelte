@@ -17,7 +17,9 @@
     let eleInput;
     let clsConfirm = false;
     let txtarea;
+ 
 
+    
 
     onMount(async() => {
         //Download the feed...
@@ -26,15 +28,15 @@
                 messages = res.rows;
                 dispatch('totalMSG', res.rowCount);
         });
+
+      
+        
     });
 
-    // function formatDate(date) {
-    //     let month = ((date.getMonth() + 1) < 10) ? '0' + (date.getMonth() + 1) : date.getMonth() + 1;
-    //     let day = date.getDate();
-    //     let year = date.getFullYear();
+   
 
-    //     return `${month} - ${day} - ${year}`;
-    // }
+
+ 
 
     function getImg(msg){
         let spartan = spartans.filter(spartan => spartan['user_id'] == msg.user_id)[0];
@@ -51,6 +53,8 @@
     function handleDisplay() {
 
         shwInput = !shwInput; 
+
+      
 
         if(shwInput) {
             setTimeout(() => {
@@ -130,15 +134,13 @@
 
     .grid-container {
         display: grid;
-        grid-template-columns: 86% 14%;
+        grid-template-columns: 90% 10%;
+        
     }
     .grid-item {
         padding: 2px;
     }
-    #floating {
-         position: fixed;bottom: 50px; right: 29%;
-        
-    }
+   
 
     @keyframes shadow-pulse
     {
@@ -154,68 +156,88 @@
         color: #C3073F;
         animation: shadow-pulse 1s infinite;
     }
+
+    #grid {
+        display: grid;
+        grid-template-columns: 100%;
+    }
+    #col {
+        text-align: right;
+    }
 </style>
-<ul>
 
-    {#each messages as feed, i (feed.id_com)}
-         <li>
-            <div class="grid-container" class:highlight={feed.confirm}>
-                <div class="grid-item" id="accountInfo">
-                    <img width="40" height="40" src="{getImg(feed)}" alt="Icon" />
-                    <span>{feed.first_name + " " + feed.last_name}</span>
-                </div>
-                
-                <div class="grid-item" id="date">
-                    <span class="mif-alarm"></span>
-                    <span>{FormatDate(feed.time_track)}</span>
-                    {#if feed.user_id == isMe.UID}
-                         <button on:click="{()=> { feed.edit = true; handleEdit()}}" class="action-button"><span class="mif-pencil"></span></button>
+<div style="width: 100%;height: calc(100vh - 462px);">
+    <ul>
 
-                        <button on:click="{()=> {feed.confirm = true}}" class="action-button rotate-minus bg-red fg-white">
-                            <span class="icon">
-                                <span class="mif-bin"></span>
-                            </span>
-                        </button>
-                    {/if}
-                    {#if feed.confirm}
-                        <!-- content here -->
-                        <Confirm  title="Are you sure!!!" msg="Do you want to delete message?" 
-                        clsSmall={true} clsBig={false} on:confirm={() => handleDelete(feed)} on:close="{(event) => {feed.confirm = event.detail;}}" />
-                    {/if}
-                </div>
-                <div id="msg">
-                    {#if feed.edit}
-                         <textarea bind:this={txtarea} data-index="{i}" data-id="{feed.id_com}" on:keypress={handleMSG} rows="4" cols="50">{feed.ticket_comments}</textarea>
-                    {:else}
-                          {feed.ticket_comments}
-                    {/if}
-                </div>
-            </div>
-            <hr>
-         </li>
-    {/each}
-    
+        {#each messages as feed, i (feed.id_com)}
+            <li>
+                <div class="grid-container" class:highlight={feed.confirm}>
+                    <div class="grid-item" id="accountInfo">
+                        <img width="40" height="40" src="{getImg(feed)}" alt="Icon" />
+                        <span>{feed.first_name + " " + feed.last_name}</span>
+                    </div>
+                    
+                    <div class="grid-item" id="date">
+                        <span class="mif-alarm"></span>
+                        <span>{FormatDate(feed.time_track)}</span>
+                        {#if feed.user_id == isMe.UID}
+                            <button on:click="{()=> { feed.edit = true; handleEdit()}}" class="action-button"><span class="mif-pencil"></span></button>
 
-</ul>
-
-<div id="floating" style="width: {((shwInput) ? '60%' : 'auto')}">
-    <div class:grid-container={shwInput} >
-            {#if shwInput}
-            <div transition:fade class="input">
-                <input bind:this={eleInput} on:keypress={handleKeyInput} placeholder="Enter Comment!!" type="text" data-role="input" data-role-input="true" class="">
-                <div class="button-group">
-                    <button on:click={clearMSG} class="button input-clear-button" tabindex="-1" type="button">
-                        <span class="default-icon-cross"></span>
-                    </button>
+                            <button on:click="{()=> {feed.confirm = true}}" class="action-button rotate-minus bg-red fg-white">
+                                <span class="icon">
+                                    <span class="mif-bin"></span>
+                                </span>
+                            </button>
+                        {/if}
+                        {#if feed.confirm}
+                            <!-- content here -->
+                            <Confirm  title="Are you sure!!!" msg="Do you want to delete message?" 
+                            clsSmall={true} clsBig={false} on:confirm={() => handleDelete(feed)} on:close="{(event) => {feed.confirm = event.detail;}}" />
+                        {/if}
+                    </div>
+                    <div id="msg">
+                        {#if feed.edit}
+                            <textarea bind:this={txtarea} data-index="{i}" data-id="{feed.id_com}" on:keypress={handleMSG} rows="4" cols="50">{feed.ticket_comments}</textarea>
+                        {:else}
+                            {feed.ticket_comments}
+                        {/if}
+                    </div>
                 </div>
-            </div>
-        {/if}
-    
-        <button on:click={handleDisplay} class="action-button rotate-minus bg-red fg-white">
-            <span class="icon">
-                <span class="mif-bubble"></span>
-            </span>
-        </button>
-    </div>
-    
+                <hr>
+            </li>
+        {/each}
+        
+
+    </ul>
+
 </div>
+
+
+<div id="grid">
+
+    <div id="col" >
+        <div class:grid-container={shwInput} >
+                {#if shwInput}
+                <div transition:fade class="input">
+                    <input bind:this={eleInput} on:keypress={handleKeyInput} placeholder="Enter Comment!!" type="text" data-role="input" data-role-input="true" class="">
+                    <div class="button-group">
+                        <button on:click={clearMSG} class="button input-clear-button" tabindex="-1" type="button">
+                            <span class="default-icon-cross"></span>
+                        </button>
+                    </div>
+                </div>
+            {/if}
+            <div style="text-align: right;">
+                 <button on:click={handleDisplay} class="action-button rotate-minus bg-red fg-white">
+                <span class="icon">
+                    <span class="mif-bubble"></span>
+                </span>
+                </button>
+            </div>
+           
+        </div>
+    
+    </div>
+
+</div>
+
