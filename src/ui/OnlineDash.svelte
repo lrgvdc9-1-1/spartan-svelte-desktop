@@ -8,6 +8,7 @@
 
     const dispatch = createEventDispatcher();
     let windowSize = "30%";
+    let bckWindow = "#243C73";
 
     $: spartans = ontickets;
     let height = 0;
@@ -59,12 +60,14 @@
 			size: '96%'
 		});
         windowSize = "4%";
+        bckWindow = "#051740";
     }
     function onResize() {
         dispatch('resize', {
 			size: '70%'
 		});
         windowSize = "30%";
+        bckWindow = "#243C73"
     }
 
     function onFullScreen() {
@@ -99,7 +102,7 @@
     display: flex;
   }
   #grid2{
-      grid-column: 2;
+      grid-column: 10;
     display: flex;
     margin-top: 4px;
   }
@@ -134,76 +137,82 @@
    }
 }
 </style>
-{#if windowSize == "4%"}
-     <!-- content here -->
-     <div style="float: right; width: {windowSize};background: #051740; border-top: 2px solid #CAB448; height:100vh;">
-        <button on:click={onResize} class="button secondary">
-            <span class="mif-arrow-left"></span>
-        </button>
-        <h2>Ticket Viewers</h2>
-     </div>
-{:else}
-    <div style="float: right;width: {windowSize};height:100vh;background: #243C73;overflow:auto;">
-    <div style="width: 100%;height: 40px; background: #051740; border-top: 2px solid #CAB448;">
-        <header id="titlebar">
-                <div id="titleGrid">
 
-                     <h4>Ticket Viewers</h4>
-                </div>
-               
-                <div id="grid2"  data-role="buttongroup"
-                data-mode="multi">
-                    <button  class="tool-button rounded">
-                        <span class="mif-arrow-up-right"></span>
-                    </button>
-                    <button on:click={onClose} class="tool-button rounded" id="close-button">
-                        <span class="mif-exit"></span>
-                    </button>
-                </div>
-        </header>
+ <div id="wrapperRight" style="float: right; width: {windowSize};background: {bckWindow}; border-top: 2px solid #CAB448; height:100vh;">
+    {#if windowSize == "4%"}
+        <!-- content here -->
+        
+            <button on:click={onResize} class="button secondary">
+                <span class="mif-arrow-left"></span>
+            </button>
+            <h2>Ticket Viewers</h2>
+        
+    {:else}
+    <!-- <div  style="float: right;width: {windowSize};height:100vh;background: #243C73;overflow:auto;"> -->
+            <div style="width: 100%;height: 40px; background: #051740; border-top: 2px solid #CAB448;">
+                <header id="titlebar">
+                        <div id="titleGrid">
 
-       
-    </div>
-    <ul>
-        {#each spartans as spartan, i}
-             <!-- content here -->
-
-             {#if isMe.UID != spartan.UID}
-                  <!-- content here -->
-                  <li>
-                <div class="card" class:blink={spartan.splash}>
-                    <div class="card-header" class:blink={spartan.splash}>
-                        <div class="avatar">
-                            <img alt="Logo" src="./assets/spartan_logo.webp">
+                            <h4>Ticket Viewers</h4>
                         </div>
-                        <div class="name">{spartan.FULL_NAME}</div>
-                    </div>
-                    <div style="color:#CAB448; " class="card-content">
-          
-                        {#if !spartan.chat} 
-                        <table class="table">
-                            <tr>
-                                <td>Form Tab</td>
-                                <td>{spartan.editing.section}</td>
-                            </tr>
-                            <tr>
-                                <td>Input Selected</td>
-                                <td>{spartan.editing.attribute}</td>
-                            </tr>
-                        </table>
-                        {:else if spartan.chat} 
-                                <Chat {socket} {isMe} person={spartan}/>
-                        {/if}
-                    </div>
-                    <div class="card-footer">
-                        <button on:click={()=> {onChat(i);}} class="button secondary">Chat</button>
-                    </div>
-                </div>
+                    
+                        <div id="grid2"  data-role="buttongroup"
+                        data-mode="multi">
+                            <!-- <button  class="tool-button rounded">
+                                <span class="mif-arrow-up-right"></span>
+                            </button> -->
+                            <button on:click={onClose} class="tool-button rounded" id="close-button">
+                                <span class="mif-exit"></span>
+                            </button>
+                        </div>
+                </header>
 
-             </li>
-             {/if}
-             
-        {/each}
-    </ul>
-</div>
+            
+            </div>
+            <ul>
+                {#each spartans as spartan, i}
+                    <!-- content here -->
+
+                    {#if isMe.UID != spartan.UID}
+                        <!-- content here -->
+                        <li>
+                        <div class="card" class:blink={spartan.splash}>
+                            <div class="card-header" class:blink={spartan.splash}>
+                                <div class="avatar">
+                                    <img alt="Logo" src="./assets/spartan_logo.webp">
+                                </div>
+                                <div class="name">{spartan.FULL_NAME}</div>
+                            </div>
+                            <div style="color:#CAB448; " class="card-content">
+                
+                                {#if !spartan.chat} 
+                                <table class="table">
+                                    <tr>
+                                        <td>Form Tab</td>
+                                        <td>{spartan.editing.section}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Input Selected</td>
+                                        <td>{spartan.editing.attribute}</td>
+                                    </tr>
+                                </table>
+                                {:else if spartan.chat} 
+                                        <Chat {socket} {isMe} person={spartan}/>
+                                {/if}
+                            </div>
+                            <div class="card-footer">
+                                <button on:click={()=> {onChat(i);}} class="button secondary">Chat</button>
+                            </div>
+                        </div>
+
+                    </li>
+                    {/if}
+                    
+                {/each}
+            </ul>
+
 {/if}
+</div>
+
+
+
