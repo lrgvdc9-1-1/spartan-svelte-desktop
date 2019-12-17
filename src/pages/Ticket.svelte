@@ -101,20 +101,28 @@
                      let form = data.data;
                    
                      let formElement = document.getElementById(form.elemID)
+                     let type = formElement.type;
                      let spanElement = document.getElementById(form.elemID + "_span")
                      let userId  = data.user;
                      let full_name = viewers.find(spartan => (spartan.SOCKETID == userId));
                      
-
-                     if(form.locked) {
+                     if(spanElement) {
+                            if(form.locked) {
                         spanElement.textContent = `EDITING: ${full_name.FULL_NAME}`
                      }else {
                         spanElement.textContent = '';
                      }
+                     }
+                    
                      
 
                      formElement.disabled = form.locked;
-                     formElement.value = form.value;
+                     if(type == "checkbox") {
+                        formElement.checked = form.value;
+                     }else {
+                        formElement.value = form.value;
+                     }
+                     
                      viewers.forEach(spartan => {
                         if(spartan.SOCKETID == userId) {
                             spartan.editing.form = "TICKET";
@@ -166,7 +174,8 @@
                      ticket.updateForm(res.rows);
 
                      //Clean Some Stuff up...
-                
+
+                     //This loop is to handle the address by and address issued by section on lv maybe other areas
                      spartans.forEach(spartan => {
                            if(spartan.UID == ticket.address_by.value) {
                               ticket.address_by.value = spartan.FULL_NAME;
@@ -174,6 +183,15 @@
                               return;
                            }
                      });
+
+                     spartans.forEach(spartan => {
+                           if(spartan.UID == ticket.address_issued_by.value) {
+                              ticket.address_issued_by.value = spartan.FULL_NAME;
+                              ticket.address_issued_by.disabled  = true;
+                              return;
+                           }
+                     });
+
                      //Notify Window For Getting Connections.
                      window.dispatchEvent(new Event('queryForm'));
 
@@ -267,7 +285,7 @@
 
 <div >
 
-   <div  class="tabs tabs-wrapper top tabs-expand" style="float: left;width: {windowSize}; overflow: auto;" >
+   <div id="maintab" class="tabs tabs-wrapper top tabs-expand" style="float: left;width: {windowSize}; overflow: auto;" >
          <div style="width: {windowSize};background: white; color: #CAB448;">
              <div style="display: grid; grid-template-columns: 80px auto">
                <div style="cursor: pointer;">
@@ -499,8 +517,8 @@
                                     <button on:click={ticket.onClearFullAddress} class="button input-search-button"><span class="mif-bin"></span></button>
                                     <button on:click={ticket.onGlueFullAddress}  class="button input-search-button"><span class="mif-clipboard"></span></button>
                                  </div>
-                                 <span id="full_address_span"></span>
                               </div>
+                              <span id="full_address_span"></span>
                            </div>
                            <div class="form-group">
                               <label>Address By</label>
@@ -510,17 +528,68 @@
                            <div class="form-group">
                               <label>Date Addressed</label>
                               <input  type="date" data-title="Date Addressed" data-section="Location Validation" class="inTicket" id="date_addressed"  >
+                              <span id="date_addressed_span"></span>
                            </div>
 
                            <div class="form-group">
                                
                               <label class="switch transition-on">
-                                 <input type="checkbox" class="inTicket" id="address_issued" />
+                                 <input type="checkbox" class="inTicket" data-title="Address Issued" data-section="Location Validation" id="address_issued" />
                                  <span class="check"></span>
                                  <span class="caption">Address Issued</span>
                               </label>
 
+                               <label class="switch transition-on">
+                                 <input type="checkbox" class="inTicket" data-title="Called Customer" data-section="Location Validation" id="called_cust" />
+                                 <span class="check"></span>
+                                 <span class="caption">Called Customer</span>
+                              </label>
 
+                              <label class="switch transition-on">
+                                 <input type="checkbox" class="inTicket" data-title="Plack Generated" data-section="Location Validation" id="plack_generated" />
+                                 <span class="check"></span>
+                                 <span class="caption">Plack Generated</span>
+                              </label>
+
+
+                           </div>
+
+                           <div class="form-group">
+                              <label>Address Issued Date</label>
+                              <input  type="date" data-title="Address Issued Date" data-section="Location Validation" class="inTicket" id="address_issued_date"  >
+                              <span id="address_issued_date_span"></span>
+                           </div>
+
+                           <div class="form-group">
+                              <label>Address Issued By</label>
+                              <input on:click={addressByCheckMark} bind:this={ticket.address_issued_by}  data-trigger="1" data-check="1" type="text" data-title="Address Issued By" data-section="Location Validation" class="inTicket" id="address_issued_by" placeholder="CLICK HERE TO STAMP"     >
+                              <span id="address_issued_date_span"></span>
+                           </div>
+
+                           <div class="form-group">
+                              <label>Lat</label>
+                              
+                              <div class="input">
+                                 <input type="text" data-title="Lat" data-section="Location Validation" class="inTicket" id="lat"     >
+                                 <div class="button-group">
+                                    <button on:click={ticket.copy} data-copy="lat"  class="button input-search-button"><span style="color: #05173F !important" class="mif-clipboard"></span></button>
+                                 </div>
+                              </div>
+
+                              <span id="lat_span"></span>
+                           </div>
+
+                           <div class="form-group">
+                              <label>Long</label>
+                              
+                              <div class="input">
+                                 <input type="text" data-title="Long" data-section="Location Validation" class="inTicket" id="longy" >
+                                 <div class="button-group">
+                                    <button on:click={ticket.copy} data-copy="longy"  class="button input-search-button"><span style="color: #05173F !important" class="mif-clipboard"></span></button>
+                                 </div>
+                              </div>
+
+                              <span id="longy_span"></span>
                            </div>
                            
                      </div>
