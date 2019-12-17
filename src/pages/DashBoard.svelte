@@ -12,6 +12,7 @@
     let sql = new SQL(pool, api, client_status);
 
     let openTickets = [];
+    let mineTickets  = [];
     let searchTck = [];
     let iconURL = url + "users/getUserImage/?pic=";
 
@@ -40,6 +41,16 @@
                    available = true;
                }, 300);
            });
+
+
+           sql.getMyTickets(isMe.UID).then(res => {
+               console.log(res);
+               mineTickets = res.rows;
+
+           })
+
+
+
         }else {
             const res = await sql.getOrganizationTickets(isMe.ORGANIZATION, url);
             let hold = await res.json();
@@ -195,7 +206,43 @@
                
             </div>
             <div class="window-content p-2">
-                Window content
+
+                <ul class="listview view-content">
+                    {#each mineTickets as ticket}
+                         <li >
+                        
+                        <div style="width: 100%" >
+                            <div class="card">
+                                <div class="card-header">
+                                    <span class="icon">
+                                    <img loading="lazy" on:click={viewProfile} data-id={ticket.started_ticket} width="50" height="50" src="{getIMAGE(ticket.icon)}" alt="" id="src">
+                                    </span>
+                                    {ticket.staff} | <b> {getDateFormat(ticket.created_date)}</b>
+                                </div>
+                                <div class="card-content p-2">
+                                    <table class="table">
+                                        <tr>
+                                            <td>Ticket Id</td>
+                                            <td>{ticket.objectid}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Customer Name</td>
+                                            <td>{ticket.cfirst_name} {ticket.clast_name}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="card-footer">
+                                    <button on:click={() => { navigateTo(`#viewTicket/${ticket.id_ticket}/${ticket.objectid}`)}} class="flat-button mif-note-add" ></button>
+                                    <button class="flat-button mif-tag"></button>
+                                    <button class="flat-button mif-share"></button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                     </li>
+                     <br>
+                    {/each}
+                </ul>
             </div>
         </div>
     </div>
