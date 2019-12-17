@@ -8,7 +8,7 @@
     #bottom {
         position: absolute;
         padding: 4px;
-        bottom: 0;
+        bottom: 30px;
         height: 40px;
         width: 100%;
         background: #05173F;
