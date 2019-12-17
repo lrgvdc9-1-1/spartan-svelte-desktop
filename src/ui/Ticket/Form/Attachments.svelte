@@ -1,5 +1,5 @@
 <script>
-    import { createEventDispatcher} from 'svelte';
+    import {onMount, createEventDispatcher} from 'svelte';
     import Confirm from '../../modal/Confirm.svelte';
     
     export let ticketId;
@@ -11,20 +11,27 @@
     let attachments = [];
     let confirm = false;
     let select = null;
+    let dragover = false;
 
+
+    onMount(() => {
+
+     
+    });
 
     function onFetch() {
      
         sql.getAttachments([ticketId]).then((res) => {
                attachments= res.rows;
                dispatch('totalMSG', res.rowCount);
+               dispatch('loading', false);
         }).catch((error) => {console.log(error)});
     }
 
     function format(file) {
 
-
-        return `https://gis.lrgvdc911.org/php/spartan/api/v2/index.php/addressticket/displayPic/?path=${file.replace("pdf", "jpg")}`;
+        let handle = file.replace(".pdf", ".jpg").replace(".docx", ".jpg").replace(".doc", ".jpg");
+        return `https://gis.lrgvdc911.org/php/spartan/api/v2/index.php/addressticket/displayPic/?path=${handle}`;
     }
 
     async function onOpen(file) {
@@ -57,6 +64,44 @@
         
     }
 
+    async function handleDrop(e) {
+        e.preventDefault();
+        e.stopPropagation();
+         dispatch('loading', true);
+         var data = new FormData();
+         data.append('objectid', ticketId);
+        dragover = false;
+
+        //Loop through the files and upload them...
+        for (let f of e.dataTransfer.files) {
+            data.append('images[]', f, f.name);
+
+       
+        }
+
+
+        const response = await fetch('https://gis.lrgvdc911.org/php/spartan/api/v2/index.php/addressticket/uploadAttachments/', 
+        {
+            method: 'POST',
+            body: data
+        });
+
+        const json = await response.json();
+        console.log(json);
+
+        onFetch();
+        
+
+    }
+
+    function handleError(e) {
+        //Get the target to replace the image since it failed...
+        let target = e.target;
+        //Replace image..
+        target.src = "./assets/NoImageAvailable.png";
+    }
+
+  
 </script>
 <style>
     .gridDash {
@@ -75,19 +120,50 @@
     .img-container:hover {
         cursor: pointer;
     }
+
+     @keyframes shadow-pulse
+    {
+            0% {
+                box-shadow: 0 0 0 0px rgba(0, 0, 0, 0.2);
+            }
+            100% {
+                box-shadow: 0 0 0 35px rgba(0, 0, 0, 0);
+            }
+    }
+
+    .isdragover {
+        background: #05173F;
+        color: white;
+        border: 1px dashed;
+         animation: shadow-pulse 1s infinite;
+    }
 </style>
-<svelte:window on:onTicketUpdate={onFetch}></svelte:window>
-<div class="container gridDash">
+<svelte:window  on:onTicketUpdate={onFetch}></svelte:window>
+
+{#if attachments.length == 0}
+         
+        <div on:dragover|preventDefault|stopPropagation="{()=>{dragover = true}}" on:drop={handleDrop} on:dragleave="{()=>{dragover = false}}"
+             class:isdragover={dragover}
+             style="border: 1px dashed;line-height:100px; vertical-align:middle; width: 100%; height: 400px;text-align: center;">
+                <h2>Drag and Drop File</h2>
+        </div>
+        
+{/if}
+
+{#if attachments.length > 0}
+    <div on:dragover|preventDefault|stopPropagation="{()=>{dragover = true}}" on:drop={handleDrop} on:dragleave="{()=>{dragover = false}}" class:isdragover={dragover}  class="container gridDash">
 
     {#if confirm}
          <Confirm on:close="{()=> {confirm = false;}}" on:confirm={onDelete} title="Delete File" msg="Are you sure!!!" />
     {/if}
+
+    
     {#each attachments as ticket, i}
-        <div class="info-panel rounded no-overflow shadow-3">
+        <div  class="info-panel rounded no-overflow shadow-3">
                         <div class:breakWord={ticket.file_name.length > 25} style="background: #243C73" class="info-panel-header fg-white">{ticket.file_name}</div>
                         <div class="info-panel-content">
                             <div  class="img-container">
-                                <img alt="File" src="{format(ticket.file_name)}">
+                                <img alt="File" on:error={handleError} src="{format(ticket.file_name)}">
                                 <div class="image-overlay op-amber"></div>
                             </div>
                            
@@ -103,3 +179,4 @@
     {/each}
 
 </div>
+{/if}
