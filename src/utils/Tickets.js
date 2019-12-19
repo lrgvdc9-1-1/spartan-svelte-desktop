@@ -17,7 +17,8 @@ export default class Tickets {
       this.ogData;
       this.full_address;
       this.sql;
-      this.address_by;
+      this.address_by; //Element HTML
+      this.address_issued_by; //ELement HTML
       this.property_id;
       
       _self = this;
@@ -30,7 +31,15 @@ export default class Tickets {
 
       this.socket = socket;
     }
-
+    copy() {
+    
+       var input = document.getElementById(this.dataset.copy);
+       input.select();
+       document.execCommand('copy');
+       setTimeout(() => {
+        input.blur();
+       }, 100);
+    }
     setOriginal(original) {
       this.ogData = original;
     }
@@ -126,7 +135,7 @@ export default class Tickets {
               console.log(_self.objectid);
               value = (type == "checkbox") ? element.checked : value
               _self.socket.emit("ticketViewer", {room: _self.objectid, locked: false, value: value, title: title, section: section, elemID: attribute});
-              console.log(`lost focus VALUE IS ${value} and attribute is ${attribute}`);
+              console.log(`lost focus VALUE IS ${value} and attribute is ${attribute} is a checkbox ${type}`);
             }
         }
          
