@@ -6,6 +6,8 @@
             }
         };
 
+        
+
         function init() {
             let window = remote.getCurrentWindow();
             const minButton = document.getElementById('min-button'),
@@ -58,5 +60,7 @@
                     maxButton.style.display = "flex";
                 }
             }
+
+           
         }
     })();
