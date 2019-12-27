@@ -9,7 +9,7 @@
    import Attachments from "../ui/Ticket/Form/Attachments.svelte";
    import CommentFeed from "../ui/Ticket/Form/CommentFeed.svelte";
    import Connections from "../ui/Ticket/Form/Connections.svelte";
-
+   import Messages  from "../ui/Ticket/Form/Messages.svelte";
 
     let listTabs = {'customerData' : true, 'premisesData': true, 'lv': true,
    'db': true, 'gis' : true, 'comment' : true, 'history' : true, 'msg' : true};
@@ -22,10 +22,11 @@
     let ticket = new Ticket();
    //  let heightTicket = 600 + "px";
    
-    let active = href;
+    let activeTab = href;
     let loading = true;
    
     let dockable = false;
+    let msgComp;
 
 
     export let action;
@@ -42,19 +43,20 @@
    let totalConnections = 0;
    let totalMessages = 0;
    let comConnection;
+  
    const dispatch = createEventDispatcher();
  
     //Handle action for the riboon and other actions..
     $: handleAction = (action) ? decideAction(action) : '';
-    $: customerData = (active === 'customerData') ? '' : 'none';
-    $: premisesData = (active === 'premisesData') ? '' : 'none';
-    $: lv      = (active === 'lv') ? '' : 'none';
-    $: db      = (active === 'db') ? '' : 'none';
-    $: gis        = (active === 'gis') ? '' : 'none';
-    $: attachment = (active === 'attach') ? '' : 'none';
-    $: comment    = (active === 'comment') ? '' : 'none';
-    $: history    = (active === 'history') ? '' : 'none';
-    $: msg        = (active === 'msg') ? ''     : 'none';
+    $: customerData = (activeTab === 'customerData') ? '' : 'none';
+    $: premisesData = (activeTab === 'premisesData') ? '' : 'none';
+    $: lv      = (activeTab === 'lv') ? '' : 'none';
+    $: db      = (activeTab === 'db') ? '' : 'none';
+    $: gis        = (activeTab === 'gis') ? '' : 'none';
+    $: attachment = (activeTab === 'attach') ? '' : 'none';
+    $: comment    = (activeTab === 'comment') ? '' : 'none';
+    $: history    = (activeTab === 'history') ? '' : 'none';
+    $: msg        = (activeTab === 'msg') ? ''     : 'none';
     $: ontickets  = viewers;
 
     $: gispeeps = spartans.filter(spartan => spartan.work_center == 'GIS' || spartan.work_center == "ADMIN") || [];
@@ -84,6 +86,7 @@
          dispatch('toolbar', {text: 'TICKET'});
          ticket.setUpInputsEvent();
          ticket.setUpMask();
+
          if(socket) {
 
 
@@ -161,6 +164,9 @@
             ticket.objectid = router.params['objectid'];
             ticket.id_ticket = router.params['idTicket'];
 
+            //Check wparcels and hparcels Database to help users...
+           
+
             //Tell spartan chat server to join the room
             socket.emit("joinTicketRoom", {rmName: ticket.objectid, username: isMe.EMAIL});
 
@@ -173,7 +179,7 @@
                      ticket.setOriginal(res)
                      ticket.updateForm(res.rows);
 
-                     //Clean Some Stuff up...
+                    
 
                      //This loop is to handle the address by and address issued by section on lv maybe other areas
                      spartans.forEach(spartan => {
@@ -192,6 +198,17 @@
                            }
                      });
 
+                     spartans.forEach(spartan => {
+                           if(spartan.UID == ticket.verified_by.value) {
+                              ticket.verified_by.value = spartan.FULL_NAME;
+                              ticket.verified_by.disabled  = true;
+                              return;
+                           }
+                     });
+
+                     //Search parcels...
+                     msgComp.findParcels(ticket.formInputs);
+
                      //Notify Window For Getting Connections.
                      window.dispatchEvent(new Event('queryForm'));
 
@@ -200,7 +217,7 @@
                      
                 })
 
-            }else{
+            }else{ //Can't access the DB directly talk thru the API...
                console.log("FETCH THROUGH API");
               
             } 
@@ -221,6 +238,7 @@
        
      });
 
+     
      function getHCADSubSuggestions(event) { 
        
 
@@ -265,7 +283,7 @@
      function addressByCheckMark(event) {
         var elem = event.target || event.srcElement;
         
-         if(elem.value.length <= 0) {
+         if(elem.value.length == 0) {
                elem.dataset.userid = isMe.UID;
                elem.value = isMe.FULL_NAME;
                ticket.onUpdate(elem, isMe.UID);
@@ -299,43 +317,43 @@
             
          </div> 
             <ul class="tabs-list">
-               <li on:click="{() => active = 'customerData'}" 
-                        class:active="{active === 'customerData'}">
+               <li on:click="{() => activeTab = 'customerData'}" 
+                        class:active="{activeTab === 'customerData'}">
                         <span>CUSTOMER DATA</span> 
                </li>
-               <li on:click="{() => active = 'premisesData'}" 
-                        class:active="{active === 'premisesData'}">
+               <li on:click="{() => activeTab = 'premisesData'}" 
+                        class:active="{activeTab === 'premisesData'}">
                         <span>PREMISES DATA</span>
                </li>
-               <li on:click="{() => active = 'lv'}" 
-                        class:active="{active === 'lv'}">
+               <li on:click="{() => activeTab = 'lv'}" 
+                        class:active="{activeTab === 'lv'}">
                         <span>LOCATION VALIDATION PROCESS</span>
                </li>
-               <li on:click="{() => active = 'db'}" 
-                        class:active="{active === 'db'}">
+               <li on:click="{() => activeTab = 'db'}" 
+                        class:active="{activeTab === 'db'}">
                         <span>DATABASE VALIDATION PROCESS</span>
                </li>
-               <li on:click="{() => active = 'gis'}" 
-                        class:active="{active === 'gis'}">
+               <li on:click="{() => activeTab = 'gis'}" 
+                        class:active="{activeTab === 'gis'}">
                      <span>
                         GIS VALIDATION PROCESS
                      </span> 
                </li>
-               <li on:click="{() => active = 'attach'}" class:active="{active === 'attach'}">
+               <li on:click="{() => activeTab = 'attach'}" class:active="{activeTab === 'attach'}">
                   <span>
                      ATTACHMENTS - {totalAttachments}
                   </span>
                </li>
-               <li on:click="{() => active = 'comment'}" 
-                        class:active="{active === 'comment'}">
+               <li on:click="{() => activeTab = 'comment'}" 
+                        class:active="{activeTab === 'comment'}">
                         <span>COMMENTS FEED - {totalFeed}</span>
                </li>
-               <li class:highlight={(totalConnections > 0)} on:click="{() => active = 'history'}" 
-                        class:active="{active === 'history'}" >
+               <li class:highlight={(totalConnections > 0)} on:click="{() => activeTab = 'history'}" 
+                        class:active="{activeTab === 'history'}" >
                         <span>CONNECTIONS - {totalConnections}</span> 
                </li>
-               <li on:click="{() => active = 'msg'}" 
-                        class:active="{active === 'msg'}">
+               <li on:click="{() => activeTab = 'msg'}" 
+                        class:active="{activeTab === 'msg'}">
                         <span>MESSAGES - {totalMessages}</span> 
                   </li>
             </ul>    
@@ -638,7 +656,9 @@
                               <span id="date_verified_span"></span>
                            </div>
                            <div class="form-group">
-                              
+                              <label>Verified By</label>
+                              <input on:click={addressByCheckMark} bind:this={ticket.verified_by}  data-trigger="1" data-check="1" type="text" data-title="Verified By" data-section="Database" class="inTicket" id="verified_by" placeholder="CLICK HERE TO STAMP"     >
+                              <span id="verified_by_span"></span>
                            </div>
                      </div>
                      <!-- END OF DB -->
@@ -697,10 +717,14 @@
                         
                              <Connections bind:this={comConnection} on:totalMSG={(event) => {totalConnections = event.detail;}} {sql} phoneNumTwo={ticket.alt2_object} phoneNumOne={ticket.alt_object} ticketNum={ticket.objectid} elePropId={ticket.property_id} />
                      </div>
+
+                     <div style="display: {msg}" id="msg">
+                           <Messages on:totalMSG={(event) =>{ totalMessages = event.detail;}} bind:this={msgComp}  />
+                     </div>
                      
             </div>
          </div>
-      <OnlineDash on:resize={onResize} {url} {isMe} {socket} {ontickets}/>
+      <OnlineDash  on:resize={onResize} {url} {isMe} {socket} {ontickets}/>
 </div>
 
 
