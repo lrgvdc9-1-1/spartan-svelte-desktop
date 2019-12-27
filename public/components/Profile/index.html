@@ -1,5 +1,5 @@
 <html>
-    <link rel="stylesheet" href="https://cdn.metroui.org.ua/v4/css/metro.min.css">
+    <link rel="stylesheet" href="../../assets/metro4/css/metro.min.css">
    <link rel='stylesheet' href='bundle.css'>
     <style>
 
@@ -73,8 +73,7 @@
             line-height: 1.5;
         }
         #window-controls {
-            display: grid;
-            grid-template-columns: repeat(4, 46px);
+          
             position: absolute;
             top: 0;
             right: 0;
@@ -162,37 +161,34 @@
          <br>
          <div id="app"></div>
 
-                  
-
-
         
        <script>
-           const remote = require('electron').remote;
+           //const remote = require("remote");
+           const ipc = require('electron').ipcRenderer;	
+           //const ipc = require('electron').remote.require('ipc');
+            
+       
+                (function handleWindowControls() {
+                        // When document has loaded, initialise
+                            document.onreadystatechange = () => {
+                                if (document.readyState == "complete") {
+                                    init();
+                                }
+                            };
 
-           (function handleWindowControls() {
-                // When document has loaded, initialise
-                    document.onreadystatechange = () => {
-                        if (document.readyState == "complete") {
-                            init();
-                        }
-                    };
-
-        function init() {
-            let window = remote.getCurrentWindow();
-           
-                closeButton = document.getElementById('close-button');
-
-
-            closeButton.addEventListener("click", event => {
-                window = remote.getCurrentWindow();
-                window.close();
-            });
-
-           
-        }
-    })();
+                function init() {
+                
+                
+                        closeButton = document.getElementById('close-button');
 
 
+                    closeButton.addEventListener("click", event => {
+                        ipc.send('hide-profile');
+                    });
+
+                
+                }
+            })();
 
        </script>
         <script defer  src='./bundle.js'></script>
