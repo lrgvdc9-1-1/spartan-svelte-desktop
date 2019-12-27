@@ -135,14 +135,19 @@
 
   function onProfile() {
     shMenu = false;
-    let win = window.open(`${dirname}/components/Profile/index.html#${isMe.icon2}#${isMe.UID}#edit#${isMe.work_center}`, 'profile');
+
+    //Communicate with the main thread to toggle profile..
+    
+    ipc.send('show-profile', {"me" : isMe, "myself" : true});
    
-    var timer = setInterval(function() { 
-        if(win.closed) {
-            clearInterval(timer);
-            alert('closed');
-        }
-    }, 500);
+    // let win = window.open(`${dirname}/components/Profile/index.html#${isMe.icon2}#${isMe.UID}#edit#${isMe.work_center}`, 'profile');
+   
+    // var timer = setInterval(function() { 
+    //     if(win.closed) {
+    //         clearInterval(timer);
+    //         alert('closed');
+    //     }
+    // }, 500);
   }
 
 
