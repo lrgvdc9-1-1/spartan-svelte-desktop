@@ -9,7 +9,7 @@ export default class Tickets {
       this.started_ticket = 0;
       this.created_date;
       this.selectTicket = null;
-      this.formInputs = document.getElementsByClassName("inTicket");
+      this.formInputs = document.getElementsByClassName("inTicket") || [];
       this.socket;
       this.tele_object;
       this.alt_object;
@@ -19,6 +19,7 @@ export default class Tickets {
       this.sql;
       this.address_by; //Element HTML
       this.address_issued_by; //ELement HTML
+      this.verified_by; //HTML ELEMENT
       this.property_id;
       
       _self = this;
