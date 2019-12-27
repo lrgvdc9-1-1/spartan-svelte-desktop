@@ -1,6 +1,6 @@
 <script>
 	import {onMount} from "svelte";
-	let name = '';
+	
 	let subtitle = '';
 	let fileEle;
 	let src;
@@ -9,6 +9,8 @@
 	let isme = [];
 	let user;
 	let changepic = false;
+	let working_tickets = 0;
+	let working_worksheets = 0;
 
 	let fname;
 	let mname;
@@ -19,33 +21,55 @@
 	let password2;
 	let countError = 0;
 
+	$: full_name = (`${fname} ${mname} ${lname}`).trim();
+	
+	onMount(() => {
+		//Setup the listener from the other windows....
+		setupListener();
+	});
 
-	onMount(async () => {
-		isme = window.location.href.split("#");
-		console.log(isme);
-		
-		
-		lblEdit = (isme[2] == "edit") ? "Edit Info" : "Viewing Info";
+	function setupListener(){
+		ipc.on('profile-msg', (event, data) => {
+			console.log(data);
+			var myself = data.me;
 
-		let response = await fetch(`https://gis.lrgvdc911.org/php/spartan/api/v2/index.php/users/getUserById/?id=${isme[1]}`)
+			lblEdit = (myself.work_center == "ADMIN") ? "Edit Info" : "Viewing Info";
 
+			if(data.myself || myself.user_id == data.userid) {
+				lblEdit = "Edit Info"
+				if(myself) {
+					
+					fname = myself['first_name'];
+					mname = (myself['middle_name']) ? myself['middle_name'] : "";
+					lname = myself['last_name'];
+					email = myself['email'];
+					src = `${url}${myself['icon2']}`;
+					// name  = (`${fname} ${mname} ${lname}`).trim();
+					subtitle = myself['work_center'];
+				}
+			}else{
+				handleUser(data.userid);
+			}
+		});
+	}
+
+	async function handleUser(userid) {
+		let response = await fetch(`https://gis.lrgvdc911.org/php/spartan/api/v2/index.php/users/getUserById/?id=${userid}`)
 		let json = await response.json();
-		console.log(json);
-
+		
 		if(json.user) {
 			user = json.user;
-			console.log(user);
+			//console.log(user);
 			fname = user['first_name'];
 			mname = (user['middle_name']) ? user['middle_name'] : "";
 			lname = user['last_name'];
 			email = user['email'];
 			src = `${url}${user['icon2']}`;
-			name  = (`${fname} ${mname} ${lname}`).trim();
+			//name  = (`${fname} ${mname} ${lname}`).trim();
 			subtitle = user['work_center'];
 		}
-
-
-	});
+	}
+	
 
 	function onClickImage() {
 		fileEle.click();
@@ -128,67 +152,92 @@
 				<input accept="image/*" on:change={onChange} bind:this={fileEle} type="file" />
 				<img on:error={handleLoadError} on:click={onClickImage} {src} alt="" class="avatar">
 				<div class="grid-container">
-					<div class="title">{name}</div>
+					<div class="title">{full_name}</div>
 					<div id="btn">
 						{#if changepic}
 							<button on:click={handleReset} class="button primary">Reset</button>
 						{/if}
-						
 					</div>
 				</div>
 				
 				<div class="subtitle">{subtitle}</div>
 				
 			</div>
-			<ul class="skills">
-				<li>
-					<div class="text-bold">6</div>
-					<div>TICKETS</div>
-				</li>
-				<li>
-					<div class="text-bold">4</div>
-					<div>SUBDIVISIONS</div>
-				</li>
-				<!-- <li>
-					<div class="text-bold">36</div>
-					<div>FILMS</div>
-				</li> -->
-			</ul>
+				<ul class="skills">
+					<li>
+						<div class="text-bold">{working_tickets}</div>
+						<div>TICKETS</div>
+					</li>
+					<li>
+						<div class="text-bold">{working_worksheets}</div>
+						<div>SUBDIVISIONS</div>
+					</li>
+					<!-- <li>
+						<div class="text-bold">36</div>
+						<div>FILMS</div>
+					</li> -->
+				</ul>
 			<hr >
 			<div class="container">
 					<h2>{lblEdit}</h2>
-					<form>
-						<div class="form-group">
-							<label>First Name</label>
-							<input bind:value={fname} type="text" placeholder="Enter First NAME"/>
-						</div>
-						<div class="form-group">
-							<label>Middle Name</label>
-							<input bind:value={mname} type="text" placeholder="Enter Middle NAME"/>
-						</div>
-						<div class="form-group">
-							<label>Last Name</label>
-							<input bind:value={lname} type="text" placeholder="Enter Last NAME"/>
-						</div>
-						<div class="form-group">
-							<label>E-Mail (Username)</label>
-							<input bind:value={email} type="text" placeholder="Enter E-Mail"/>
-						</div>
+					{#if lblEdit == "Edit Info"}
+						 <form>
+								<div class="form-group">
+									<label>First Name</label>
+									<input bind:value={fname} type="text" placeholder="Enter First NAME"/>
+								</div>
+								<div class="form-group">
+									<label>Middle Name</label>
+									<input bind:value={mname} type="text" placeholder="Enter Middle NAME"/>
+								</div>
+								<div class="form-group">
+									<label>Last Name</label>
+									<input bind:value={lname} type="text" placeholder="Enter Last NAME"/>
+								</div>
+								<div class="form-group">
+									<label>E-Mail (Username)</label>
+									<input bind:value={email} type="text" placeholder="Enter E-Mail"/>
+								</div>
 
-						<div class="form-group">
-							<label>Update Password</label>
-							<input bind:value={password} type="text" placeholder="Enter E-Mail"/>
-						</div>
+								<div class="form-group">
+									<label>Update Password</label>
+									<input bind:value={password} type="text" placeholder="Enter E-Mail"/>
+								</div>
 
-						<div class="form-group">
-							<label>Re-Enter Passwrod</label>
-							<input bind:value={password2} type="text" placeholder="Enter E-Mail"/>
-						</div>
-						
-						<div class="form-group">
-							<button type="button" class="button primary">Update Profile</button>
-						</div>
+								<div class="form-group">
+									<label>Re-Enter Passwrod</label>
+									<input bind:value={password2} type="text" placeholder="Enter E-Mail"/>
+								</div>
+
+								<div class="form-group">
+									<button type="button" class="button primary">Update Profile</button>
+								</div>
 						</form>
+					{:else}
+						<table class="table striped" style="color: inherit;">
+							<tbody>
+							    <tr>
+								 	<td>First Name</td>
+									<td>{fname}</td>
+								 </tr>
+								  <tr>
+								 	<td>Middle Name</td>
+									<td>{mname}</td>
+								 </tr>
+								 <tr>
+								 	<td>Last Name</td>
+									 <td>{lname}</td>
+								 </tr>
+								 <tr>
+								 	<td>E-mail</td>
+									<td>{email}</td>
+								 </tr>
+							</tbody>
+								
+						</table>	
+					
+					{/if}
+					
 			</div>
 			
 </div>
