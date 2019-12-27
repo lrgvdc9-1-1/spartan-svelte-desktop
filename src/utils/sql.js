@@ -10,6 +10,11 @@ export default class SQL {
         return this.client_status;
     }
 
+    getOrganizationNames(){
+        console.log(this.api['company']['names']);
+        return this.pool.query(this.api['company']['names'])
+    }
+
     getOrganizationTickets(organization_id, url = null) {
         if(this.client_status) {
             return this.pool.query(this.api['tickets']['organization'], [organization_id]);
@@ -57,12 +62,7 @@ export default class SQL {
 
      getActiveUsers()
     {
-        if(this.client_status) {
-    
-            return this.pool.query(this.api.users.active);
-        }else{
-            
-        }
+        return this.pool.query(this.api.users.active);
     }
 
     getAttachments(whereInfo) {

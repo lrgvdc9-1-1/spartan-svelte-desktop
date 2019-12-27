@@ -1,12 +1,13 @@
 export default class User {
 
-    constructor(uid, fname, mname, lname, email, icon, orga, wcenter) {
+    constructor(uid, fname, mname, lname, email, icon, orga,orga_name, wcenter) {
         this.user_id    = uid;
         this.first_name = fname;
         this.middle_name = mname;
         this.last_name  = lname;
         this.email      = email;
         this.icon2       = icon;
+        this.org_name   = orga_name
         this.organization_id = orga;
         this.work_center = wcenter;
         this.socket_id = 0;

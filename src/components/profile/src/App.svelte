@@ -16,6 +16,7 @@
 	let mname;
 	let lname;
 	let email;
+	let company;
 
 	let password;
 	let password2;
@@ -44,8 +45,8 @@
 					lname = myself['last_name'];
 					email = myself['email'];
 					src = `${url}${myself['icon2']}`;
-					// name  = (`${fname} ${mname} ${lname}`).trim();
-					subtitle = myself['work_center'];
+					company = myself['org_name'];
+					subtitle =  `${myself['org_name']} - ${myself['work_center']}`;
 				}
 			}else{
 				handleUser(data.userid);
@@ -65,14 +66,15 @@
 			lname = user['last_name'];
 			email = user['email'];
 			src = `${url}${user['icon2']}`;
-			//name  = (`${fname} ${mname} ${lname}`).trim();
-			subtitle = user['work_center'];
+			company = user['org_name'];
+			subtitle = `${user['org_name']} - ${user['work_center']}`;
 		}
 	}
 	
 
 	function onClickImage() {
-		fileEle.click();
+		
+		if(lblEdit == "Edit Info") fileEle.click();
 	}
 
 	function onChange() {
@@ -231,6 +233,11 @@
 								 <tr>
 								 	<td>E-mail</td>
 									<td>{email}</td>
+								 </tr>
+
+								 <tr>
+								 	<td>Organization</td>
+									<td>{company}</td>
 								 </tr>
 							</tbody>
 								
