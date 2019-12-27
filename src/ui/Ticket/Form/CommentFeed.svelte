@@ -137,8 +137,15 @@
         grid-template-columns: 90% 10%;
         
     }
+    
+    .grid-messages {
+        display: grid;
+        grid-template-columns: 80% 20%;
+    }
+
     .grid-item {
         padding: 2px;
+     
     }
    
 
@@ -171,7 +178,7 @@
 
         {#each messages as feed, i (feed.id_com)}
             <li>
-                <div class="grid-container" class:highlight={feed.confirm}>
+                <div class="grid-messages" class:highlight={feed.confirm}>
                     <div class="grid-item" id="accountInfo">
                         <img width="40" height="40" src="{getImg(feed)}" alt="Icon" />
                         <span>{feed.first_name + " " + feed.last_name}</span>
@@ -180,6 +187,7 @@
                     <div class="grid-item" id="date">
                         <span class="mif-alarm"></span>
                         <span>{FormatDate(feed.time_track)}</span>
+                        <br>
                         {#if feed.user_id == isMe.UID}
                             <button on:click="{()=> { feed.edit = true; handleEdit()}}" class="action-button"><span class="mif-pencil"></span></button>
 
