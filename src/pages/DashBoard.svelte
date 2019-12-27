@@ -93,21 +93,19 @@
     }
 
     function viewProfile(e) {
-        console.log(e);
-        console.log(isMe);
+
         let element = e.target;
         let data = element.dataset;
-
-
-        let edit = (isMe.work_center == "ADMIN") ? "edit" : "view";
-        let win = window.open(`${dirname}/components/Profile/index.html#${data['id']}#${edit}#${isMe.work_center}`, 'profile');
+        ipc.send('show-profile', {"me": isMe, "userid" : data['id'], "myself" : false});
+        // let edit = (isMe.work_center == "ADMIN") ? "edit" : "view";
+        // let win = window.open(`${dirname}/components/Profile/index.html#${data['id']}#${edit}#${isMe.work_center}`, 'profile');
    
-    var timer = setInterval(function() { 
-        if(win.closed) {
-            clearInterval(timer);
-            alert('closed');
-        }
-    }, 500);
+        // var timer = setInterval(function() { 
+        //     if(win.closed) {
+        //         clearInterval(timer);
+        //         alert('closed');
+        //     }
+        // }, 500);
     }
 
 </script>
@@ -185,7 +183,7 @@
                                 </div>
                                 <div class="card-footer">
                                     <button on:click={() => { navigateTo(`#viewTicket/${ticket.id_ticket}/${ticket.objectid}`)}} class="flat-button mif-note-add" ></button>
-                                    <button class="flat-button mif-tag"></button>
+                                    <button class="flat-button mif-location"></button>
                                     <button class="flat-button mif-share"></button>
                                 </div>
                             </div>
@@ -233,7 +231,7 @@
                                 </div>
                                 <div class="card-footer">
                                     <button on:click={() => { navigateTo(`#viewTicket/${ticket.id_ticket}/${ticket.objectid}`)}} class="flat-button mif-note-add" ></button>
-                                    <button class="flat-button mif-tag"></button>
+                                    <button class="flat-button mif-location"></button>
                                     <button class="flat-button mif-share"></button>
                                 </div>
                             </div>
