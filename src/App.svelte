@@ -17,6 +17,7 @@
   //Main API EndPOINT
 	let url = "https://gis.lrgvdc911.org/php/spartan/api/v2/index.php/";
   let spartans = [];
+  let organizations_name = [];
   let isMe = null;
   let sql = new SQL(pool, api, client_status)
   let login = false;
@@ -34,10 +35,8 @@
   let socket = io('http://hchapa:3000'); 
   
   onMount(async () => {
-      //alert(dirname);
-
       
-
+      
       socket.on("online", (users) => { // Collect all the users...
           //Reset everythign to no socket id, and online off everyone.
           spartans.forEach(spartan => {
@@ -64,14 +63,19 @@
   });
 
   //Once the application has sign in then this can happen..
-  function queryDB() {
+  async function queryDB() {
       console.timeEnd("init");
       let sql = new SQL(pool, api, client_status)
       loginComponent.setSQL(sql);
+
+      var res_orga = await sql.getOrganizationNames();
+      //console.log(res_orga);
+      organizations_name = res_orga.rows || [];
+      console.log(organizations_name);
       sql.getActiveUsers().then((res) => {
         
          res.rows.forEach(em => {
-            spartans.push(new User(em.user_id, em.first_name, em.middle_name, em.last_name, em.email, em.icon2, em.organization_id, em.work_center));
+            spartans.push(new User(em.user_id, em.first_name, em.middle_name, em.last_name, em.email, em.icon2, em.organization_id, em.org_name, em.work_center));
          });
          console.log(spartans);
       }).catch(err => console.log("Error executing query", err.stack));
@@ -139,15 +143,7 @@
     //Communicate with the main thread to toggle profile..
     
     ipc.send('show-profile', {"me" : isMe, "myself" : true});
-   
-    // let win = window.open(`${dirname}/components/Profile/index.html#${isMe.icon2}#${isMe.UID}#edit#${isMe.work_center}`, 'profile');
-   
-    // var timer = setInterval(function() { 
-    //     if(win.closed) {
-    //         clearInterval(timer);
-    //         alert('closed');
-    //     }
-    // }, 500);
+  
   }
 
 
