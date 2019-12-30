@@ -108,6 +108,16 @@
         // }, 500);
     }
 
+    function onZoomLocation(obj) {
+        console.log("ZOOMING ON LOL");
+        window.ipc.send("show-gis-window", {
+          "action": "zoomToTicket",
+          "data"  : obj
+
+        });
+        
+    }
+
 </script>
 <style>
     .listview {
@@ -183,7 +193,7 @@
                                 </div>
                                 <div class="card-footer">
                                     <button on:click={() => { navigateTo(`#viewTicket/${ticket.id_ticket}/${ticket.objectid}`)}} class="flat-button mif-note-add" ></button>
-                                    <button class="flat-button mif-location"></button>
+                                    <button on:click={()=> {onZoomLocation(ticket)}} class="flat-button mif-location"></button>
                                     <button class="flat-button mif-share"></button>
                                 </div>
                             </div>
@@ -231,7 +241,7 @@
                                 </div>
                                 <div class="card-footer">
                                     <button on:click={() => { navigateTo(`#viewTicket/${ticket.id_ticket}/${ticket.objectid}`)}} class="flat-button mif-note-add" ></button>
-                                    <button class="flat-button mif-location"></button>
+                                    <button on:click={()=> {onZoomLocation(ticket)}} class="flat-button mif-location"></button>
                                     <button class="flat-button mif-share"></button>
                                 </div>
                             </div>
