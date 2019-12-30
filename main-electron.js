@@ -11,6 +11,8 @@ const ps = new Shell({
   noProfile: true
 });
 
+
+
 //Delete all the files on the file directory...
 const directory = `${__dirname}/public/files/`;
 
@@ -45,6 +47,8 @@ let winProfile;
 let winGIS;
 
 function createSplash() {
+
+  const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
       winSplash = new BrowserWindow({
         width: 440,
         height: 400,
@@ -54,17 +58,31 @@ function createSplash() {
 
 
     winProfile = new BrowserWindow({
-      width: 500,
-      height: 850,
-      show: false,
-      frame: false,
-      webPreferences: {
-        nodeIntegration: true
-    }
+        width: 500,
+        height: 850,
+        show: false,
+        frame: false,
+        webPreferences: {
+          nodeIntegration: true
+      }
     })
 
-    winProfile.webContents.openDevTools()
+    winGIS = new BrowserWindow({
+      width: width - 250,
+      height: height - 250,
+      show:false,
+      frame: false, webPreferences:{
+        preload: path.join(__dirname, "./public/components/GIS/js/preload.js")
+      }
+    })
 
+  
+
+    winGIS.loadURL(url.format({
+      pathname: path.join(__dirname, './public/components/GIS/index.html'),
+      protocol: 'file:',
+      slashes: true
+    }))
     winProfile.loadURL(
       url.format({
         pathname: path.join(__dirname, './public/components/Profile/index.html'),
@@ -81,7 +99,7 @@ function createSplash() {
           slashes: true
         })
       );
-      createWindow()
+      createWindow(width, height)
       
       winSplash.once('ready-to-show', () => {
         winSplash.show();
@@ -103,6 +121,7 @@ ipc.on('SvelteAlive', function(event, data){
   
     if(data.action == 'ready') {
       winMain.show();
+     
       if(winSplash){
         winSplash.close();   
         winSplash.destroy();
@@ -132,12 +151,26 @@ ipc.on('hide-profile', (event, data) =>{
    winProfile.hide();
 })
 
+ipc.on('hide-gis-window', (event, data) => {
+    winGIS.hide();
+});
+
+ipc.on('show-gis-window', (event,data)=>{
+     winGIS.webContents.openDevTools()
+    if(!winGIS.isVisible()) winGIS.show()
+
+    if(data.action == "zoomToTicket") {
+       winGIS.webContents.send("zoom-to-ticket", data.data);
+    }
+   
+});
 
 
-function createWindow () {
+
+//Create main window for application..
+function createWindow (width, height) {
   // Create the browser window.
-  const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
- //console.log(width * .10);
+ 
  winMain = new BrowserWindow({
     width:  width - 200,
     height: height - 200,
@@ -174,9 +207,17 @@ function createWindow () {
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
     winMain = null;
+
+
+    //Close all the windows available..
     if(winProfile){
       winProfile.destroy();   
       winProfile = null;
+    }
+
+    if(winGIS){
+      winGIS.destroy();
+      winGIS = null;
     }
     
    
