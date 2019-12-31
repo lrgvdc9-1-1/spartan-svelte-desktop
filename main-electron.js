@@ -72,17 +72,20 @@ function createSplash() {
       height: height - 250,
       show:false,
       frame: false, webPreferences:{
+        //nodeIntegration: true
         preload: path.join(__dirname, "./public/components/GIS/js/preload.js")
       }
     })
 
+
+    winGIS.loadURL(`file://${__dirname}/public/components/GIS/index.html`)
   
 
-    winGIS.loadURL(url.format({
-      pathname: path.join(__dirname, './public/components/GIS/index.html'),
-      protocol: 'file:',
-      slashes: true
-    }))
+    // winGIS.loadURL(url.format({
+    //   pathname: path.join(__dirname, './public/components/GIS/index.html'),
+    //   protocol: 'file:',
+    //   slashes: true
+    // }))
     winProfile.loadURL(
       url.format({
         pathname: path.join(__dirname, './public/components/Profile/index.html'),
@@ -156,7 +159,7 @@ ipc.on('hide-gis-window', (event, data) => {
 });
 
 ipc.on('show-gis-window', (event,data)=>{
-     winGIS.webContents.openDevTools()
+    //winGIS.webContents.openDevTools()
     if(!winGIS.isVisible()) winGIS.show()
 
     if(data.action == "zoomToTicket") {
@@ -180,6 +183,10 @@ function createWindow (width, height) {
         nodeIntegration: true
     }
   })
+
+
+  //Set Parent lets see what this does... lol
+  winGIS.parent = winMain;
 
 
  

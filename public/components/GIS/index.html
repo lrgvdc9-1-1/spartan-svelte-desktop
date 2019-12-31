@@ -1,284 +1,236 @@
-<!DOCTYPE html>
-<html en="english">
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SpartanPro</title>
+    <base href="./">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="stylesheet" href="https://js.arcgis.com/3.28/esri/css/esri.css">
+  <style> 
+    html, body { height: 100%; width: 100%; margin: 0; padding: 0; }
+    #map{
+      padding:0;
+    }
+
+    .checkbox {
+    color: #C12F79 !important;
+      } 
+  </style>
+  <link rel="stylesheet" href="https://js.arcgis.com/3.28/esri/themes/calcite/dijit/calcite.css"> 
+  <link rel="stylesheet" href="https://cdn.metroui.org.ua/v4/css/metro-all.min.css">
+  <link rel="stylesheet" href="assets/red-dark.css">
+
   
- <head>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="initial-scale=1,maximum-scale=1,user-scalable=no"
-    />
-    <title>Spartan Map</title>
-    <link rel="stylesheet" href="https://js.arcgis.com/4.14/esri/themes/light/main.css">
-    <script>
-      
-      (function handleWindowControls() {
-                        // When document has loaded, initialise
-                            document.onreadystatechange = () => {
-                                if (document.readyState == "complete") {
-                                    init();
-                                }
-                            };
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+  <style>
+    .dijitReset {
+        color: #9E2CCF !important;
+      }
+  </style>
 
-                function init() {
-                
-                
-                        closeButton = document.getElementById('close-button');
+<style>
 
-
-                    closeButton.addEventListener("click", event => {
-                        ipc.send('hide-gis-window');
-                    });
-
-                
-                }
-            })();
-    </script>
-    <script src="https://js.arcgis.com/4.14/"></script>
-   
-    <style>
-
-      @font-face {
-            font-family: segoe;
-            src: url(../../fonts/SegMDL2.ttf);
-          }
-
-          html,
-      body {
-        padding: 0;
-        margin: 0;
-        height: 100%;
-        width: 100%;
-        
+  @font-face {
+        font-family: segoe;
+        src: url(../../fonts/SegMDL2.ttf);
       }
 
-      body{
-			font-family: 'Ubuntu', sans-serif;
-          overflow: hidden;
-            color:white !important;
-            
-		}
+ 
 
-      #mapView {
-        width: 100%;
-        height: 96%;
-      }
-            #titlebar {
+        body{
+        font-family: 'Ubuntu', sans-serif;
           
-              width: 100%;
-              height: 4%;
-              background: #05173F;
-              z-index: 2;
-              border-bottom: 2px solid #CAB448;
-          }
-
-          #titlebar #drag-region {
-              width: 100%;
-              height: 100%;
-              cursor: grab;
-              -webkit-app-region: drag;
-          }
-          #titlebar {
-              color: #FFF;
-          }
-          #titlebar #drag-region {
-              display: grid;
-              grid-template-columns: 80px auto 61px;
-          }
-          #window-title {
-              grid-column: 2;
-              display: flex;
-              align-items: center;
-              bottom: 8px;
               
+      }
+
+
+        #titlebar {
+      
+          width: 100%;
+          height: 4%;
+          background: #05173F;
+          z-index: 2;
+          border-bottom: 2px solid #CAB448;
+      }
+
+      #titlebar #drag-region {
+          width: 100%;
+          height: 100%;
+          cursor: grab;
+          -webkit-app-region: drag;
+      }
+      #titlebar {
+          color: #FFF;
+      }
+      #titlebar #drag-region {
+          display: grid;
+          grid-template-columns: 80px auto 61px;
+      }
+      #window-title {
+          grid-column: 2;
+          display: flex;
+          align-items: center;
+          bottom: 8px;
           
-          }
+      
+      }
 
 
-          #window-icon {
-              grid-column: 1;
-              position: relative;
-              z-index:9999;
-              display: flex;
-              align-items: center;
-              margin-left: 8px;
-          }
+      #window-icon {
+          grid-column: 1;
+          position: relative;
+          z-index:9999;
+          display: flex;
+          align-items: center;
+          margin-left: 8px;
+      }
 
-          #window-username {
-              position: absolute;
-              z-index: 4;
-              align-items: center;
-              right: 126px;
-              top: 4px;
-          }
+      #window-username {
+          position: absolute;
+          z-index: 4;
+          align-items: center;
+          right: 126px;
+          top: 4px;
+      }
 
-          #window-username button:hover {
-              cursor: pointer;
-          }
-          #window-title span {
-              overflow: hidden;
-              text-overflow: ellipsis;
-              line-height: 1.5;
-          }
-          #window-controls {
-              top: 0;
-              right: 0;
-              height: 100%;
-              font-family: segoe;
-              font-size: 14px;
-          }
-          #window-controls {
-              -webkit-app-region: no-drag;
-          }
-          #window-controls .button {
-              grid-row: 1 / span 1;
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              width: 100%;
-              height: 100%;
-          }
+      #window-username button:hover {
+          cursor: pointer;
+      }
+      #window-title span {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          line-height: 1.5;
+      }
+      #window-controls {
+          top: 0;
+          right: 0;
+          height: 100%;
+          font-family: segoe;
+          font-size: 14px;
+      }
+      #window-controls {
+          -webkit-app-region: no-drag;
+      }
+      #window-controls .button {
+          grid-row: 1 / span 1;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 100%;
+          height: 100%;
+      }
 
 
 
-          #window-controls .button {
-              user-select: none;
-              color: #BBB;
-              background: transparent;
-          }
-          #window-controls .button:hover {
-              background: rgba(255,255,255,0.2);
-              color: #FFF;
-              cursor: pointer;
-          }
+      #window-controls .button {
+          user-select: none;
+          color: #BBB;
+          background: transparent;
+      }
+      #window-controls .button:hover {
+          background: rgba(255,255,255,0.2);
+          color: #FFF;
+          cursor: pointer;
+      }
 
-          #window-controls #min-button {
-              grid-column: 3;
-          }
-          #window-controls #max-button, #window-controls #restore-button {
-              grid-column: 4;
-          }
-          #window-controls #restore-button {
-              display: none;
-          }
-          #window-controls #close-button {
-              grid-column: 5;
-          }
-          #window-controls #close-button:hover {
-              background: #E81123;
-          }
-          .subMenu {
-              list-style: none;
-              position: absolute;
-              z-index: 5;
-              background: #05173F;
-              width: 109px;
-              top: 18px;
-              /* bottom: 16px; */
-              height: auto;
-              right: -16px;
-              padding: 10px;
+      #window-controls #min-button {
+          grid-column: 3;
+      }
+      #window-controls #max-button, #window-controls #restore-button {
+          grid-column: 4;
+      }
+      #window-controls #restore-button {
+          display: none;
+      }
+      #window-controls #close-button {
+          grid-column: 5;
+      }
+      #window-controls #close-button:hover {
+          background: #E81123;
+      }
+      .subMenu {
+          list-style: none;
+          position: absolute;
+          z-index: 5;
+          background: #05173F;
+          width: 109px;
+          top: 18px;
+          /* bottom: 16px; */
+          height: auto;
+          right: -16px;
+          padding: 10px;
 
-          }
-    </style>
+      }
+</style>
 
-    
-    </style>
- </head>
-  <body>
-    <div id="titlebar">
-      <div id="drag-region" style="cursor: grab !important;">
-        <div id="window-icon">
-          <img width="50" height="50" src="../../assets/spartan_logo.webp" alt="Spartan Logo">
-        </div>
-        <div id="window-title">
+  <script>
+    var dojoConfig = {
+      has: {
+        "esri-featurelayer-webgl": 1
+      }
+    };
+  </script>
+  <script>
+      
+    (function handleWindowControls() {
+                      // When document has loaded, initialise
+                          document.onreadystatechange = () => {
+                              if (document.readyState == "complete") {
+                                  init();
+                              }
+                          };
+
+              function init() {
+              
+              
+                      closeButton = document.getElementById('close-button');
+
+
+                  closeButton.addEventListener("click", event => {
+                    if(window.ipc) {
+                      ipc.send("hide-gis-window");
+                    }  
+                    
+                  });
+
+              
+              }
+          })();
+  </script>
+<link rel="stylesheet" href="styles.77f096946983d876e868.css"></head>
+<body >
+  <div id="titlebar">
+    <div id="drag-region" style="cursor: grab !important;">
+      <div id="window-icon">
+        <img width="50" height="50" src="../../assets/spartan_logo.webp" alt="Spartan Logo">
+      </div>
+      <div id="window-title">
+       
+        <span>Spartan GIS</span>
          
-          <span>Spartan GIS</span>
-           
-        </div>
+      </div>
 
-        <div id="window-controls">
-          
+      <div id="window-controls">
         
+      
 
-        
-          <div class="button" id="close-button">
-            <span>&#xE8BB;</span>
-          </div>
+      
+        <div class="button" id="close-button">
+          <span>&#xE8BB;</span>
         </div>
       </div>
     </div>
-    <div id="mapView"></div>
-    <script>
+  </div>
+  <app-root></app-root>
 
-      // import MapView from require("esri/views/MapView");
-      // import WebMap from require("esri/WebMap");
-
-      //   var webmap = new WebMap({
-      //     portalItem: {
-      //       // autocasts as new PortalItem()
-      //       id: "f2e9b762544945f390ca4ac3671cfa72"
-      //     }
-      //   });
-
-
-      //       var view = new MapView({
-      //     map: webmap,
-      //     container: "mapView"
-      //   });
-      
-     
-      require(["esri/views/MapView", "esri/WebMap", "esri/geometry"], function(MapView, WebMap, Geometry) {
-        /************************************************************
-         * Creates a new WebMap instance. A WebMap must reference
-         * a PortalItem ID that represents a WebMap saved to
-         * arcgis.com or an on-premise portal.
-         *
-         * To load a WebMap from an on-premise portal, set the portal
-         * url with esriConfig.portalUrl.
-         ************************************************************/
-
-         console.log(Geometry);
-        window.WebMap = new WebMap({
-          portalItem: {
-            // autocasts as new PortalItem()
-            id: "f2e9b762544945f390ca4ac3671cfa72"
-          }
-        });
-
-        /************************************************************
-         * Set the WebMap instance to the map property in a MapView.
-         ************************************************************/
-        window.MapView = new MapView({
-          map: window.WebMap,
-          container: "mapView"
-        });
-
-        ipc.on("zoom-to-ticket", (event, data) => {
-            console.log("I GOT INFORMATION..")
-            console.log(data);
-            if(data.x && data.y) {
-              var pt = new Geometry.Point({
-                  x: data.x,
-                  y: data.y,
-                  spatialReference: 4326
-                });
-                
-                var opts = {
-                  duration: 2000  // Duration of animation will be 5 seconds
-                };
-
-                // go to point at LOD 15 with custom duration
-                window.MapView.goTo({
-                  target: pt,
-                  zoom: 16
-                }, opts);
-            }
-        });
-      });
-
-
-
-
-    </script>
-  </body>
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="https://cdn.metroui.org.ua/v4/js/metro.min.js"></script>
+  <script src="https://js.arcgis.com/3.28/" data-esri-loader="loaded"></script>
+<script src="runtime-es2015.edb2fcf2778e7bf1d426.js" type="module"></script><script src="runtime-es5.edb2fcf2778e7bf1d426.js" nomodule defer></script><script src="polyfills-es5.c81d8d06944a69a03202.js" nomodule defer></script><script src="polyfills-es2015.b985f6665c276f6653d5.js" type="module"></script><script src="main-es2015.f329ec513a77d1ce1906.js" type="module"></script><script src="main-es5.f329ec513a77d1ce1906.js" nomodule defer></script></body>
 </html>
