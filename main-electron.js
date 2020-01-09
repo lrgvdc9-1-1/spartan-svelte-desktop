@@ -78,6 +78,7 @@ function createSplash() {
     })
 
 
+    //  winGIS.loadURL('http://localhost:4200/');
     winGIS.loadURL(`file://${__dirname}/public/components/GIS/index.html`)
   
 
@@ -102,11 +103,17 @@ function createSplash() {
           slashes: true
         })
       );
+      
+    
+      
+      
       createWindow(width, height)
       
       winSplash.once('ready-to-show', () => {
         winSplash.show();
       });
+
+
    
 }
 
@@ -148,7 +155,7 @@ ipc.on("show-profile", (event, data)  => {
     winProfile.webContents.send('profile-msg', data);
      
      
-    });
+});
 
 ipc.on('hide-profile', (event, data) =>{
    winProfile.hide();
@@ -158,15 +165,31 @@ ipc.on('hide-gis-window', (event, data) => {
     winGIS.hide();
 });
 
+
+//Show GIS WINDOW IF NOT OPEN..
+//If open don't do nothing...
 ipc.on('show-gis-window', (event,data)=>{
-    //winGIS.webContents.openDevTools()
+    winGIS.webContents.openDevTools()
     if(!winGIS.isVisible()) winGIS.show()
 
-    if(data.action == "zoomToTicket") {
-       winGIS.webContents.send("zoom-to-ticket", data.data);
-    }
-   
 });
+
+ipc.on('window-gis-events', (event, data) => {
+   console.log(data.event);
+   winGIS.webContents.send(data.event, data.send);
+});
+
+ipc.on('send-gis-user', (event,data) => {
+    winGIS.webContents.send('get-user-info', data);
+});
+
+ipc.on('window-main', (event, data) => {
+
+  winMain.webContents.send(data.event, data.send);
+
+})
+
+
 
 
 
