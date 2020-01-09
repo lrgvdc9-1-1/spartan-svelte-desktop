@@ -86,11 +86,16 @@
 
                     dispatch('totalMSG', messages.length);
                 }
+                console.log("NOTIFY IPC")
+                console.log(window.ipc);
+                 ipc.send("window-gis-events", {"event": "ticket-refresh-comments", "send": {"ticketId" : ticketId}});
             })
             //This is tips future me: user_id, first_name, last_name, ticket_number, ticket_comments, time_track, id_com, unshift
             
             //Reset the inserting comments..
             clearMSG();
+
+           
             
         }
         
