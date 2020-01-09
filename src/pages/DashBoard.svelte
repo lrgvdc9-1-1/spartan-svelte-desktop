@@ -110,11 +110,9 @@
 
     function onZoomLocation(obj) {
         console.log("ZOOMING ON LOL");
-        window.ipc.send("show-gis-window", {
-          "action": "zoomToTicket",
-          "data"  : obj
-
-        });
+        window.ipc.send("show-gis-window");
+        window.ipc.send("window-gis-events", {
+            "event" : "zoom-to-ticket", "send" : {obj}})
         
     }
 
