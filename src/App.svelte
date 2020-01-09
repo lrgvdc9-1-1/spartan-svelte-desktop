@@ -31,13 +31,17 @@
   $: console.log(`CHANGING: ${spartans.length}`)
   $: username = (isMe) ? `${isMe.first_name} ${isMe.last_name}` : 'SIGN IN - SPARTANS'
   
+
+
   //Connection to spartan chat server...
   let socket = io('http://hchapa:3000'); 
   
   onMount(async () => {
       
-      
+      ipcNavigationEvents();
       socket.on("online", (users) => { // Collect all the users...
+
+      
           //Reset everythign to no socket id, and online off everyone.
           spartans.forEach(spartan => {
              spartan.SOCKETID = null;
@@ -59,6 +63,8 @@
           //Reassig itself..
           spartans = spartans;
       })
+
+      //Future for comunication esri map with main application..
 
   });
 
@@ -102,14 +108,21 @@
 
     if(isMe) {
         //Let user know I am online...
+        ipc.send('send-gis-user', isMe);
         Audio.play();
         startApp = true;
         socket.emit("aboutme", isMe); //Tell Socket about me..
     }
-    
-    console.log(spartans)
 
+  }
 
+  function ipcNavigationEvents() {
+    if(window.ipc) {
+        window.ipc.on("open-ticket", (event, data) => {
+            navigateTo(`#viewTicket/${data['id_ticket']}/${data['objectid']}`)
+           
+        });
+    }
   }
 
   function onLoginReady() {
