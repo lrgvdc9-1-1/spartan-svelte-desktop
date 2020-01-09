@@ -552,15 +552,15 @@ textarea.focused,
   color: #ffffff;
 }
 .window .window-caption {
-  background-color: #9E2CCF;
+  background-color: #1C2E59;
   color: #ffffff;
 }
 .window .window-content {
-  background-color: #201325;
+  
   color: #919396;
 }
 .resize-element::after {
-  border-bottom-color: #9E2CCF;
+  border-bottom-color: #1C2E59;
 }
 .popover {
   background-color: #252525;
