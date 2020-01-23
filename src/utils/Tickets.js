@@ -214,6 +214,21 @@ export default class Tickets {
     return data;
   }
 
+  updateFormById(elemId, value) {
+     
+    if(this.formInputs) {
+      var size = this.formInputs.length;
+      for(var i = 0; i < size; i++){
+          var elem = this.formInputs[i];
+          if(elem.id == elemId) {
+             elem.value = value;
+             break;
+          }
+      }
+      
+    }
+  }
+
   updateForm(row) {
       if(row.length == 1) { 
 
