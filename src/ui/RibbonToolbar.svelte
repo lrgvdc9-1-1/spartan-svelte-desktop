@@ -269,6 +269,7 @@
                 <Route path="#WalkIns" ><DashBoardCard {isMe} {url} path={"addressticket/getAllWalkIn/"} /></Route>
                 <Route path="#AllOpenTickets" ><DashBoardCard {isMe} {url} path={`addressticket/getAllPendingTicketsByOrga2/?id=${isMe.ORGANIZATION}`} /></Route>
                 <Route path="#newTicket"  ><Ticket on:toolbar={(event)=>{display = event.detail.text}} {url} {socket} {isMe} {spartans} newTicket={true}  action={action} /></Route>
+                <Route path="#newTicket/:lat/:long" let:router  ><Ticket on:toolbar={(event)=>{display = event.detail.text}} {router} {url} {socket} {isMe} {spartans} newTicket={true}  action={action} /></Route>
                 <Route path="#viewTicket/:idTicket/:objectid" let:router><Ticket on:toolbar={(event)=>{display = event.detail.text}} {url} {socket} {isMe} {spartans} {router} newTicket={false}  action={action} /></Route>
                 <Route path="*" ><DashBoard {isMe} {url} /></Route>
             </Router>
