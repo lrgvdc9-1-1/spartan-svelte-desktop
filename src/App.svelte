@@ -87,8 +87,9 @@
       }).catch(err => console.log("Error executing query", err.stack));
 
       loginComponent.checkOnSave();
-
-      ipc.send('SvelteAlive', {"action" : "ready"});
+      window['ipc'].send("window-action", {"show" : true, "name" : "Main"});
+      window['ipc'].send('window-action', {"close" : true, "name" : "Splash"});
+     
   }
 
   function onSelectUser(event) {
@@ -108,7 +109,7 @@
 
     if(isMe) {
         //Let user know I am online...
-        ipc.send('send-gis-user', isMe);
+        ipc.send('window-action', {"event" : 'get-user-info' , 'name' : 'GIS', "send" : isMe});//send-gis-user', isMe);
         Audio.play();
         startApp = true;
         socket.emit("aboutme", isMe); //Tell Socket about me..
@@ -120,6 +121,17 @@
     if(window.ipc) {
         window.ipc.on("open-ticket", (event, data) => {
             navigateTo(`#viewTicket/${data['id_ticket']}/${data['objectid']}`)
+           
+        });
+        window.ipc.on("new-ticket", (event, data) => {
+            
+            if(data['lat'] && data['long']) {
+                 
+                 var lat = data['lat'].toString().replace(".", ",");
+                 var lng = data['long'].toString().replace(".", ",");
+                 navigateTo(`#newTicket/${lat}/${lng}`)
+           
+            }
            
         });
     }
