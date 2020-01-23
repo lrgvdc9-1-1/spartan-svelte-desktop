@@ -96,7 +96,16 @@
 
         let element = e.target;
         let data = element.dataset;
-        ipc.send('show-profile', {"me": isMe, "userid" : data['id'], "myself" : false});
+        window['ipc'].send("window-action", {
+            "show": true,
+            "name"  : "Profile"
+        })
+        ipc.send('window-action', {
+            "name" : "Profile",
+            "event": "profile-msg",
+            "sent" : {"me": isMe, "userid" : data['id'], "myself" : false}
+            
+            });
         // let edit = (isMe.work_center == "ADMIN") ? "edit" : "view";
         // let win = window.open(`${dirname}/components/Profile/index.html#${data['id']}#${edit}#${isMe.work_center}`, 'profile');
    
@@ -110,8 +119,10 @@
 
     function onZoomLocation(obj) {
         console.log("ZOOMING ON LOL");
-        window.ipc.send("show-gis-window");
-        window.ipc.send("window-gis-events", {
+        //window.ipc.send("show-gis-window");
+        window.ipc.send("window-action", {"show" : true, "name" : "GIS"});
+        window.ipc.send("window-action", {
+            "name" : "GIS",
             "event" : "zoom-to-ticket", "send" : {obj}})
         
     }
