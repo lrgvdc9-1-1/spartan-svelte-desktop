@@ -31,7 +31,7 @@
 
 	function setupListener(){
 		ipc.on('profile-msg', (event, data) => {
-			console.log(data);
+			
 			var myself = data.me;
 
 			lblEdit = (myself.work_center == "ADMIN") ? "Edit Info" : "Viewing Info";
