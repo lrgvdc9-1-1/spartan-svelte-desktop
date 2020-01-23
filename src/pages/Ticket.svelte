@@ -154,6 +154,14 @@
          
          if(newTicket){
             loading = false;
+            if(router){
+               console.log(router);
+               let lat = router.params['lat'].replace(",", ".");
+               let long = router.params['long'].replace(",",".");
+
+               ticket.updateFormById('lat', lat);
+               ticket.updateFormById('longy', long);
+            }
             // ticket.fetchTicketNumber(api).then(res => res.json())
             // .then(response => 
             // console.log('Success:', response))
@@ -175,6 +183,7 @@
                       
                       totalFeed = parseInt(res.rows[0].count);
                   });
+
                   sql.getTicketForm(ticket.getSQL(), [ticket.objectid]).then(res => {
                      ticket.setOriginal(res)
                      ticket.updateForm(res.rows);
