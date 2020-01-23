@@ -37,7 +37,7 @@
     async function onOpen(file) {
           const response = await fetch(`https://gis.lrgvdc911.org/php/spartan/api/v2/index.php/addressticket/getFileBase64/?path=${file}`);
           const result = await response.json();
-          await ipc.send('SvelteAlive', {"action" : "open","fname": file, "content" : result['content']});
+          await ipc.send('window-action', {"openFile" : true ,"fname": file, "content" : result['content']});
           
           setTimeout(() => {
                dispatch('loading', false);
