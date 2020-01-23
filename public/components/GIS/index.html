@@ -8,9 +8,10 @@
     <base href="./">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
+ 
   <link href="https://fonts.googleapis.com/css?family=Ubuntu&display=swap" rel="stylesheet">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
-  <link rel="stylesheet" href="https://js.arcgis.com/3.28/esri/css/esri.css">
+  <!-- <link rel="stylesheet" href="https://js.arcgis.com/3.28/esri/css/esri.css"> -->
   <style> 
     html, body { height: 100%; width: 100%; margin: 0; padding: 0;overflow: hidden; }
     #map{
@@ -21,7 +22,9 @@
     color: #C12F79 !important;
       } 
   </style>
-  <link rel="stylesheet" href="https://js.arcgis.com/3.28/esri/themes/calcite/dijit/calcite.css"> 
+  <!-- <link rel="stylesheet" href="https://js.arcgis.com/3.28/esri/themes/calcite/dijit/calcite.css">  -->
+  <link rel="stylesheet" href="https://js.arcgis.com/4.14/esri/themes/light/main.css">
+  <script src="https://js.arcgis.com/4.14/" data-esri-loader="loaded"></script>
   <link rel="stylesheet" href="https://cdn.metroui.org.ua/v4/css/metro-all.min.css">
   <link rel="stylesheet" href="assets/red-dark.css">
 
@@ -197,7 +200,7 @@
 
                   closeButton.addEventListener("click", event => {
                     if(window.ipc) {
-                      ipc.send("hide-gis-window");
+                      ipc.send("window-action", {"name" : "GIS", "hide" : true});
                     }  
                     
                   });
@@ -234,6 +237,6 @@
 
   <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
   <script src="https://cdn.metroui.org.ua/v4/js/metro.min.js"></script>
-  <script src="https://js.arcgis.com/3.28/" data-esri-loader="loaded"></script>
-<script src="runtime-es2015.edb2fcf2778e7bf1d426.js" type="module"></script><script src="runtime-es5.edb2fcf2778e7bf1d426.js" nomodule defer></script><script src="polyfills-es5.c81d8d06944a69a03202.js" nomodule defer></script><script src="polyfills-es2015.b985f6665c276f6653d5.js" type="module"></script><script src="main-es2015.1658ed121f313ed3f54a.js" type="module"></script><script src="main-es5.1658ed121f313ed3f54a.js" nomodule defer></script></body>
+  <!-- <script src="https://js.arcgis.com/3.28/" data-esri-loader="loaded"></script> -->
+<script src="runtime-es2015.edb2fcf2778e7bf1d426.js" type="module"></script><script src="runtime-es5.edb2fcf2778e7bf1d426.js" nomodule defer></script><script src="polyfills-es5.c81d8d06944a69a03202.js" nomodule defer></script><script src="polyfills-es2015.b985f6665c276f6653d5.js" type="module"></script><script src="main-es2015.6649ae28857e1330d333.js" type="module"></script><script src="main-es5.6649ae28857e1330d333.js" nomodule defer></script></body>
 </html>
