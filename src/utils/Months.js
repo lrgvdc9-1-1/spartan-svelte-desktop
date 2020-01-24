@@ -1,6 +1,9 @@
 export const  Months = [ "January", "February", "March", "April", "May", "June",
 "July", "August", "September", "October", "November", "December" ];
+export const MonthsAbbre = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 export const WeekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+export const WeekDays2 = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+export const FullWeekDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 export const  FormatDate = function(date) {
 
@@ -13,8 +16,6 @@ export const  FormatDate = function(date) {
         let year  = date.getFullYear();
 
         return `${month} - ${day} - ${year}`;
-   
-    
 }
 
 export const CalendarPage = function(date, currentMonth) {
