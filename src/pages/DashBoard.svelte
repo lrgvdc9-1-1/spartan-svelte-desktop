@@ -103,7 +103,7 @@
         ipc.send('window-action', {
             "name" : "Profile",
             "event": "profile-msg",
-            "sent" : {"me": isMe, "userid" : data['id'], "myself" : false}
+            "send" : {"me": isMe, "userid" : data['id'], "myself" : false}
             
             });
         // let edit = (isMe.work_center == "ADMIN") ? "edit" : "view";

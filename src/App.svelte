@@ -164,11 +164,20 @@
 
   function onProfile() {
     shMenu = false;
-
+   
     //Communicate with the main thread to toggle profile..
-    
-    ipc.send('show-profile', {"me" : isMe, "myself" : true});
-  
+     window['ipc'].send("window-action", {
+            "show": true,
+            "name"  : "Profile"
+        })
+
+        ipc.send('window-action', {
+            "name" : "Profile",
+            "event": "profile-msg",
+            "send" : {"me" : isMe, "myself" : true}
+            
+            });
+
   }
 
 
