@@ -183,7 +183,7 @@
 
 
                     closeButton.addEventListener("click", event => {
-                        ipc.send('hide-profile');
+                        ipc.send('window-action', {"name" : "Profile", "hide" : true});
                     });
 
                 
