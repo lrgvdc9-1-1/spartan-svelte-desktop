@@ -5,6 +5,8 @@
     export let msg;
     export let clsBig = true;
     export let clsSmall = false;
+    export let clsError = false;
+    export let noyes = true;
 
     const dispatch = createEventDispatcher();
     
@@ -35,9 +37,9 @@
     }
 
 </style>
-<div transition:fade class="window" class:small={clsSmall} class:big={clsBig}>
-    <div class="window-caption">
-        <span class="icon mif-windows"></span>
+<div transition:fade class="window"  class:small={clsSmall} class:big={clsBig}>
+    <div class="window-caption" class:bg-red={clsError}>
+        <span class="icon mif-info"></span>
         <span class="title">{title}</span>
         <div class="buttons">
          
@@ -47,8 +49,11 @@
     <div class="window-content p-2">
         {msg}
         <br>
-        <button on:click={onClose} class="button">No</button>
-        <button on:click="{()=> {dispatch('confirm', true)}}" class="button primary">Yes</button>
 
+        {#if noyes}
+            <button on:click={onClose} class="button">No</button>
+            <button on:click="{()=> {dispatch('confirm', true)}}" class="button primary">Yes</button>
+        {/if}
+    
     </div>
 </div>
