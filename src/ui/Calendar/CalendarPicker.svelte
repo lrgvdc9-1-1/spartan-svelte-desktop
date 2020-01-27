@@ -7,24 +7,74 @@
      
     export let footer = false;
     let element;
-    let today = new Date();
-    let alwaysToday = new Date(2020, 1, 20);
-    let moveUp = false;
+    let today = new Date(); //This variable handles the calendar changes..
+    let alwaysToday = new Date();
     let choosen = null;
     let redrawing = false;
     let calendars = [];
+    let current_month = 0;
 
-    $: MonthTitle = Months[today.getMonth()];
+    $: MonthTitle = Months[current_month];
     $: Todaylbl  = `${FullWeekDays[alwaysToday.getDay()]}, ${MonthsAbbre[alwaysToday.getMonth()]} ${alwaysToday.getDate()}`;
 
     onMount(() => {
          today = new Date(today.getFullYear(), today.getMonth(), 1);
+         current_month = today.getMonth();
          calendars =  getDaysInMonth(today, new Date(today.getFullYear(), today.getMonth(), daysInMonth(today.getMonth(), today.getFullYear())));
          redrawing = true;
          //console.table(calendars);
     });
 
+    export function reset() {
 
+        if(choosen) {
+             today = new Date(choosen.getFullYear(), choosen.getMonth(), 1);
+        }else{
+             today = new Date(alwaysToday.getFullYear(), alwaysToday.getMonth(), 1);
+        }
+         current_month = today.getMonth();
+         calendars =  getDaysInMonth(today, new Date(today.getFullYear(), today.getMonth(), daysInMonth(today.getMonth(), today.getFullYear())));
+    }
+
+    export function removeChoosen() {
+        choosen = null;
+    }
+
+    function onPrevMonth(){
+        if(current_month == 0) {
+            current_month = 11;
+            today = new Date(today.getFullYear() - 1, current_month, 1);
+            calendars =  getDaysInMonth(today, new Date(today.getFullYear(), today.getMonth(), daysInMonth(today.getMonth(), today.getFullYear())));
+        }else{
+            current_month -= 1;
+            today = new Date(today.getFullYear(), current_month, 1);
+            calendars =  getDaysInMonth(today, new Date(today.getFullYear(), today.getMonth(), daysInMonth(today.getMonth(), today.getFullYear())));
+        }
+    }
+
+    function onNextMonth(){
+       if(current_month == 11) {
+            current_month = 0;
+            today = new Date(today.getFullYear() + 1, current_month, 1);
+            calendars =  getDaysInMonth(today, new Date(today.getFullYear(), today.getMonth(), daysInMonth(today.getMonth(), today.getFullYear())));
+        }else{
+            current_month += 1;
+            today = new Date(today.getFullYear(), current_month, 1);
+            calendars =  getDaysInMonth(today, new Date(today.getFullYear(), today.getMonth(), daysInMonth(today.getMonth(), today.getFullYear())));
+        }
+    }
+
+    function onNextYear(){
+        let year = today.getFullYear() + 1;
+        today = new Date(year, current_month, 1);
+        calendars =  getDaysInMonth(today, new Date(today.getFullYear(), today.getMonth(), daysInMonth(today.getMonth(), today.getFullYear())));
+    }
+
+    function onPrevYear() {
+        let year = today.getFullYear() - 1;
+        today = new Date(year, current_month, 1);
+        calendars =  getDaysInMonth(today, new Date(today.getFullYear(), today.getMonth(), daysInMonth(today.getMonth(), today.getFullYear())));
+    }
 
     function getDaysInMonth(today, lastDay) {
         var date = new Date(today);
@@ -76,6 +126,35 @@
       return 32 - new Date(iYear, iMonth, 32).getDate();
     }
 
+    function onSelect(e) {
+        if(element) { //IF we have something selected..
+            
+            calendars[element.dataset.mindex][element.dataset.index].choosen = false;
+            element = e.target || e.srcElement;
+            calendars[element.dataset.mindex][element.dataset.index].choosen = true;
+            choosen = calendars[element.dataset.mindex][element.dataset.index].date;
+        }else{ //First time ever click..
+            element = e.target || e.srcElement;
+            calendars[element.dataset.mindex][element.dataset.index].choosen = true;
+            choosen = calendars[element.dataset.mindex][element.dataset.index].date;
+        }
+        
+        
+    }
+
+    export function getSelected() {
+        return choosen;
+    }
+
+    export function isSelected() {
+
+        return (choosen == null) ? true : false;
+    }
+
+    export function getFormatDate() {
+        return `${choosen.getFullYear()}-${(choosen.getMonth() + 1)}-${choosen.getDate()}`
+    }
+
   </script>
   
   <div class=" calendar">
@@ -85,21 +164,23 @@
         </div>
         <div class="calendar-content">
             <div class="calendar-toolbar">
-                <span class="prev-month"><span class="default-icon-chevron-left"></span></span>
+                <span on:click={onPrevMonth} class="prev-month">
+                    <span class="default-icon-chevron-left"></span>
+                </span>
                 <span class="curr-month">{MonthTitle}</span>
-                <span class="next-month">
+                <span on:click={onNextMonth} class="next-month">
                     <span class="default-icon-chevron-right"></span>
                 </span>
-                <span class="prev-year"><span class="default-icon-chevron-left"></span></span>
-                <span class="curr-year">2020</span>
-                <span class="next-year">
+                <span on:click={onPrevYear} class="prev-year"><span class="default-icon-chevron-left"></span></span>
+                <span class="curr-year">{today.getFullYear()}</span>
+                <span on:click={onNextYear} class="next-year">
                     <span class="default-icon-chevron-right"></span>
                 </span>
             </div>
            <WeekDays />
             <div class="days">
-                {#each calendars as days}
-                     <Week days={days} />
+                {#each calendars as days, i}
+                     <Week on:click={onSelect} days={days} index={i} />
                 {/each}
  
             </div>
