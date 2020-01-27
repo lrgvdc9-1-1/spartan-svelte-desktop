@@ -19,6 +19,7 @@
     let sql = new SQL(pool, api, client_status)
     let start = 0;
     let end   = 200;
+    let showRecs = 200;
     let loading = true;
     let arrs;
     let arrt;
@@ -33,13 +34,31 @@
 
     function getAllArchives(){
         start = 0;
-        end = 200;
+        end = showRecs;
         if(isMe['org_name'].includes('LRGVDC')) {
             sql.getTicketStatus(['00']).then((res) => {
                 archives = res.rows;
                 loading = false;
             }).catch((error) => {
                 loading = false;
+            })
+        }
+    }
+
+    //Filter By Calendar
+    function getFilterArchivesByCalendar(from, to){
+        start = 0;
+        end = showRecs;
+        
+        if(isMe['org_name'].includes('LRGVDC')) {
+            sql.getFilterArchive(['00', from, to]).then((res) => {
+                archives = res.rows;
+                end = (res.rows.length < showRecs) ? res.rows.length : showRecs;
+                loading = false;
+                calendar.onToggle();
+            }).catch((error) => {
+                loading = false;
+                 calendar.onToggle();
             })
         }
     }
@@ -64,19 +83,19 @@
 
     function onFoward() {
 
-        if((start + 200) < archives.length) {
-            start += 200;
-            end += 200;
+        if((start + showRecs) < archives.length) {
+            start += showRecs;
+            end += showRecs;
         }
     }
 
     function onBackwards() {
-        if((start - 200) > 0) {
-            start -= 200;
-            end -= 200;
+        if((start - showRecs) > 0) {
+            start -= showRecs;
+            end -= showRecs;
         }else{
             start = 0;
-            end = 200;
+            end = showRecs;
         }
 
         
@@ -92,7 +111,7 @@
 
     function onReset(){
         start = 0;
-        end = 200;
+        end = showRecs;
         arrBDis =  "none";
    
     }
@@ -100,11 +119,21 @@
 
     async function onSearch(e) {
         loading = true;
-        var value = e.detail.toUpperCase();
-        viewing = archives.filter((ticket) => ticket['cfirst_name'] == value || ticket['clast_name'] == value);
-        loading = false;       
+        var value = `%${e.detail.toUpperCase()}`;
+         if(isMe['org_name'].includes('LRGVDC')) { //We search all in the database...
+            sql.searchArchiveTickets([value, '00']).then((res) => {
+                archives = res.rows;
+                end = (res.rows.length < showRecs) ? res.rows.length : showRecs;
+                loading = false;
+            }).catch((error) => {
+                loading = false;
+            })
+        }
+
+           
     }
 
+    //This handles the popup menu option was press..
     function onHandle(e) {
         arrs.onClose();
         switch (e.detail) {
@@ -113,6 +142,7 @@
                 loading = true;
                 
                 getAllArchives();
+                calendar.removeChoosen();
                 break;
             case "CALENDAR":
                 calendar.onToggle();
@@ -122,6 +152,11 @@
             default:
                 break;
         }
+    }
+
+    function onFilterByCalendar(e) {
+        //console.log(e.detail);
+        getFilterArchivesByCalendar(e.detail.from, e.detail.to);
     }
 
 </script>
@@ -169,7 +204,7 @@
 <div class="container" style="background: white;color: gray;height: 70vh;">
    
    <div class="grid-container">
-             <h3>Total Rango Archived: {archives.length}</h3>
+             <h3>Total Archived: {archives.length}</h3>
              <div style="margin:auto;">
                 <SearchInput on:search="{onSearch}" title="Search Archive Tickets" />
              </div>
@@ -178,7 +213,7 @@
             </h3>
        </div>
     <ArrowTicket bind:this={arrt} />
-    <CalendarPopUp bind:this={calendar} />
+    <CalendarPopUp on:filter={onFilterByCalendar} bind:this={calendar} />
     <div id="body"  style="background: white;border-radius: 8px; overflow: auto; overflow-x: hidden;height: 58vh;">
         
         <ArrowSearch on:spit={onHandle} bind:this={arrs} />
