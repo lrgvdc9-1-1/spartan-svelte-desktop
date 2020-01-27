@@ -78,6 +78,14 @@ export default class SQL {
         }
     }
 
+    getFilterArchive(whereInfo) {
+        return this.pool.query(this.api.tickets.archive.filter, whereInfo);
+    }
+
+    searchArchiveTickets(whereInfo){
+        return this.pool.query(this.api.tickets.archive.search, whereInfo);
+    }
+
     getRelTelePhone(whereInfo) {
         if(this.client_status) {
             return this.pool.query(this.api.tickets.connections.telephone, whereInfo);
