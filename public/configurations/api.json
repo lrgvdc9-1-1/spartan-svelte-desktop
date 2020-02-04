@@ -11,6 +11,10 @@
         "status" : "SELECT * FROM addressticket where status = $1",
         "attachments" : "SELECT * FROM attachment_ticket where id_ticket = $1",
         "DISTINCT_VALUE" : "SELECT DISTINCT $1 FROM addressticket",
+        "archive" : {
+            "filter": "SELECT * FROM addressticket where sentto = $1 and  created_date  BETWEEN $2 AND $3 order by created_date asc",
+            "search" : "SELECT * FROM addressticket where cfirst_name LIKE $1 AND sentto = $2 or clast_name LIKE $1 AND sentto = $2 or subdivision LIKE $1 AND sentto = $2"
+        },
         "connections" : {
             "propertyId" : "SELECT *, 'Property ID'::text as relation FROM addressticket WHERE objectid != $1 and property_id = $2 order by created_date desc",
             "telephone"  : "SELECT *, 'Telehpone'::text as relation FROM addressticket WHERE objectid != $1 and telephone_land_line like $2 or objectid != $1 and alt_telephone like $2 or objectid != $1 and alt2_telephone like $2 order by created_date desc"

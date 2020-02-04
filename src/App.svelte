@@ -89,6 +89,7 @@
       loginComponent.checkOnSave();
       window['ipc'].send("window-action", {"show" : true, "name" : "Main"});
       window['ipc'].send('window-action', {"close" : true, "name" : "Splash"});
+      window['ipc'].send("window-action", {"event" : "local-network", "name" : "TICKET", "send" : true});
      
   }
 
@@ -166,18 +167,16 @@
     shMenu = false;
    
     //Communicate with the main thread to toggle profile..
-     window['ipc'].send("window-action", {
-            "show": true,
-            "name"  : "Profile"
-        })
-
-        ipc.send('window-action', {
+    ipc.send('window-action', {
             "name" : "Profile",
             "event": "profile-msg",
             "send" : {"me" : isMe, "myself" : true}
             
             });
-
+           window['ipc'].send("window-action", {
+            "show": true,
+            "name"  : "Profile"
+        }) 
   }
 
 
