@@ -102,11 +102,7 @@
     }
 
     function onDisplayMenu(e) {
-        
-        if(archives.length > 0) {
-            arrs.onToggle();
-        }
-
+         arrs.onToggle();
     }
 
     function onReset(){
@@ -158,7 +154,6 @@
         //console.log(e.detail);
         getFilterArchivesByCalendar(e.detail.from, e.detail.to);
     }
-
 </script>
 <style>
     .grid-container {
@@ -209,7 +204,7 @@
                 <SearchInput on:search="{onSearch}" title="Search Archive Tickets" />
              </div>
              <h3 style="text-align: right;">
-             Showing {start + 1} of {end}
+             Showing {((end == 0) ? 0 : start + 1)} of {end}
             </h3>
        </div>
     <ArrowTicket bind:this={arrt} />

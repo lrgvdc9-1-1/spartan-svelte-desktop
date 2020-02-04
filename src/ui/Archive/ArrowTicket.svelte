@@ -48,15 +48,22 @@
         console.log(this);
     }
 
-    function onDrag(e) {
-        e.preventDefault();
-       //display = "none";
+    function onDrag() {
+
         hidden = true;
        setTimeout(() => {
            display = 'none';
            hidden = false;
        }, 1700);
     }
+
+    function sendInfo() {
+        if(ticket) {
+            onDrag(); 
+            window['ipc'].send("window-action", {"show": true, "name" : "TICKET"}); 
+            window['ipc'].send("window-action", {"name": "TICKET","event": "open-ticket", "send" : ticket});
+        }
+   }
     
  </script>
  
@@ -85,13 +92,13 @@
 
 
 
-<div draggable="true" on:dragstart={onDrag} class:hidden={hidden} class="arrow_box" style="display: {display}; left: 50%;top: 50%;margin-top: -60px;">
+<div draggable="true" on:dragstart|preventDefault={onDrag} class:hidden={hidden} class="arrow_box" style="display: {display}; left: 50%;top: 50%;margin-top: -60px;">
          <ul class="v-menu">
             <li on:click={onDeterClose} class="menu-title">General - {lbl} 
                 <!-- <button on:click={onClose} style="position:relative; z-index:2; left: 25px;bottom:14px;"  class="button alert cycle mini">
                 <span on:click={onClose} class="mif-cross"></span></button> -->
             </li>
-            <li on:click|preventDefault><a href="/#" ><span class="mif-arrow-up-right icon"></span>Pop Up Ticket</a></li>
+            <li on:click|preventDefault={sendInfo}><a href="/#" ><span class="mif-arrow-up-right icon"></span>Pop Up Ticket</a></li>
             <li on:click|preventDefault={redirectTo}><a href="/#"><span class="mif-stack icon"></span> Go To Ticket</a></li>
         </ul>
 </div>

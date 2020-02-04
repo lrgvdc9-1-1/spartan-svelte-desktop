@@ -6,7 +6,7 @@
      import Week from "./Week.svelte";
      
     export let footer = false;
-    let element;
+    let tracking = {"row" : 0, "col" : 0};
     let today = new Date(); //This variable handles the calendar changes..
     let alwaysToday = new Date();
     let choosen = null;
@@ -62,6 +62,8 @@
             today = new Date(today.getFullYear(), current_month, 1);
             calendars =  getDaysInMonth(today, new Date(today.getFullYear(), today.getMonth(), daysInMonth(today.getMonth(), today.getFullYear())));
         }
+
+       
     }
 
     function onNextYear(){
@@ -93,7 +95,15 @@
                 calendars[row].push(new CalendarPage(new Date(date), month));
                 var col = calendars[row].length - 1;
                 if(col > -1)
-                {calendars[row][col].checkChoosen(choosen);}
+                {
+                    if(calendars[row][col].checkChoosen(choosen)) {
+                       
+                        tracking.col = row;
+                        tracking.row  = col;
+                       
+
+                    }
+                }
                 date.setDate(date.getDate() + 1);
              }
 
@@ -113,7 +123,10 @@
             var cutDays = number - x;
             today.setDate(today.getDate() - cutDays);
             days.push(new CalendarPage(new Date(today), month));
-            days[x].checkChoosen(choosen);
+            if(days[x].checkChoosen(choosen)){
+               
+                tracking.col = 0; tracking.row = x;
+            }  
             today = new Date(date);            
         }
         
@@ -127,16 +140,24 @@
     }
 
     function onSelect(e) {
-        if(element) { //IF we have something selected..
+
+        var element = e.target || e.srcElement;
+        if(choosen) { //IF we have something selected..
             
-            calendars[element.dataset.mindex][element.dataset.index].choosen = false;
-            element = e.target || e.srcElement;
-            calendars[element.dataset.mindex][element.dataset.index].choosen = true;
-            choosen = calendars[element.dataset.mindex][element.dataset.index].date;
+            calendars[tracking.col][tracking.row].choosen = false;
+            
+            //Reset with new information...
+            tracking.col = element.dataset.mindex;
+            tracking.row = element.dataset.index;
+
+
+            calendars[tracking.col][tracking.row].choosen = true;
+            choosen = calendars[tracking.col][tracking.row].date;
         }else{ //First time ever click..
-            element = e.target || e.srcElement;
-            calendars[element.dataset.mindex][element.dataset.index].choosen = true;
-            choosen = calendars[element.dataset.mindex][element.dataset.index].date;
+            tracking.col = element.dataset.mindex;
+            tracking.row = element.dataset.index;
+            calendars[tracking.col][tracking.row].choosen = true;
+            choosen = calendars[tracking.col][tracking.row].date;
         }
         
         
