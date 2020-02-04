@@ -1,12 +1,19 @@
 // Modules to control application life and create native browser window
 const SpartanController = require('./js-master/SpartanController');
 const electron = require('electron');
-const { app, BrowserWindow } = electron
+const { app, BrowserWindow, dialog} = electron
+
 const path = require('path')
 const url  = require('url')
 const fs = require('fs');
 const Shell = require('node-powershell');
 var ipc = require('electron').ipcMain;
+
+console.log(process.platform);
+console.log(process.argv);
+
+//console.log('hello args');
+//console.log(args);
 
 const ps = new Shell({
   executionPolicy: 'Bypass',
@@ -14,7 +21,7 @@ const ps = new Shell({
 });
 
 //Spartan Controllers Handles Creation, Communication of windows.
-let spartan = new SpartanController(ipc, electron, BrowserWindow, path, url, fs, Shell, __dirname);
+let spartan = new SpartanController(ipc, electron, BrowserWindow, path, url, fs, Shell, __dirname, dialog);
 
 
 

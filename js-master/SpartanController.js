@@ -1,11 +1,12 @@
 let _self = null;
 class SpartanController{
 
-    constructor(ipc, electron, browser, path, url, fs, Shell, directory)
+    constructor(ipc, electron, browser, path, url, fs, Shell, directory, dialog)
     {
         this.ipc = ipc;
         this.electron = electron;
         this.BrowserWindow = browser;
+		this.dialog = dialog;
         this.path = path;
         this.url = url;
         this.fs = fs;
@@ -48,7 +49,7 @@ class SpartanController{
      createSplash() {
       
         const { width, height } = _self.electron.screen.getPrimaryDisplay().workAreaSize;
-        
+		_self.dialog.showOpenDialog({ properties: ['openFile', 'multiSelections'] })
         _self.win['Splash'] = new _self.BrowserWindow({
             width: 440,
             height: 400,

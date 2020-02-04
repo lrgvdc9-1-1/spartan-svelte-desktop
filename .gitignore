@@ -1,5 +1,6 @@
 .DS_Store
 node_modules
+distro
 SpartanPro-win32-x64
 SpartanPro-win32-x64.*
 public/bundle.*

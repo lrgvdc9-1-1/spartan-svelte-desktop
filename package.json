@@ -21,7 +21,7 @@
     "autobuild": "rollup -c -w",
     "dev": "run-p start:dev autobuild",
     "start": "sirv public",
-    "electron": "electron .",
+    "electron": "electron . ",
     "electronbuild": "electron-packager . SpartanPro --overwrite",
     "package": "electron-packager . SpartanPro --overwrite",
     "start:dev": "sirv public --dev -s"
