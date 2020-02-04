@@ -18,7 +18,8 @@ class SpartanController{
             "Main" : null,
             "Splash" : null,
             "Profile" : null,
-            "GIS" : null
+            "GIS" : null,
+            "TICKET" : null
          };
         this.workspace = directory;
         _self = this;
@@ -75,8 +76,21 @@ class SpartanController{
             preload: _self.path.join(_self.workspace, "./public/components/GIS/js/preload.js")
             }
         })
+
+
+        _self.win['TICKET'] = new _self.BrowserWindow({
+            width:  width - 200,
+            height: height - 150,
+            show:false,
+            frame: false, webPreferences:{
+                
+                preload: _self.path.join(_self.workspace, "./public/components/TICKET/js/preload.js")
+            }
+        })
     
-    
+        
+        _self.win['TICKET'].loadURL(`file://${_self.workspace}/public/components/Ticket/index.html`)
+        
         _self.win['GIS'].loadURL(`file://${_self.workspace}/public/components/GIS/index.html`)
         
     
@@ -123,7 +137,7 @@ class SpartanController{
     
       //Set Parent lets see what this does... lol
       this.win['GIS'].parent = this.win['Main'];
-    
+      this.win['TICKET'].parent = this.win['Main'];
       
       // and load the index.html of the app.
       //winMain.loadFile(`${__dirname}\\public\\index.html`)
@@ -137,6 +151,8 @@ class SpartanController{
       );
       
     
+      //
+      this.win['TICKET'].webContents.openDevTools();
     
       // Open the DevTools.
       this.win['Main'].webContents.openDevTools()
@@ -149,6 +165,11 @@ class SpartanController{
                 
                 if(this.win['Main']) {
                     this.win['Main'] = null;
+                }
+
+                if(this.win['TICKET']){
+                    this.win['TICKET'].destroy();
+                    this.win['TICKET'] = null;
                 }
             
                 //Close all the windows available..

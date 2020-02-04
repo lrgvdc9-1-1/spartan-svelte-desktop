@@ -1,5 +1,5 @@
 // Modules to control application life and create native browser window
-const SpartanController = require('./js/SpartanController');
+const SpartanController = require('./js-master/SpartanController');
 const electron = require('electron');
 const { app, BrowserWindow } = electron
 const path = require('path')
