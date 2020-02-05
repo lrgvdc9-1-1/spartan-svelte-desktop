@@ -179,6 +179,17 @@
         }) 
   }
 
+  function onFailedDNS() {
+    window['ipc'].send('window-action', {
+      "close" : true,
+      "name" : "Splash"
+    });
+    window['ipc'].send("window-action", {
+      "show" : true,
+      "name" : "Main"
+    })
+  }
+
 
 	
 </script>
@@ -310,7 +321,7 @@
   }
 
 </style>
-<svelte:window on:clientfailed={()=>{}} on:clientready={queryDB}></svelte:window>
+<svelte:window on:clientfailed={onFailedDNS} on:clientready={queryDB}></svelte:window>
 <audio bind:this={Audio} id="myAudio">
   <source src="./music-tones/filling-your-inbox.mp3" type="audio/mpeg">
   Your browser does not support the audio element.

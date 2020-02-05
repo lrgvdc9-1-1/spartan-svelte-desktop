@@ -6,19 +6,22 @@ const { app, BrowserWindow, dialog} = electron
 const path = require('path')
 const url  = require('url')
 const fs = require('fs');
-const Shell = require('node-powershell');
+
+
+const Shell = (process.platform == "win32") ?
+require('node-powershell') : null;
 var ipc = require('electron').ipcMain;
 
-console.log(process.platform);
+
 console.log(process.argv);
 
-//console.log('hello args');
-//console.log(args);
+if(Shell) {
+  const ps = new Shell({
+    executionPolicy: 'Bypass',
+    noProfile: true
+  });
+}
 
-const ps = new Shell({
-  executionPolicy: 'Bypass',
-  noProfile: true
-});
 
 //Spartan Controllers Handles Creation, Communication of windows.
 let spartan = new SpartanController(ipc, electron, BrowserWindow, path, url, fs, Shell, __dirname, dialog);
@@ -30,6 +33,7 @@ let spartan = new SpartanController(ipc, electron, BrowserWindow, path, url, fs,
 
 //Delete all the files on the file directory...
 const directory = `${__dirname}/public/files/`;
+console.log(directory);
 spartan.cleanUpFiles(directory);
 
 

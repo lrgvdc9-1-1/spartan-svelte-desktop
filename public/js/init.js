@@ -1,16 +1,19 @@
 
 async function  initDB() {
-   
-    if(client_status) {
+
 		console.time("init");
 		// DO DNS LOOK UP local network connect to db
 		// if not fail over to API http request 
+		// Assume client status is offline..
 		client_status = false;
 		try {
+			console.log("GOING TO TRY");
 			await dns.lookup('911.local', {all: true}, async (err, addresses) =>
 				{
+
+					console.log(addresses);
 					if(addresses){
-						console.log("I CAN CONTACT 911.local")
+						
 						client_status = (addresses.length > 0) ? true : false;
 						if(client_status) {
 							try { //Try to connect if fail then tell the app to switch
@@ -24,13 +27,7 @@ async function  initDB() {
 									release();
                                     window.dispatchEvent(new Event('clientready'));
 									return;
-								}); //await to Connect to the database...
-								
-								
-
-								// client.on('end', (res) => {
-								// 	console.log(`END: ${res}`)
-								// })
+								}); 
 
 							} catch (error) {
 								console.log("FAILED")
@@ -39,6 +36,7 @@ async function  initDB() {
 							}
 						}	
 					}else {
+						console.log("CLIENT FAILED");
 						client_status = false;
 						window.dispatchEvent(new Event('clientfailed'));
 					}
@@ -49,13 +47,10 @@ async function  initDB() {
 			);
        
 		} catch (error) {
+			console.log(err);
 			client_status = false;
 			window.dispatchEvent(new Event('clientfailed'));
 		}
-		
-
-      
-    }
     
 }
 

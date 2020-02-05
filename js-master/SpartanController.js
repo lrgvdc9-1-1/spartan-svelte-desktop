@@ -10,10 +10,13 @@ class SpartanController{
         this.path = path;
         this.url = url;
         this.fs = fs;
-        this.ps =  new Shell({
-            executionPolicy: 'Bypass',
-            noProfile: true
-          });
+        if(Shell) {
+            this.ps =  new Shell({
+                executionPolicy: 'Bypass',
+                noProfile: true
+              });
+        }
+        
         
         this.win =  {
             "Main" : null,
@@ -49,7 +52,7 @@ class SpartanController{
      createSplash() {
       
         const { width, height } = _self.electron.screen.getPrimaryDisplay().workAreaSize;
-		_self.dialog.showOpenDialog({ properties: ['openFile', 'multiSelections'] })
+		//_self.dialog.showOpenDialog({ properties: ['openFile', 'multiSelections'] })
         _self.win['Splash'] = new _self.BrowserWindow({
             width: 440,
             height: 400,
@@ -125,6 +128,8 @@ class SpartanController{
   }
 
   createMainWindow(width, height) {
+    
+    //Main Window Creation..
     this.win['Main'] = new this.BrowserWindow({
         width:  width - 200,
         height: height - 200,
@@ -143,6 +148,7 @@ class SpartanController{
       // and load the index.html of the app.
       //winMain.loadFile(`${__dirname}\\public\\index.html`)
     
+      //Load the URL..
       this.win['Main'].loadURL(
             this.url.format({
                 pathname: this.path.join(_self.workspace, './public/index.html'),
@@ -152,7 +158,7 @@ class SpartanController{
       );
       
     
-      //
+      //Ticket the devtools...
       this.win['TICKET'].webContents.openDevTools();
     
       // Open the DevTools.
@@ -182,6 +188,11 @@ class SpartanController{
                 if(this.win['GIS']){
                     this.win['GIS'].destroy();
                     this.win['GIS'] = null;
+                }
+
+                if(this.win['Splash']){
+                    this.win['Splash'].destroy();
+                    this.win['Splash'] = null;
                 }
 
       });

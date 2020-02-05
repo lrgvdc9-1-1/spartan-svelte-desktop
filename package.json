@@ -14,7 +14,8 @@
     "rollup-plugin-svelte": "^5.1.0",
     "rollup-plugin-terser": "^4.0.4",
     "sirv-cli": "^0.4.4",
-    "svelte": "^3.12.1"
+    "svelte": "^3.12.1",
+    "electron-reload": "^1.5.0"
   },
   "scripts": {
     "build": "rollup -c",
@@ -27,7 +28,6 @@
     "start:dev": "sirv public --dev -s"
   },
   "dependencies": {
-    "electron-reload": "^1.5.0",
     "imask": "^5.2.1",
     "metro4": "^4.3.4",
     "node-powershell": "^4.0.0",
