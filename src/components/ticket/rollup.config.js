@@ -12,7 +12,7 @@ export default {
 		sourcemap: true,
 		format: 'iife',
 		name: 'app',
-		file: 'C:\\projects_electron\\spartan-svelte-desktop\\public\\components\\Ticket\\bundle.js'//'public/bundle.js'
+		file: '../../../public/components/Ticket/bundle.js'//'public/bundle.js'
 	},
 	plugins: [
 		svelte({
@@ -21,7 +21,7 @@ export default {
 			// we'll extract any component CSS out into
 			// a separate file — better for performance
 			css: css => {
-				css.write('C:\\projects_electron\\spartan-svelte-desktop\\public\\components\\Ticket\\bundle.css');
+				css.write('../../../public/components/Ticket/bundle.css');
 			}
 		}),
 
