@@ -28,6 +28,7 @@
                     msg.innerHTML = `Ticket: ${ticketNumber}`;
                     form.customer.onDownload(ticketNumber);
                     form.premises.onDownload(ticketNumber);
+                    form.lv.onDownload(ticketNumber);
             });
 
             //Setup Listener If available.
@@ -163,7 +164,7 @@
                                              <Premises bind:this={form.premises} />
                                         </div>
                                          <div class="swiper-slide">
-                                             <LV />
+                                             <LV bind:this={form.lv} />
                                         </div>
                                          <div class="swiper-slide">
                                              <DB />
