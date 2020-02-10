@@ -16,14 +16,24 @@
     let carousel;
     let form = {};
     let msg;
+    let myself = "TICKET"
 
     onMount(()=> {
         msg = document.getElementById("msg-ticket");
         if(window['ipc']){
+
+             
+             //Notify The Controller to display himself since it mounted...\
+             //Also findout if is local available...
+              window['ipc'].send("window-action", {"name" : myself, "GETLOCAL" : true});
+             
+              
+             
+
             //On Open Ticket Get Information About Ticket...
             window['ipc'].on("open-ticket", (event, data) => {
+                    console.log("")
                     console.log(data);
-
                     ticketNumber = (data['objectid']) ? data['objectid'] : data['id_ticket'];
                     msg.innerHTML = `Ticket: ${ticketNumber}`;
                     form.customer.onDownload(ticketNumber);
@@ -33,9 +43,13 @@
 
             //Setup Listener If available.
             window['ipc'].on("local-network", (event, data) => {
-               
+                console.log("local network is good so far...")
                 window.client_status = data;
                 window.sql = new window.Pool(window.db);
+                
+                //Notify main window ticket window is ready...
+                window['ipc'].send("window-action", {"event" : "ticket:ready", "name" : "Main", "send": true});
+                window['ipc'].send("window-action", {"show" : true, "name" : myself});
                 
             });
         }

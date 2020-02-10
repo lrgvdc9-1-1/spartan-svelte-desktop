@@ -7,6 +7,9 @@
    }
    .title {
       text-align: center;
+   } 
+   .window-content{
+     height: 90vh;
    }
 </style>
 

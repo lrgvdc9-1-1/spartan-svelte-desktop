@@ -89,7 +89,7 @@
       loginComponent.checkOnSave();
       window['ipc'].send("window-action", {"show" : true, "name" : "Main"});
       window['ipc'].send('window-action', {"close" : true, "name" : "Splash"});
-      window['ipc'].send("window-action", {"event" : "local-network", "name" : "TICKET", "send" : true});
+      window['ipc'].send("window-action", {"local" :  true});
      
   }
 

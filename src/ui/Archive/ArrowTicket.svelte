@@ -1,5 +1,5 @@
  <script>
-    import {createEventDispatcher} from "svelte";
+    import {onMount, onDestroy, createEventDispatcher} from "svelte";
     import {  navigateTo  } from '../../lib/main';
     let display = 'none'
     const dispatch = createEventDispatcher();
@@ -24,6 +24,12 @@
         lbl = (ticket['objectid'] ? ticket['objectid'] : ticket['id_ticket']);
     }
 
+
+    onMount(() => {
+        if(window['ipc']) {
+            window['ipc'].on("ticket:ready", listen);
+        }
+    });
 
 
     function onSpitOut(e) {
@@ -60,10 +66,17 @@
     function sendInfo() {
         if(ticket) {
             onDrag(); 
-            window['ipc'].send("window-action", {"show": true, "name" : "TICKET"}); 
-            window['ipc'].send("window-action", {"name": "TICKET","event": "open-ticket", "send" : ticket});
+            window['ipc'].send("window-action", {"create": true, "name" : "TICKET", "preyes": true});            
         }
    }
+
+   function listen(event, data) {
+        window['ipc'].send("window-action", {"name": "TICKET","event": "open-ticket", "send" : ticket});
+   }
+
+   onDestroy(() => {
+       window['ipc'].removeListener("ticket:ready", listen);
+   })
     
  </script>
  

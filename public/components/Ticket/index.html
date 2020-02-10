@@ -38,8 +38,8 @@
 
 
                   closeButton.addEventListener("click", event => {
-                    if(window.ipc) {
-                      ipc.send("window-action", {"name" : "TICKET", "hide" : true});
+                    if(window.ipc) { //Destroy the ticket instance recreated when we needed it..
+                      ipc.send("window-action", {"close": true, "name" : "TICKET"});
                     }  
                     
                   });
