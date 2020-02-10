@@ -3,8 +3,12 @@ export default class Ticket {
     constructor() {
         this.inputsElements = [];
         this.data = null;
+        this.spartans = null;
     }
 
+    set SPARTANS(users){
+        this.spartans = users;
+    }
     set ELEMENTS(lookup){
         this.inputsElements = document.getElementsByClassName(lookup) || [];
     }
@@ -43,7 +47,7 @@ export default class Ticket {
 
             if(type == "checkbox") {//Check box Is save as 1 or 0 on database..
                  //If is 1 true for check if not false for zero.
-                 elem.checked = (attribute[x] == 1) ? true : false;
+                 elem.checked = (this.data[x] == 1) ? true : false;
                  continue; //Skip to the next iteration since there is no value property.
               
             }
