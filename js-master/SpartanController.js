@@ -10,6 +10,9 @@ class SpartanController{
         this.path = path;
         this.url = url;
         this.fs = fs;
+        this.width = 0;
+        this.height = 0;
+        this.localClient = false;
         if(Shell) {
             this.ps =  new Shell({
                 executionPolicy: 'Bypass',
@@ -25,7 +28,15 @@ class SpartanController{
             "GIS" : null,
             "TICKET" : null
          };
+        
         this.workspace = directory;
+
+        this.fileURL = {
+            "TICKET" : `file://${this.workspace}/public/components/Ticket/index.html`
+        }
+        this.preloads = {
+            "TICKET" : this.path.join(this.workspace, "./public/components/TICKET/js/preload.js")
+        }
         _self = this;
 
         this.setupIPCEvents();
@@ -44,14 +55,14 @@ class SpartanController{
 
     }
 
-    createWindow(nmeWindow) {
 
-    }
 
     
      createSplash() {
       
         const { width, height } = _self.electron.screen.getPrimaryDisplay().workAreaSize;
+        _self.width = width;
+        _self.height = height;
 		//_self.dialog.showOpenDialog({ properties: ['openFile', 'multiSelections'] })
         _self.win['Splash'] = new _self.BrowserWindow({
             width: 440,
@@ -82,18 +93,7 @@ class SpartanController{
         })
 
 
-        _self.win['TICKET'] = new _self.BrowserWindow({
-            width:  width - 200,
-            height: height - 150,
-            show:false,
-            frame: false, webPreferences:{
-                
-                preload: _self.path.join(_self.workspace, "./public/components/TICKET/js/preload.js")
-            }
-        })
-    
-        
-        _self.win['TICKET'].loadURL(`file://${_self.workspace}/public/components/Ticket/index.html`)
+       
         
         _self.win['GIS'].loadURL(`file://${_self.workspace}/public/components/GIS/index.html`)
         
@@ -115,7 +115,7 @@ class SpartanController{
             })
             );
             
-        
+            
             
             _self.createMainWindow(width, height)
         
@@ -143,7 +143,8 @@ class SpartanController{
     
       //Set Parent lets see what this does... lol
       this.win['GIS'].parent = this.win['Main'];
-      this.win['TICKET'].parent = this.win['Main'];
+      
+    
       
       // and load the index.html of the app.
       //winMain.loadFile(`${__dirname}\\public\\index.html`)
@@ -158,43 +159,26 @@ class SpartanController{
       );
       
     
-      //Ticket the devtools...
-      this.win['TICKET'].webContents.openDevTools();
+   
     
       // Open the DevTools.
       this.win['Main'].webContents.openDevTools()
     
       // Emitted when the window is closed.
       this.win['Main'].on('closed',  () => {
-                // Dereference the window object, usually you would store windows
-                // in an array if your app supports multi windows, this is the time
-                // when you should delete the corresponding element.
                 
-                if(this.win['Main']) {
-                    this.win['Main'] = null;
-                }
-
-                if(this.win['TICKET']){
-                    this.win['TICKET'].destroy();
-                    this.win['TICKET'] = null;
-                }
             
-                //Close all the windows available..
-                if(this.win['Profile']){
-                    this.win['Profile'].destroy();   
-                    this.win['Profile'] = null;
-                }
-            
-                if(this.win['GIS']){
-                    this.win['GIS'].destroy();
-                    this.win['GIS'] = null;
-                }
-
-                if(this.win['Splash']){
-                    this.win['Splash'].destroy();
-                    this.win['Splash'] = null;
-                }
-
+               //If the main event is closed.
+               //Destroy all the other windows to close the application.
+               //Loop through all window  key's
+               for(var key in this.win){
+                   if(key == "Main"){
+                       this.win[key] = null;
+                   }else if(this.win[key]) {
+                       this.win[key].destroy();
+                       this.win[key] = null;
+                   }
+               }
       });
 
 }
@@ -207,12 +191,50 @@ class SpartanController{
     return;
 }
 
+     //Create ANY WINDOW WE WANTS BASED ON CONFIGS...
+  createWindow(name, yespreload) {
+    if(!_self.win[name] && yespreload) {
+          _self.win[name] = new _self.BrowserWindow({
+              width:  _self.width - 200,
+              height: _self.height - 150,
+              show:false,
+              frame: false, webPreferences:{
+                  
+                  preload: _self.preloads[name]
+              }
+          })
+     
+          _self.win[name].loadURL(_self.fileURL[name])
+
+
+           // Open the DevTools.
+             _self.win[name].webContents.openDevTools()
+
+      }else if(!_self.win[name]){
+            _self.win[name] = new _self.BrowserWindow({
+                width:  _self.width - 200,
+                height: _self.height - 150,
+                show:false,
+                frame: false
+            })
+    
+            _self.win[name].loadURL(_self.fileURL[name])     
+            
+             // Open the DevTools.
+             _self.win[name].webContents.openDevTools()
+
+      }
+  }
+
+
   setupIPCEvents() {
 
     this.ipc.on('window-action', (event, window) => {
 
         if(window.show) {
             _self.win[window.name].show();
+
+           
         }
         else if(window.hide){
             _self.win[window.name].hide();
@@ -221,7 +243,16 @@ class SpartanController{
             _self.win[window.name].close();
             _self.win[window.name].destroy();
             _self.win[window.name] = null;
-        }else if(window.openFile) {
+        
+            
+        }else if(window.create){
+
+            _self.createWindow(window.name, window.preyes)
+        } 
+        else if(window.local){
+            _self.localClient = window.local;
+        }
+        else if(window.openFile) {
 
 
             let fileDest = _self.workspace + `/public/files/${window.fname}`;
@@ -232,13 +263,24 @@ class SpartanController{
             
             _self.openApp(cmd);
             return;
+        }else if(window.GETLOCAL){
+           
+            if(_self.localClient) {
+                _self.win[window.name].send("local-network", _self.localClient);
+            }
         }else{
-            _self.win[window.name].send(window.event, window.send);
+
+            //Only Send Information if the window is available...
+            if(_self.win[window.name]){
+                _self.win[window.name].send(window.event, window.send);
+            }
         }
     });
 
 
   }
+
+ 
 
 }
 
