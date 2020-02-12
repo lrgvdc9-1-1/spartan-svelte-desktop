@@ -16,7 +16,8 @@
     let carousel;
     let form = {};
     let msg;
-    let myself = "TICKET"
+    let myself = "TICKET";
+    let spartans = [];
 
     onMount(()=> {
         msg = document.getElementById("msg-ticket");
@@ -27,8 +28,18 @@
              //Also findout if is local available...
               window['ipc'].send("window-action", {"name" : myself, "GETLOCAL" : true});
              
-              
-             
+             //MESSAGE RECEIVE INFORMATION FROM 
+             window['ipc'].on("ticket:users", (event, data) =>{
+                    console.log("GETING TICKET USERS");
+                    console.log(data);
+                    spartans = data;
+                    form.customer.setUsers(spartans);
+                    form.premises.setUsers(spartans);
+                    form.lv.setUsers(spartans);
+                    form.db.setUsers(spartans);
+
+
+             });
 
             //On Open Ticket Get Information About Ticket...
             window['ipc'].on("open-ticket", (event, data) => {
@@ -39,6 +50,7 @@
                     form.customer.onDownload(ticketNumber);
                     form.premises.onDownload(ticketNumber);
                     form.lv.onDownload(ticketNumber);
+                    form.db.onDownload(ticketNumber);
             });
 
             //Setup Listener If available.
@@ -181,22 +193,22 @@
                                              <LV bind:this={form.lv} />
                                         </div>
                                          <div class="swiper-slide">
-                                             <DB />
+                                             <DB bind:this={form.db} />
                                         </div>
                                          <div class="swiper-slide">
-                                             <GIS />
+                                             <GIS bind:this={form.gis} />
                                         </div>
                                         <div class="swiper-slide">
-                                             <Attach />
+                                             <Attach bind:this={form.attach} />
                                         </div>
                                          <div class="swiper-slide">
-                                             <Comments />
+                                             <Comments bind:this={form.com} />
                                         </div>
                                          <div class="swiper-slide">
-                                             <Connections />
+                                             <Connections bind:this={form.con} />
                                         </div>
                                          <div class="swiper-slide">
-                                             <Messages />
+                                             <Messages bind:this={form.message} />
                                         </div>
                                 </Carousel>
             </div>

@@ -207,7 +207,7 @@
              Showing {((end == 0) ? 0 : start + 1)} of {end}
             </h3>
        </div>
-    <ArrowTicket bind:this={arrt} />
+    <ArrowTicket {spartans} bind:this={arrt} />
     <CalendarPopUp on:filter={onFilterByCalendar} bind:this={calendar} />
     <div id="body"  style="background: white;border-radius: 8px; overflow: auto; overflow-x: hidden;height: 58vh;">
         

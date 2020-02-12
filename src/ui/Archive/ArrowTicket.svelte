@@ -6,6 +6,9 @@
     let ticket = null;
     let lbl;
     let hidden = false;
+    export let spartans;
+
+    
     export function onToggle() {
         display = (display == 'none') ? 'block' : 'none';
     }
@@ -28,6 +31,7 @@
     onMount(() => {
         if(window['ipc']) {
             window['ipc'].on("ticket:ready", listen);
+           
         }
     });
 
@@ -71,7 +75,16 @@
    }
 
    function listen(event, data) {
-        window['ipc'].send("window-action", {"name": "TICKET","event": "open-ticket", "send" : ticket});
+
+        // WINDOW ACTION TO SEND TICKET INFORMATION TO THE WINDOW 
+        window['ipc'].send("window-action", {
+            "name": "TICKET","event": "open-ticket", "send" : ticket
+        });
+        
+        // WINDOW ACTION SEND SPARTANS USER TO THE WINDOW..
+        window['ipc'].send("window-action", {
+            "name" : "TICKET", "event" : "ticket:users", "send" : spartans
+        });
    }
 
    onDestroy(() => {

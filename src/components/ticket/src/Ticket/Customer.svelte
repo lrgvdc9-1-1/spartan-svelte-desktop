@@ -11,6 +11,7 @@
          };
 
     let ticket = new Ticket();
+
     onMount(()=> {
        //Construct the ticket object
       
@@ -21,6 +22,10 @@
         ph_mask.alt = IMask(phones.alt, maskOptions);
         ph_mask.alt2 = IMask(phones.alt2, maskOptions);
     })
+
+    export function setUsers(users) {
+       ticket.SPARTANS = users;
+    }
 
 
       //On Download only relevant to the inputs of this component..

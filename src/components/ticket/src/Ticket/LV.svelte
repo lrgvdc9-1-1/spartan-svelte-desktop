@@ -14,11 +14,15 @@
          if(window.client_status) { //If local network send sql query..
            
             window.sql.query(ticket.getSQL(), [objectid]).then((res) => {
-               console.log(res.rows);
+               //console.log(res.rows);
                ticket.DATA = (res.rows.length == 1) ? res.rows[0] : null
                if(ticket.RECORDS){ticket.processData()}
             })
         }
+    }
+
+    export function setUsers(users) {
+       ticket.SPARTANS = users;
     }
 
 </script>

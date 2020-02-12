@@ -21,6 +21,11 @@
             })
         }
     }
+
+     export function setUsers(users) {
+       ticket.SPARTANS = users;
+     }
+     
 </script>
 
 

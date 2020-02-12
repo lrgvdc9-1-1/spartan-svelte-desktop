@@ -14,11 +14,15 @@
          if(window.client_status) { //If local network send sql query..
            
             window.sql.query(ticket.getSQL(), [objectid]).then((res) => {
-               
+               // console.log(res);
                ticket.DATA = (res.rows.length == 1) ? res.rows[0] : null
                if(ticket.RECORDS){ticket.processData()}
             })
         }
+    }
+
+    export function setUsers(users) {
+       ticket.SPARTANS = users;
     }
 
 </script>
@@ -68,7 +72,7 @@
     </div>
     <div class="form-group">
         <label>Verified By</label>
-        <input bind:this={ticket.verified_by}  data-trigger="1" data-check="1" type="text" data-title="Verified By" data-section="Database" class="dbTicket" id="verified_by" placeholder="CLICK HERE TO STAMP"     >
+        <input data-trigger="1" data-check="1" type="text" data-title="Verified By" data-section="Database" class="dbTicket" id="verified_by" placeholder="CLICK HERE TO STAMP"  >
         <span id="verified_by_span"></span>
     </div>
 </Window>
