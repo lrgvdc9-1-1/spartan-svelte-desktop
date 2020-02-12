@@ -18,8 +18,13 @@
     let msg;
     let myself = "TICKET";
     let spartans = [];
+    let msgLBL;
+      
+
+    
 
     onMount(()=> {
+        msgLBL  = 0; //Set something rather then nothing...
         msg = document.getElementById("msg-ticket");
         if(window['ipc']){
 
@@ -96,6 +101,11 @@
 
 
     }
+
+    function checkOtherData(e){
+           form.message.findParcels(e.detail);
+    }
+
 </script>
 
 
@@ -174,7 +184,7 @@
                                         <span class="icon"><span class="mif-folder"></span></span>
                                         <span class="caption">MESSAGES</span>
 										 <div class="badges">
-                                            <span class="badge inline">10</span>
+                                            <span  class="badge inline">{msgLBL}</span>
                                         </div>
                                     </a>
                                 </li>
@@ -187,10 +197,10 @@
                                              <Customer bind:this={form.customer} />
                                         </div>
                                         <div class="swiper-slide">
-                                             <Premises bind:this={form.premises} />
+                                             <Premises on:done={checkOtherData} bind:this={form.premises} />
                                         </div>
                                          <div class="swiper-slide">
-                                             <LV bind:this={form.lv} />
+                                             <LV  bind:this={form.lv} />
                                         </div>
                                          <div class="swiper-slide">
                                              <DB bind:this={form.db} />
@@ -208,7 +218,7 @@
                                              <Connections bind:this={form.con} />
                                         </div>
                                          <div class="swiper-slide">
-                                             <Messages bind:this={form.message} />
+                                             <Messages on:totalMSG={(e)=>{msgLBL =e.detail;}} bind:this={form.message} />
                                         </div>
                                 </Carousel>
             </div>

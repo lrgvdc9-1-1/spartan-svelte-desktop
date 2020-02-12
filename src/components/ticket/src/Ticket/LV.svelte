@@ -3,6 +3,8 @@
     import Window from "../Window.svelte";
     import Ticket from "../utils/Ticket";
     let ticket;
+    
+
      onMount(() => {
         
         ticket = new Ticket();
@@ -17,7 +19,11 @@
                //console.log(res.rows);
                ticket.DATA = (res.rows.length == 1) ? res.rows[0] : null
                if(ticket.RECORDS){ticket.processData()}
+              
+
             })
+        }else{ //<<<<<<Fetch Through ONLINE>>>>
+
         }
     }
 

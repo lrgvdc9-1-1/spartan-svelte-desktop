@@ -19,6 +19,9 @@ export default class Ticket {
     set ELEMENTS(lookup){
         this.inputsElements = document.getElementsByClassName(lookup) || [];
     }
+    get ELEMENTS(){
+        return this.inputsElements;
+    }
 
 
     //SET DATA RAW DATA ON PLACEHOLDER..

@@ -1,9 +1,11 @@
 <script>
-    import {onMount} from "svelte";
+    import {onMount, createEventDispatcher} from "svelte";
     import Window from "../Window.svelte";
     import Ticket from "../utils/Ticket";
 
     let ticket;
+    const dispatch = createEventDispatcher();
+
     onMount(() => {
         
         ticket = new Ticket();
@@ -17,7 +19,7 @@
             window.sql.query(ticket.getSQL(), [objectid]).then((res) => {
                
                ticket.DATA = (res.rows.length == 1) ? res.rows[0] : null
-               if(ticket.RECORDS){ticket.processData()}
+               if(ticket.RECORDS){ticket.processData();  dispatch("done", ticket.ELEMENTS);}
             })
         }
     }
