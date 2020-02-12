@@ -232,6 +232,7 @@ class SpartanController{
     this.ipc.on('window-action', (event, window) => {
 
         if(window.show) {
+
             _self.win[window.name].show();
 
            
@@ -243,11 +244,17 @@ class SpartanController{
             _self.win[window.name].close();
             _self.win[window.name].destroy();
             _self.win[window.name] = null;
+
+            if(window.name == 'TICKET'){
+                _self.win['Main'].send("ticket:close", true);
+            }
+            
         
             
         }else if(window.create){
 
-            _self.createWindow(window.name, window.preyes)
+            //If window null create window...
+            if(_self.win[window.name] == null) _self.createWindow(window.name, window.preyes)
         } 
         else if(window.local){
             _self.localClient = window.local;
