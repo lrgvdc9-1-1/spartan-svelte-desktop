@@ -1,5 +1,6 @@
 <script>
   import {onMount} from "svelte";
+  
   import { fade } from 'svelte/transition';
   import { Router, Route, Link, navigateTo  } from './lib/main';
 	import RibbonToolbar from './ui/RibbonToolbar.svelte';
@@ -77,12 +78,14 @@
       var res_orga = await sql.getOrganizationNames();
       //console.log(res_orga);
       organizations_name = res_orga.rows || [];
-      console.log(organizations_name);
+      // console.log(organizations_name);
       sql.getActiveUsers().then((res) => {
         
          res.rows.forEach(em => {
             spartans.push(new User(em.user_id, em.first_name, em.middle_name, em.last_name, em.email, em.icon2, em.organization_id, em.org_name, em.work_center));
          });
+
+         
          console.log(spartans);
       }).catch(err => console.log("Error executing query", err.stack));
 
