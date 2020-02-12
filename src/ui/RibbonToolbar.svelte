@@ -1,5 +1,7 @@
 <script>
+    import {onMount} from "svelte";
     import { Router, Route, Link, navigateTo  } from '../lib/main';
+    
     import { fade, fly } from 'svelte/transition';
     import DashBoard from '../pages/DashBoard.svelte';
     import DashBoardCard from '../pages/DashBoardCard.svelte';
@@ -22,6 +24,12 @@
     let dashboardDropDown = {alltickets: false, mytickets: false, walkins: false }
     let dashboardOp = false;
     $: showOptionsDashBoard = (dashboardOp) ? '' : 'none';
+
+
+    onMount(() => {
+        
+    });
+
 </script>
 <style>
     .liactive{
@@ -263,7 +271,7 @@
 
         <section style="width:100%; height: auto; overflow: auto;">
              <Router>
-                <Route path="#ArchiveTicketPage"><ArchiveTicketPage {isMe}  {Audio} {spartans} {url} /></Route>
+                <Route path="#ArchiveTicketPage"><ArchiveTicketPage  {isMe}  {Audio} {spartans} {url} /></Route>
                 <Route path="#TicketCalendarPage/:organizationId" let:router><CalendarPage {router} /></Route>
                 <Route path="#dashboard" ><DashBoard {isMe} {url} /></Route>
                 <Route path="#WalkIns" ><DashBoardCard {isMe} {url} path={"addressticket/getAllWalkIn/"} /></Route>
