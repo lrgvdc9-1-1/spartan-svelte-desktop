@@ -1,6 +1,6 @@
 <script>
   import {onMount} from "svelte";
-  
+  import {ticketStateWin} from "./stores/SpartanData.js";
   import { fade } from 'svelte/transition';
   import { Router, Route, Link, navigateTo  } from './lib/main';
 	import RibbonToolbar from './ui/RibbonToolbar.svelte';
@@ -138,6 +138,16 @@
             }
            
         });
+
+           window['ipc'].on("ticket:ready", (event, data) => {
+               ticketStateWin.update(window => window = {"open": true, "timestamp" : new Date()}); 
+           });
+
+            //Listen for state primarily on close window ticket
+            window['ipc'].on("ticket:close", (event, data) =>{
+
+                   ticketStateWin.update(window => window = {"close": true, "timestamp" : new Date()}); 
+            });
     }
   }
 

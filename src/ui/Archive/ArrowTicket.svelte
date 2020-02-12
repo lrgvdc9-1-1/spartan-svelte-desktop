@@ -1,14 +1,17 @@
  <script>
     import {onMount, onDestroy, createEventDispatcher} from "svelte";
+    import { get } from 'svelte/store';
     import {  navigateTo  } from '../../lib/main';
+    import {ticketStateWin} from "../../stores/SpartanData.js";
+
     let display = 'none'
     const dispatch = createEventDispatcher();
     let ticket = null;
     let lbl;
     let hidden = false;
+    let didOpen = false;
+    let unsubscribe; 
     export let spartans;
-
-    
     export function onToggle() {
         display = (display == 'none') ? 'block' : 'none';
     }
@@ -29,20 +32,24 @@
 
 
     onMount(() => {
-        if(window['ipc']) {
-            window['ipc'].on("ticket:ready", listen);
-           
-        }
+        
+        unsubscribe = ticketStateWin.subscribe(window => {
+		        if(window.open){
+                   sendInformation();
+                }
+	    });
+
     });
 
-
-    function onSpitOut(e) {
-        dispatch("spit", e);
-    }
+    onDestroy(()=>{
+        console.log(unsubscribe)
+       unsubscribe()
+       console.log(unsubscribe);
+   })
 
     function redirectTo() {
         if(ticket) navigateTo(`#viewTicket/${ticket['id_ticket']}/${ticket['objectid']}`)
-        console.log(ticket);
+      
     }
 
     export function noHidden() {
@@ -58,24 +65,30 @@
         console.log(this);
     }
 
-    function onDrag() {
+    function onDrag(intent = true) {
 
         hidden = true;
        setTimeout(() => {
            display = 'none';
            hidden = false;
        }, 1700);
+       if(intent) {
+           dispatch("clearSelect");
+       }
+
     }
 
     function sendInfo() {
         if(ticket) {
-            onDrag(); 
-            window['ipc'].send("window-action", {"create": true, "name" : "TICKET", "preyes": true});            
+            onDrag(false); 
+            window['ipc'].send("window-action", {"create": true, "name" : "TICKET", "preyes": true}); 
+            let isOpen = get(ticketStateWin);
+            if(isOpen.open)  window['ipc'].send("window-action", {"name": "TICKET","event": "open-ticket", "send" : ticket});
         }
    }
 
-   function listen(event, data) {
-
+   function sendInformation() {
+      
         // WINDOW ACTION TO SEND TICKET INFORMATION TO THE WINDOW 
         window['ipc'].send("window-action", {
             "name": "TICKET","event": "open-ticket", "send" : ticket
@@ -87,9 +100,7 @@
         });
    }
 
-   onDestroy(() => {
-       window['ipc'].removeListener("ticket:ready", listen);
-   })
+   
     
  </script>
  

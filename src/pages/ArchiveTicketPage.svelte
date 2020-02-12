@@ -1,7 +1,8 @@
 <script>
-    import {onMount} from "svelte";
+    import {onMount, onDestroy} from "svelte";
     import {  navigateTo  } from '../lib/main';
     import {FormatDate} from '../utils/Months';
+    import {ticketStateWin} from "../stores/SpartanData.js";
     import SQL from '../utils/sql';
     import Loading from '../ui/Loading.svelte';
     import SearchInput from "../ui/Archive/SearchInput.svelte";
@@ -24,13 +25,33 @@
     let arrs;
     let arrt;
     let calendar;
+    let holdTicket;
+    let index;
+    let unsubscribe
 
     $: viewing = archives.slice(start, end);
 
     onMount(() => {
-        getAllArchives();    
+        getAllArchives(); 
+        
+         unsubscribe = ticketStateWin.subscribe(window => {
+		        if(window.close){
+                    
+                    if(holdTicket) holdTicket.selected = false;
+                    viewing[index] = holdTicket;
+                  
+                }
+	    });
 
     });
+
+    onDestroy(() =>{
+        //Delete the subscription..
+        console.log(unsubscribe)
+        unsubscribe();
+        console.log(unsubscribe)
+        console.log("ARCHIVE PAGE");
+    })
 
     function getAllArchives(){
         start = 0;
@@ -154,6 +175,14 @@
         //console.log(e.detail);
         getFilterArchivesByCalendar(e.detail.from, e.detail.to);
     }
+
+    function onCheckSelecs() {
+        
+        if(index){
+            viewing[index].selected = false;
+        }
+        
+    }
 </script>
 <style>
     .grid-container {
@@ -190,6 +219,16 @@
     #cog:hover {
         background: #adacacbe !important;
     }
+
+    .select {
+        color: brown;
+        text-decoration: underline;
+    }
+
+    .rowSelect{
+        color: white !important;
+        background: rgba(41, 80, 172, 0.856) !important;
+    }
    
 </style>
 {#if loading}
@@ -207,7 +246,7 @@
              Showing {((end == 0) ? 0 : start + 1)} of {end}
             </h3>
        </div>
-    <ArrowTicket {spartans} bind:this={arrt} />
+    <ArrowTicket on:clearSelect={onCheckSelecs} {spartans} bind:this={arrt} />
     <CalendarPopUp on:filter={onFilterByCalendar} bind:this={calendar} />
     <div id="body"  style="background: white;border-radius: 8px; overflow: auto; overflow-x: hidden;height: 58vh;">
         
@@ -234,9 +273,9 @@
                 </thead>
                 <tbody>
                 {#each viewing as ticket, i}
-                    <tr>
-                            <td>
-                            <span on:click="{() => {ticketOptions(ticket)}}">{((ticket.objectid) ? ticket.objectid : ticket.id_ticket)}</span> 
+                    <tr class:rowSelect={ticket.selected}>
+                            <td class:select={ticket.selected}>
+                                <span on:click="{() => {ticketOptions(ticket); onCheckSelecs();index = i;holdTicket = ticket; ticket.selected = true;}}">{((ticket.objectid) ? ticket.objectid : ticket.id_ticket)}</span> 
                             </td>
                             <td>{FormatDate(ticket.created_date)}</td>
                             <td>
