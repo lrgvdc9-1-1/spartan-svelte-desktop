@@ -24,6 +24,7 @@
         "names" : "SELECT * FROM organization"
     },
     "users" : {
+        "all"    : "SELECT user_id, first_name, middle_name, last_name, email, icon2, users.organization_id, work_center, org.name as org_name FROM users join organization as org on users.organization_id = org.organization_id order by email",
         "active" : "SELECT user_id, first_name, middle_name, last_name, email, icon2, users.organization_id, work_center, org.name as org_name FROM users join organization as org on users.organization_id = org.organization_id where active = 1 order by email",
         "authenticate" : "SELECT user_id, email, password, pin_pass FROM users where active = 1 and email = $1"
     }
