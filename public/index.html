@@ -69,7 +69,7 @@
 	const {remote} = require('electron');
 
 	const path = require('path');
-	
+	const fs   = require('fs');
     const {Pool} = require('pg');
 	const api = require('./configurations/api');
 	const dns = require('dns');
@@ -111,11 +111,15 @@
 	//IF DB JSON is not there then tell the system not to connect to database
 	console.log(dirname);
 	try {
-		db = require('./configurations/db');
+		//Get The HASH File parse it and process into json...
+		db = fs.readFileSync(`${__dirname}/configurations/hash.text`, 'utf8');
+		db = atob(db);
+		db = (typeof(db) == "string") ? JSON.parse(db) : db;
+		
 		client_status = (Object.entries(db).length === 0) ? false : true;
 		
-		
 	} catch (error) {
+		console.log(error);
 		client_status = false;
 	}
 </script>
