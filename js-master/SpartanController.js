@@ -244,7 +244,9 @@ class SpartanController{
             _self.win[window.name].close();
             _self.win[window.name].destroy();
             _self.win[window.name] = null;
-
+            
+            //When Window is destroy by users notify
+            //The main window about that particular window been closed..
             if(window.name == 'TICKET'){
                 _self.win['Main'].send("ticket:close", true);
             }

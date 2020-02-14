@@ -1,5 +1,6 @@
 <script>
     import {onMount} from "svelte";
+    import InputCalendar from "../components/Calendar/InputCalendar.svelte";
     import Window from "../Window.svelte";
     import Ticket from "../utils/Ticket";
     let ticket;
@@ -16,7 +17,7 @@
          if(window.client_status) { //If local network send sql query..
            
             window.sql.query(ticket.getSQL(), [objectid]).then((res) => {
-               //console.log(res.rows);
+              
                ticket.DATA = (res.rows.length == 1) ? res.rows[0] : null
                if(ticket.RECORDS){ticket.processData()}
               
@@ -90,9 +91,15 @@
         <input id="address_by"  style="cursor: pointer;"  data-trigger="1" data-check="1" data-title="Address By" data-section="Location Validation" class="lvTicket"  placeholder="CLICK HERE TO STAMP" type="text" />
         <span id="address_by_span"></span>
     </div>
-    <div class="form-group">
+    <!-- <div class="form-group">
         <label>Date Addressed</label>
         <input  type="date" data-title="Date Addressed" data-section="Location Validation" class="lvTicket" id="date_addressed"  >
+        <span id="date_addressed_span"></span>
+    </div> -->
+
+    <div class="form-group">
+        <label>Date Addressed</label>
+        <InputCalendar type="text" title="Date Addressed" section="Location Validation" clazz="lvTicket" id="date_addressed" />
         <span id="date_addressed_span"></span>
     </div>
 

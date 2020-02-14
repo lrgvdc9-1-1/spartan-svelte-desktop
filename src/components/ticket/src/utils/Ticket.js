@@ -8,8 +8,12 @@ export default class Ticket {
         this.inputsElements = [];
         this.data = null;
         this.spartans = null;
+        this.datepicker = null;
     }
 
+    set DATEPICKER(picker){
+        this.datepicker = picker;
+    }
     //MODULE: HOLD ALL USERS FROM DB...
     set SPARTANS(users){
         this.spartans = users;
@@ -78,6 +82,7 @@ export default class Ticket {
             //Assuming is the date object..
             if(x.indexOf("date") != -1){
                 elem.value = this.convertDate(this.data[x])
+                elem.dispatchEvent(new CustomEvent('picker', { detail: this.data[x] })); //Emit Customer event to that element
                 continue;
             }
 
@@ -90,11 +95,13 @@ export default class Ticket {
                  continue; //Skip to the next iteration since there is no value property.   
             }
 
+            //For the stamps...
             if(elem.dataset.check && elem.dataset.check == 1 && this.spartans) {
                 this.spartans.forEach(user => {
-                    console.log(user);
+                    
                     if(user.user_id == this.data[x]){
                         elem.value = user.first_name + " " + user.last_name;
+                        elem.disabled = true;
                         return;
                     }
                 });
