@@ -1,5 +1,5 @@
   <script>
-     import {onMount} from "svelte";
+     import {onMount, createEventDispatcher} from "svelte";
      
      import {Months,MonthsAbbre,FullWeekDays, CalendarPage} from '../../utils/Months';
      import WeekDays from "./WeekDays.svelte";
@@ -10,6 +10,7 @@
     export let choosen = null;
     export let popup = false;
 
+    let dispatch = createEventDispatcher();
     let tracking = {"row" : 0, "col" : 0};
     let today = new Date(); //This variable handles the calendar changes..
     let alwaysToday = new Date();
@@ -153,7 +154,7 @@
     //This Function is going to Emit Back to The Parent
     //Of Notifying the change..
     function onSelect(e) {
-
+       
         var element = e.target || e.srcElement;
         if(choosen) { //IF we have something selected..
             
@@ -174,7 +175,9 @@
         }
         
         //Emit what was choosen by user..
-        display("choosen", converDate(choosen));
+        dispatch("choosen", {"parse": convertDate(choosen),
+            "date": choosen
+        });
         
     }
 
@@ -187,6 +190,11 @@
         }
 
         return val;
+    }
+
+    //Close the calendar..
+    function onClose(){
+        dispatch("close", false);
     }
 
     export function getSelected() {
@@ -241,9 +249,10 @@
 
                  {#if footer}
                      <div class="calendar-footer">
-                        <!-- <button type="button" class="button cancel js-dialog-close">Cancel</button>
-                            <button type="button" class="button today">Today</button><button type="button" class="button clear">Clear</button>
-                            <button type="button" class="button done js-dialog-close">Done</button> -->
+                        <button type="button" class="button cancel js-dialog-close">Cancel</button>
+                        <button type="button" class="button today">Today</button>
+                        <button type="button" class="button clear">Clear</button>
+                        <button type="button" on:click={onClose} class="button done js-dialog-close">Done</button>
                     </div>
                  {/if}   
                     

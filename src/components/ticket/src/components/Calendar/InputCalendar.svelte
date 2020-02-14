@@ -14,9 +14,31 @@
 
   let show = false;
   let inputMask;
+
+  let timeout;
   
   onMount(() => {
-    inputMask = IMask(input, {mask: Date, pattern: 'Y-`m-`d'});
+    inputMask = IMask(input, {mask: Date, pattern: 'Y-`m-`dd',  // Pattern mask with defined blocks, default is 'd{.}`m{.}`Y'
+  // you can provide your own blocks definitions, default blocks for date mask are:
+  // blocks: {
+  //   d: {
+  //     mask: IMask.MaskedRange,
+  //     from: 1,
+  //     to: 31,
+  //     maxLength: 2,
+  //   },
+  //   m: {
+  //     mask: IMask.MaskedRange,
+  //     from: 1,
+  //     to: 12,
+  //     maxLength: 2,
+  //   },
+  //   Y: {
+  //     mask: IMask.MaskedRange,
+  //     from: 1900,
+  //     to: 9999,
+  //   }}
+    });
   });
 
   onDestroy(() => {
@@ -30,8 +52,9 @@
   //Once the input has been performed from Spartan Ticket
   //Controller it will Emit Custom handler..
   function handlePicker(e) {
-     display = e.detail;
-     choosen = e.detail;
+     inputMask.value = e.detail.parse;
+     display = e.detail.date;
+     choosen = e.detail.date;
   }
 
   //Click input show or hide Calendar Picker..
@@ -39,17 +62,20 @@
     show = !show;
   }
 
-  //Lose focus on input close Calendar Picker..
-  function handleBlur(){
-   show = false;
-  }
-
+  
   function handleChoosen(e){
-      input.value = e.detail;
+
+      //Clear the Timeout because we press button
+      clearTimeout(timeout);
+      inputMask.value = e.detail.parse;
+      choosen = e.detail.date;
+      display = e.detail.date;
+      inputMask.updateValue();
+
   }
 
 </script>
-<input bind:this={input} on:blur={handleBlur} on:picker={handlePicker} on:click={handleClick} class="{clazz}" data-title="{title}" data-section="{section}"  id="{id}" type="{type}" />
+<input bind:this={input} on:picker={handlePicker} on:click={handleClick} class="{clazz}" data-title="{title}" data-section="{section}"  id="{id}" type="{type}" />
 {#if show}
-    <CalendarPicker on:choosen={handleChoosen} popup={true} {choosen} {display}  />
+    <CalendarPicker on:close="{(e)=>{show = e.detail}}" on:choosen={handleChoosen} footer={true} popup={true} {choosen} {display}  />
 {/if}

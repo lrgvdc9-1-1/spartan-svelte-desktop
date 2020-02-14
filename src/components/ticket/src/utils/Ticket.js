@@ -55,16 +55,26 @@ export default class Ticket {
         return sql;
     }
 
-    //Conversion of Date object if needed...
+    //Conversion of string to Date object if needed...
     convertDate(val) {
         if(val instanceof Date){
-            var yyyy = val.getFullYear();
-            var mm   = (val.getMonth() + 1 < 10) ? `0${val.getMonth()+ 1}` : val.getMonth() + 1;
-            var dd   = (val.getDate() < 10) ? `0${val.getDate()}` : val.getDate();
-            return `${yyyy}-${mm}-${dd}`;
+            return val;
+        }else{
+
+            return val;
+
         }
 
-        return val;
+        
+    }
+    //Conversion of Date Object Back to string database can accept..
+    convertDateToString(date){
+        if(date instanceof Date){
+            var yyyy = date.getFullYear();
+            var mm   = (date.getMonth() + 1 < 10) ? `0${date.getMonth()+ 1}` : date.getMonth() + 1;
+            var dd   = (date.getDate() < 10) ? `0${date.getDate()}` : date.getDate();
+            return `${yyyy}-${mm}-${dd}`;
+        }
     }
 
 
@@ -81,8 +91,9 @@ export default class Ticket {
             //If the attribute has the word date..
             //Assuming is the date object..
             if(x.indexOf("date") != -1){
-                elem.value = this.convertDate(this.data[x])
-                elem.dispatchEvent(new CustomEvent('picker', { detail: this.data[x] })); //Emit Customer event to that element
+                //elem.value = this.convertDate(this.data[x])
+                elem.dispatchEvent(new CustomEvent('picker', { detail: {"date" : this.data[x], 
+                "parse" :  this.convertDateToString(this.data[x])}})); //Emit Customer event to that element
                 continue;
             }
 
