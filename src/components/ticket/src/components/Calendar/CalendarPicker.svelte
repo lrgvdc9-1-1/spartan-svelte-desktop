@@ -149,6 +149,9 @@
       return 32 - new Date(iYear, iMonth, 32).getDate();
     }
 
+    //When The User Selects A Date..
+    //This Function is going to Emit Back to The Parent
+    //Of Notifying the change..
     function onSelect(e) {
 
         var element = e.target || e.srcElement;
@@ -170,7 +173,20 @@
             choosen = calendars[tracking.col][tracking.row].date;
         }
         
+        //Emit what was choosen by user..
+        display("choosen", converDate(choosen));
         
+    }
+
+    function convertDate(val) {
+        if(val instanceof Date){
+            var yyyy = val.getFullYear();
+            var mm   = (val.getMonth() + 1 < 10) ? `0${val.getMonth()+ 1}` : val.getMonth() + 1;
+            var dd   = (val.getDate() < 10) ? `0${val.getDate()}` : val.getDate();
+            return `${yyyy}-${mm}-${dd}`;
+        }
+
+        return val;
     }
 
     export function getSelected() {

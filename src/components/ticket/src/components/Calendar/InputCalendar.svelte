@@ -24,27 +24,32 @@
   });
 
   export function setDate(picker){
-  display = picker;
+    display = picker;
   };
 
-
+  //Once the input has been performed from Spartan Ticket
+  //Controller it will Emit Custom handler..
   function handlePicker(e) {
-  console.log(e);
-  console.log("ON INPUT WHAT WHAT...");
-  display = e.detail;
-  choosen = e.detail;
-
+     display = e.detail;
+     choosen = e.detail;
   }
 
+  //Click input show or hide Calendar Picker..
   function handleClick(e) {
-  show = !show;
+    show = !show;
   }
+
+  //Lose focus on input close Calendar Picker..
   function handleBlur(){
-  show = false;
+   show = false;
+  }
+
+  function handleChoosen(e){
+      input.value = e.detail;
   }
 
 </script>
 <input bind:this={input} on:blur={handleBlur} on:picker={handlePicker} on:click={handleClick} class="{clazz}" data-title="{title}" data-section="{section}"  id="{id}" type="{type}" />
 {#if show}
-    <CalendarPicker popup={true} {choosen} {display}  />
+    <CalendarPicker on:choosen={handleChoosen} popup={true} {choosen} {display}  />
 {/if}
