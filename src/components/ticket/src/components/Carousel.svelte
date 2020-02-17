@@ -4,7 +4,7 @@
 		<slot></slot>
     </div>
     <!-- Add Pagination -->
-    <div class="swiper-pagination"></div>
+    
   </div>
 
 
@@ -24,10 +24,7 @@
             slideShadows: true,
             shadowOffset: 20,
             shadowScale: 0.94,
-          },
-          pagination: {
-            el: '.swiper-pagination',
-          },
+          }
           });
           
           //When the slide changes  emit event to main component..
