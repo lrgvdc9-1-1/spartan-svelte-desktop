@@ -75,7 +75,7 @@
   }
 
 </script>
-<input bind:this={input} on:picker={handlePicker} on:click={handleClick} class="{clazz}" data-title="{title}" data-section="{section}"  id="{id}" type="{type}" />
+<input bind:this={input} on:picker={handlePicker} on:click|preventDefault={handleClick} class="{clazz}" data-title="{title}" data-section="{section}"  id="{id}" type="{type}" />
 {#if show}
-    <CalendarPicker on:close="{(e)=>{show = e.detail}}" on:choosen={handleChoosen} footer={true} popup={true} {choosen} {display}  />
+    <CalendarPicker  on:close="{(e)=>{show = e.detail}}" on:choosen={handleChoosen} footer={true} popup={true} {choosen} {display}  />
 {/if}
