@@ -1,10 +1,9 @@
 <script>
     import {onMount} from "svelte";
-    import InputCalendar from "../components/Calendar/InputCalendar.svelte";
+    import InputCalendarPicker from "../components/Calendar/InputCalendarPicker.svelte";
     import Window from "../Window.svelte";
     import Ticket from "../utils/Ticket";
     let ticket;
-    
 
      onMount(() => {
         
@@ -18,7 +17,8 @@
            
             window.sql.query(ticket.getSQL(), [objectid]).then((res) => {
               
-               ticket.DATA = (res.rows.length == 1) ? res.rows[0] : null
+               ticket.DATA = (res.rows.length == 1) ? res.rows[0] : null;
+               console.log(res.rows);
                if(ticket.RECORDS){ticket.processData()}
               
 
@@ -31,6 +31,8 @@
     export function setUsers(users) {
        ticket.SPARTANS = users;
     }
+
+  
 
 </script>
 
@@ -99,7 +101,7 @@
 
     <div class="form-group">
         <label>Date Addressed</label>
-        <InputCalendar type="text" title="Date Addressed" section="Location Validation" clazz="lvTicket" id="date_addressed" />
+        <InputCalendarPicker btnGroup={true}  type="text" title="Date Addressed" section="Location Validation" clazz="lvTicket" id="date_addressed" />
         <span id="date_addressed_span"></span>
     </div>
 
@@ -128,7 +130,8 @@
 
     <div class="form-group">
         <label>Address Issued Date</label>
-        <input  type="date" data-title="Address Issued Date" data-section="Location Validation" class="lvTicket" id="address_issued_date"  >
+        <InputCalendarPicker btnGroup={true} type="text" title="Address Issued Date" section="Location Validation" clazz="lvTicket" id="address_issued_date" />
+        <!-- <input  type="date" data-title="Address Issued Date" data-section="Location Validation" class="lvTicket" id="address_issued_date"  > -->
         <span id="address_issued_date_span"></span>
     </div>
 
@@ -143,8 +146,8 @@
         
         <div class="input">
             <input type="text" data-title="Lat" data-section="Location Validation" class="lvTicket" id="lat"     >
-            <div class="button-group">
-            <button on:click={ticket.copy} data-copy="lat"  class="button input-search-button"><span style="color: #05173F !important" class="mif-clipboard"></span></button>
+                <div class="button-group">
+                <button on:click={ticket.copy} data-copy="lat"  class="button input-search-button"><span style="color: #05173F !important" class="mif-clipboard"></span></button>
             </div>
         </div>
 

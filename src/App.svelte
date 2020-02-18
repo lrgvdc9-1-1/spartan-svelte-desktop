@@ -139,6 +139,7 @@
            
         });
 
+          //Listen for state when is ready to go..
            window['ipc'].on("ticket:ready", (event, data) => {
                ticketStateWin.update(window => window = {"open": true, "timestamp" : new Date()}); 
            });

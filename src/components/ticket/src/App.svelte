@@ -48,7 +48,7 @@
 
             //On Open Ticket Get Information About Ticket...
             window['ipc'].on("open-ticket", (event, data) => {
-                    console.log("")
+                   
                     console.log(data);
                     ticketNumber = (data['objectid']) ? data['objectid'] : data['id_ticket'];
                     msg.innerHTML = `Ticket: ${ticketNumber}`;
@@ -56,6 +56,7 @@
                     form.premises.onDownload(ticketNumber);
                     form.lv.onDownload(ticketNumber);
                     form.db.onDownload(ticketNumber);
+                    form.gis.onDownload(ticketNumber);
             });
 
             //Setup Listener If available.

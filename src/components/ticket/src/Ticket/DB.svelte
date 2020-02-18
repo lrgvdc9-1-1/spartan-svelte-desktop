@@ -1,8 +1,10 @@
 <script>
     import {onMount} from "svelte";
+    import InputCalendarPicker from "../components/Calendar/InputCalendarPicker.svelte";
     import Window from "../Window.svelte";
     import Ticket from "../utils/Ticket";
     let ticket;
+    
      onMount(() => {
         
         ticket = new Ticket();
@@ -14,7 +16,7 @@
          if(window.client_status) { //If local network send sql query..
            
             window.sql.query(ticket.getSQL(), [objectid]).then((res) => {
-               // console.log(res);
+               console.log(res);
                ticket.DATA = (res.rows.length == 1) ? res.rows[0] : null
                if(ticket.RECORDS){ticket.processData()}
             })
@@ -67,7 +69,8 @@
         <label>
             Verified Date
         </label>
-        <input class="dbTicket" id="date_verified" data-title="Verified Date"  data-section="Database"   type="date" />
+        <InputCalendarPicker type="text" title="Verified Date" section="Database" clazz="dbTicket" id="date_verified" />
+        <!-- <input class="dbTicket" id="date_verified" data-title="Verified Date"  data-section="Database"   type="date" /> -->
         <span id="date_verified_span"></span>
     </div>
     <div class="form-group">

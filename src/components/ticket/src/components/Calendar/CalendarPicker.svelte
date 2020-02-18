@@ -19,9 +19,13 @@
     let redrawing = false;
     let calendars = [];
     let current_month = 0;
+    let calELE; //GETS HTML CONTAINER...
+    let footerELE; //gets the footer html container...
+    
     
     let cmpYears;
     let cmpMonths;
+
 
     $: MonthTitle = Months[current_month];
     $: Todaylbl  = `${FullWeekDays[alwaysToday.getDay()]}, ${MonthsAbbre[alwaysToday.getMonth()]} ${alwaysToday.getDate()}`;
@@ -39,7 +43,13 @@
              calendars =  getDaysInMonth(today, new Date(today.getFullYear(), today.getMonth(), daysInMonth(today.getMonth(), today.getFullYear())));
              redrawing = true;
         }
+
+        //Tell parent he is ready to go...
+
+          dispatch("ready", true);
     });
+
+    
 
     export function reset() {
 
@@ -232,6 +242,16 @@
          redrawing = true;
     }
 
+
+    export function scrollView() {
+        if(footer){
+            footerELE.scrollIntoView();
+        }else{
+            calELE.scrollIntoView();
+        }
+       
+    }
+
     export function getSelected() {
         return choosen;
     }
@@ -250,10 +270,11 @@
     .pop {
         position: absolute;
         z-index: 3;
+        height: 436px;
     }
   </style>
   
-  <div class="calendar" class:pop={popup}>
+  <div  bind:this={calELE} class="calendar" class:pop={popup}>
     <div class="calendar-header">
         <div class="header-year">{alwaysToday.getFullYear()}</div>
         <div class="header-day">{Todaylbl}</div>
@@ -283,7 +304,7 @@
          </div>
 
                  {#if footer}
-                     <div class="calendar-footer">
+                     <div bind:this={footerELE} class="calendar-footer">
                         <!-- <button type="button" class="button cancel js-dialog-close">Cancel</button> -->
                         <button type="button" on:click|preventDefault={onTodaySelect} class="button today">Today</button>
                         <!-- <button type="button" class="button clear">Clear</button> -->
@@ -291,10 +312,7 @@
                     </div>
                  {/if}   
                     
-                    
-                    
-                    <MonthsList bind:this={cmpMonths} />
-                    <YearsList bind:this={cmpYears} currentYear={today.getFullYear()} on:selected={changeCalYear}  />
-                   
+            <MonthsList bind:this={cmpMonths} />
+            <YearsList bind:this={cmpYears} currentYear={today.getFullYear()} on:selected={changeCalYear}  />       
 </div>
 

@@ -7,6 +7,10 @@
     export function onHide(){
         appear = false;
     }
+    function onSelected(e){
+        let target = e.target || e.srcElement;
+        console.log(target.dataset);
+    }
 </script>
 <style>
    .appear{
@@ -19,8 +23,8 @@
 </style>
 <div class:appear={appear} class="calendar-months">
         <ul class="months-list">
-            {#each MonthsAbbre as month}
-                <li>{month}</li>
+            {#each MonthsAbbre as month, i}
+                <li on:click={onSelected} data-index={i} data-month={month}>{month}</li>
             {/each}
         </ul>
 </div>
