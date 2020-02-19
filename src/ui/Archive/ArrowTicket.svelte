@@ -11,6 +11,7 @@
     let hidden = false;
     let didOpen = false;
     let unsubscribe; 
+    export let isMe;
     export let spartans;
     export function onToggle() {
         display = (display == 'none') ? 'block' : 'none';
@@ -83,7 +84,10 @@
             onDrag(false); 
             window['ipc'].send("window-action", {"create": true, "name" : "TICKET", "preyes": true}); 
             let isOpen = get(ticketStateWin);
-            if(isOpen.open)  window['ipc'].send("window-action", {"name": "TICKET","event": "open-ticket", "send" : ticket});
+            if(isOpen.open) {
+                window['ipc'].send("window-action", {"name": "TICKET","event": "open-ticket", "send" : ticket});
+                window['ipc'].send("window-action", {"name": "TICKET","event": "user:myself", "send" : isMe});
+            }
         }
    }
 
@@ -98,6 +102,9 @@
         window['ipc'].send("window-action", {
             "name" : "TICKET", "event" : "ticket:users", "send" : spartans
         });
+
+        // NOTIFY WINDOW TICKET ABOUT MYSELF 
+         window['ipc'].send("window-action", {"name": "TICKET","event": "user:myself", "send" : isMe});
    }
 
    

@@ -49,6 +49,7 @@
         <span id="initials_mapping_span"></span>
     </div>
     <div class="form-group">
+         <label>Date</label>
         <InputCalendarPicker btnGroup={true}  type="text" title="RCL Date" section="GIS" clazz="gisTicket" id="mapping_verified_date" />
         <span id="mapping_verified_date_span"></span>
     </div>
@@ -68,6 +69,7 @@
         <span id="initials_geocoding_span"></span>
     </div>
     <div class="form-group">
+        <label>Date</label>
         <InputCalendarPicker btnGroup={true}  type="text" title="Geocoding Date" section="GIS" clazz="gisTicket" id="geocoding_date" />
         <span id="geocoding_date_span"></span>
     </div>

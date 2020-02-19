@@ -75,18 +75,22 @@
 
                 //IT GETS THE HCAD JSON BUT INTO STRING..
                 response_hcad = (typeof(response_hcad) == "string") ? JSON.parse(response_hcad) : response_hcad;
+                console.log(response_hcad)
 
+                if(response_hcad ){ //If HCAD Empty...
+                    if(!response_hcad['error']){
+                        if(response_hcad.results.length > 0) { //Does it contain records...
+                                response_hcad.results.forEach(element => {
+                                    element.moreinfo = false;
+                                    element.display = [];
+                            });
 
-                if(response_hcad && response_hcad.results.length > 0){
+                            hparcels = response_hcad.results;
+                            count += response_hcad.results.length;
+                            console.log(`COUNT ROWS ${count}`)
 
-                        response_hcad.results.forEach(element => {
-                                element.moreinfo = false;
-                                element.display = [];
-                        });
-
-                     hparcels = response_hcad.results;
-                     count += response_hcad.results.length;
-                     console.log(`COUNT ROWS ${count}`)
+                        }
+                    }
                 }
 
                 if(search_wcad) { //only search if prop id is specified..

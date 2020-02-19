@@ -242,6 +242,13 @@
          redrawing = true;
     }
 
+    function changeCalMonth(e){
+        today = new Date(today.getFullYear(), e.detail, 1);
+        current_month = today.getMonth();
+        calendars =  getDaysInMonth(today, new Date(today.getFullYear(), today.getMonth(), daysInMonth(today.getMonth(), today.getFullYear())));
+        redrawing = true;
+    }
+
 
     export function scrollView() {
         if(footer){
@@ -312,7 +319,7 @@
                     </div>
                  {/if}   
                     
-            <MonthsList bind:this={cmpMonths} />
+            <MonthsList on:selected={changeCalMonth} bind:this={cmpMonths} />
             <YearsList bind:this={cmpYears} currentYear={today.getFullYear()} on:selected={changeCalYear}  />       
 </div>
 

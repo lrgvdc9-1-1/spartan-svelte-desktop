@@ -1,6 +1,10 @@
 <script>
-    import {MonthsAbbre} from '../../utils/Months';
+    import {onMount, createEventDispatcher} from "svelte";
+    import {Months} from '../../utils/Months';
+   
     let appear = false;
+    let display = createEventDispatcher()
+
     export function onShow() {
         appear = true;
     }
@@ -9,21 +13,24 @@
     }
     function onSelected(e){
         let target = e.target || e.srcElement;
-        console.log(target.dataset);
+        //console.log(target.dataset);
+        onHide();
+        display("selected", parseInt(target.dataset.index));
     }
 </script>
 <style>
    .appear{
-        left: 120px;
+        left: 160px;
         display: block;
    }
    .disappear{
+        left: 0px;
         display: none;
    }
 </style>
-<div class:appear={appear} class="calendar-months">
+<div class:appear={appear} class:disappear={!appear} class="calendar-months">
         <ul class="months-list">
-            {#each MonthsAbbre as month, i}
+            {#each Months as month, i}
                 <li on:click={onSelected} data-index={i} data-month={month}>{month}</li>
             {/each}
         </ul>

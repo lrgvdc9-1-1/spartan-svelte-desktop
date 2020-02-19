@@ -10,8 +10,8 @@
     import ArrowSearch from "../ui/Archive/ArrowSearch.svelte";
     import CalendarPopUp from '../ui/Archive/CalendarPopUp.svelte';
     import ArrowUp from "../ui/Buttons/ArrowUp.svelte";
+
     export let isMe;
-    
     export let url;
     export let Audio;
     export let spartans;
@@ -246,7 +246,7 @@
              Showing {((end == 0) ? 0 : start + 1)} of {end}
             </h3>
        </div>
-    <ArrowTicket on:clearSelect={onCheckSelecs} {spartans} bind:this={arrt} />
+    <ArrowTicket {isMe} on:clearSelect={onCheckSelecs} {spartans} bind:this={arrt} />
     <CalendarPopUp on:filter={onFilterByCalendar} bind:this={calendar} />
     <div id="body"  style="background: white;border-radius: 8px; overflow: auto; overflow-x: hidden;height: 58vh;">
         

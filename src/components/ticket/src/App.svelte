@@ -16,15 +16,19 @@
     let carousel;
     let form = {};
     let msg;
+    let isMe;
     let myself = "TICKET";
     let spartans = [];
     let msgLBL;
+    let comLBL;
+    let url = "https://gis.lrgvdc911.org/php/spartan/api/v2/index.php/";
       
 
     
 
     onMount(()=> {
         msgLBL  = 0; //Set something rather then nothing...
+        comLBL  = 0;
         msg = document.getElementById("msg-ticket");
         if(window['ipc']){
 
@@ -33,7 +37,7 @@
              //Also findout if is local available...
               window['ipc'].send("window-action", {"name" : myself, "GETLOCAL" : true});
              
-             //MESSAGE RECEIVE INFORMATION FROM 
+             // MESSAGE RECEIVE INFORMATION FROM 
              window['ipc'].on("ticket:users", (event, data) =>{
                     console.log("GETING TICKET USERS");
                     console.log(data);
@@ -42,8 +46,12 @@
                     form.premises.setUsers(spartans);
                     form.lv.setUsers(spartans);
                     form.db.setUsers(spartans);
-
-
+             });
+            
+            // 
+             window['ipc'].on("user:myself", (event, data)=> {
+                   
+                    isMe = data;
              });
 
             //On Open Ticket Get Information About Ticket...
@@ -57,6 +65,7 @@
                     form.lv.onDownload(ticketNumber);
                     form.db.onDownload(ticketNumber);
                     form.gis.onDownload(ticketNumber);
+                    form.com.onDownload(data['id_ticket']); //This component needs the official ticket number...
             });
 
             //Setup Listener If available.
@@ -167,7 +176,7 @@
                                         <span class="icon"><span class="mif-comment"></span></span>
                                         <span class="caption">COMMENTS FEED</span>
 										 <div class="badges">
-                                            <span class="badge inline">10</span>
+                                            <span class="badge inline">{comLBL}</span>
                                         </div>
                                     </a>
                                 </li>
@@ -213,7 +222,7 @@
                                              <Attach bind:this={form.attach} />
                                         </div>
                                          <div class="swiper-slide">
-                                             <Comments bind:this={form.com} />
+                                             <Comments on:totalMSG={(e)=>{comLBL = e.detail;}} {spartans} {isMe} {url} bind:this={form.com} />
                                         </div>
                                          <div class="swiper-slide">
                                              <Connections bind:this={form.con} />
