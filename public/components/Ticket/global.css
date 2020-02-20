@@ -39,6 +39,10 @@ input, button, select, textarea {
 	border-radius: 2px;
 }
 
+select {
+	line-height: 20px;
+}
+
 input:disabled {
 	color: #ccc;
 }
