@@ -11,8 +11,7 @@
     let hidden = false;
     let didOpen = false;
     let unsubscribe; 
-    export let isMe;
-    export let spartans;
+   
     export function onToggle() {
         display = (display == 'none') ? 'block' : 'none';
     }
@@ -43,9 +42,9 @@
     });
 
     onDestroy(()=>{
-        console.log(unsubscribe)
+      
        unsubscribe()
-       console.log(unsubscribe);
+      
    })
 
     function redirectTo() {
@@ -86,7 +85,7 @@
             let isOpen = get(ticketStateWin);
             if(isOpen.open) {
                 window['ipc'].send("window-action", {"name": "TICKET","event": "open-ticket", "send" : ticket});
-                window['ipc'].send("window-action", {"name": "TICKET","event": "user:myself", "send" : isMe});
+              
             }
         }
    }
@@ -97,14 +96,6 @@
         window['ipc'].send("window-action", {
             "name": "TICKET","event": "open-ticket", "send" : ticket
         });
-        
-        // WINDOW ACTION SEND SPARTANS USER TO THE WINDOW..
-        window['ipc'].send("window-action", {
-            "name" : "TICKET", "event" : "ticket:users", "send" : spartans
-        });
-
-        // NOTIFY WINDOW TICKET ABOUT MYSELF 
-         window['ipc'].send("window-action", {"name": "TICKET","event": "user:myself", "send" : isMe});
    }
 
    
@@ -138,7 +129,7 @@
 
 <div draggable="true" on:dragstart|preventDefault={onDrag} class:hidden={hidden} class="arrow_box" style="display: {display}; left: 50%;top: 50%;margin-top: -60px;">
          <ul class="v-menu">
-            <li on:click={onDeterClose} class="menu-title">General - {lbl} 
+            <li on:click|preventDefault={onDeterClose} class="menu-title">General - {lbl} 
                 <!-- <button on:click={onClose} style="position:relative; z-index:2; left: 25px;bottom:14px;"  class="button alert cycle mini">
                 <span on:click={onClose} class="mif-cross"></span></button> -->
             </li>

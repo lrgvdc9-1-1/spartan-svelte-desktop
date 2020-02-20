@@ -50,8 +50,9 @@
             
             // 
              window['ipc'].on("user:myself", (event, data)=> {
-                   
+                    console.log(data);
                     isMe = data;
+                    console.log(isMe);
              });
 
             //On Open Ticket Get Information About Ticket...

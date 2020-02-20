@@ -59,11 +59,13 @@
        
         if(ele.keyCode == 13) {
             let msg = ele.target.value.toUpperCase();
-            let object = {user_id: isMe.UID, first_name: isMe.FNAME, last_name: isMe.LNAME, ticket_comments: msg, time_track: new Date()};
-            
+
+            let object = {user_id: isMe.user_id, first_name: isMe.first_name, last_name: isMe.last_name, ticket_comments: msg, time_track: new Date()};
+            console.log(object);
+
             //sql transaction..
-           //Lets send it to the DATABASE TO SAVE....
-            window.sql.query(window['api']['tickets']['insertComment'] ,[isMe.UID, isMe.FNAME, isMe.LNAME,ticketId, msg]).then(res => {
+            //Lets send it to the DATABASE TO SAVE....
+            window.sql.query(window['api']['tickets']['insertComment'], [isMe.user_id, isMe.first_name, isMe.last_name,ticketId, msg]).then(res => {
                 if(res.rows.length == 1) { //Get the id_com from the new save transaction from DB..
                     object.id_com =  res.rows[0].id_com;
                     messages = [object].concat(messages);
@@ -139,7 +141,7 @@
     
     .grid-messages {
         display: grid;
-        grid-template-columns: 80% 20%;
+        grid-template-columns: 90% 10%;
     }
 
     .grid-item {
@@ -172,7 +174,7 @@
     }
 </style>
 <Window title="Comments Feed">
-    <div style="width: 100%;height: calc(100vh - 462px);">
+    <div style="width: 100%;height: 90%;">
     <ul>
 
         {#each messages as feed, i (feed.id_com)}
@@ -187,7 +189,7 @@
                         <span class="mif-alarm"></span>
                         <span>{FormatDate(feed.time_track)}</span>
                         <br>
-                        {#if feed.user_id == isMe.UID}
+                        {#if feed.user_id == isMe.user_id}
                             <button on:click="{()=> { feed.edit = true; handleEdit()}}" class="action-button"><span class="mif-pencil"></span></button>
 
                             <button on:click="{()=> {feed.confirm = true}}" class="action-button rotate-minus bg-red fg-white">

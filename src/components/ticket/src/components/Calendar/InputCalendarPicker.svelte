@@ -35,9 +35,12 @@
   //Once the input has been performed from Spartan Ticket
   //Controller it will Emit Custom handler..
   function handlePicker(e) {
-     inputMask.value = e.detail.parse;
-     display = e.detail.date;
-     choosen = e.detail.date;
+     if(e.detail.parse) {
+       inputMask.value = e.detail.parse;
+       display = e.detail.date;
+       choosen = e.detail.date;
+     }
+     
   }
 
   //Click input show or hide Calendar Picker..

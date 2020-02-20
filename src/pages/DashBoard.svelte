@@ -1,7 +1,8 @@
 <script>
     import { onMount, onDestroy } from 'svelte';
-    import { Router, Route, Link, navigateTo  } from '../lib/main';
+    
     import SQL from '../utils/sql.js';
+    import MenuTicket from "../ui/DropDowns/MenuTicket.svelte";
 
     export let url;
     export let option;
@@ -36,17 +37,29 @@
             
            sql.getOrganizationTickets(isMe.ORGANIZATION).then(res => {
                console.log(res);
-               searchTck = openTickets = res.rows;
-               setTimeout(() => {
-                   available = true;
-               }, 300);
+               if(res) {
+                 if(res.rows.length > 0){
+                       searchTck = openTickets = addMenuKey(res.rows);
+                    setTimeout(() => {
+                        available = true;
+                    }, 300);
+                 }
+                   
+               }
+              
            });
 
 
            sql.getMyTickets(isMe.UID).then(res => {
-               console.log(res);
-               mineTickets = res.rows;
+               
+               if(res) {
+                   if(res.rows.length > 0) {
 
+                       mineTickets = addMenuKey(res.rows);
+
+                   }
+               }
+               
            })
 
 
@@ -61,6 +74,13 @@
         }
     }
 
+
+    function addMenuKey(rows) {
+        rows.forEach(ele => {
+            ele.menu = false;
+        });
+        return rows;
+    }
 
     function getDateFormat(date) {
         let dateFormat = "";
@@ -201,7 +221,11 @@
                                     </table>
                                 </div>
                                 <div class="card-footer">
-                                    <button on:click={() => { navigateTo(`#viewTicket/${ticket.id_ticket}/${ticket.objectid}`)}} class="flat-button mif-note-add" ></button>
+                                    {#if ticket.menu}
+                                        <MenuTicket {isMe}  on:close="{(e)=>{ticket.menu = e.detail;}}" {ticket} />
+                                    {/if}
+                                   
+                                    <button on:click={() => { ticket.menu = !ticket.menu}} class="flat-button mif-note-add" ></button>
                                     <button on:click={()=> {onZoomLocation(ticket)}} class="flat-button mif-location"></button>
                                     <button class="flat-button mif-share"></button>
                                 </div>
@@ -220,9 +244,8 @@
             <div class="window-caption">
                 <span class="icon mif-windows"></span>
                 <span class="title">Working Ticket's</span>
-               
             </div>
-            <div class="window-content p-2">
+            <div class="window-content p-2" style="height: 340px;">
 
                 <ul class="listview view-content">
                     {#each mineTickets as ticket}
@@ -249,7 +272,10 @@
                                     </table>
                                 </div>
                                 <div class="card-footer">
-                                    <button on:click={() => { navigateTo(`#viewTicket/${ticket.id_ticket}/${ticket.objectid}`)}} class="flat-button mif-note-add" ></button>
+                                     {#if ticket.menu}
+                                        <MenuTicket {isMe} on:close="{(e)=>{ticket.menu = e.detail;}}" {ticket} />
+                                    {/if}
+                                    <button on:click={() => { ticket.menu = !ticket.menu}} class="flat-button mif-note-add" ></button>
                                     <button on:click={()=> {onZoomLocation(ticket)}} class="flat-button mif-location"></button>
                                     <button class="flat-button mif-share"></button>
                                 </div>

@@ -271,7 +271,7 @@
 
         <section style="width:100%; height: auto; overflow: auto;">
              <Router>
-                <Route path="#ArchiveTicketPage"><ArchiveTicketPage  {isMe}  {Audio} {spartans} {url} /></Route>
+                <Route path="#ArchiveTicketPage"><ArchiveTicketPage {Audio} {isMe} {url} /></Route>
                 <Route path="#TicketCalendarPage/:organizationId" let:router><CalendarPage {router} /></Route>
                 <Route path="#dashboard" ><DashBoard {isMe} {url} /></Route>
                 <Route path="#WalkIns" ><DashBoardCard {isMe} {url} path={"addressticket/getAllWalkIn/"} /></Route>
@@ -283,9 +283,6 @@
             </Router>
         
         </section>
-
-       
-
 </div>
 
 

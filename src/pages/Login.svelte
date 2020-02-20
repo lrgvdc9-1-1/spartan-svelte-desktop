@@ -35,7 +35,7 @@
             if(account)
             {
                 account = JSON.parse(account);
-                console.log(account);
+              
                 sql.logMeIn(account.email).then((res) => {
                 
                         if(res.rows.length == 1) {

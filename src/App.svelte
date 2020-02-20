@@ -1,8 +1,9 @@
 <script>
   import {onMount} from "svelte";
-  import {ticketStateWin} from "./stores/SpartanData.js";
+  import {ticketStateWin, SpartansState} from "./stores/SpartanData.js";
   import { fade } from 'svelte/transition';
   import { Router, Route, Link, navigateTo  } from './lib/main';
+ 
 	import RibbonToolbar from './ui/RibbonToolbar.svelte';
 	import Login from "./pages/Login.svelte";
 	import Ticket from './pages/Ticket.svelte';
@@ -71,7 +72,7 @@
 
   //Once the application has sign in then this can happen..
   async function queryDB() {
-      console.timeEnd("init");
+     
       let sql = new SQL(pool, api, client_status)
       loginComponent.setSQL(sql);
 
@@ -85,8 +86,8 @@
             spartans.push(new User(em.user_id, em.first_name, em.middle_name, em.last_name, em.email, em.icon2, em.organization_id, em.org_name, em.work_center));
          });
 
-         
-         console.log(spartans);
+         SpartansState.update(spartans => spartans = {"users": spartans, "timestamp" : new Date()}); 
+        
       }).catch(err => console.log("Error executing query", err.stack));
 
       loginComponent.checkOnSave();
@@ -103,7 +104,7 @@
           spartan.IsMe = true;
           spartan.chat = false;
           isMe = spartan;
-          console.log(isMe);
+          
           return;//stop loop..
         }
     });
@@ -139,9 +140,19 @@
            
         });
 
-          //Listen for state when is ready to go..
+          //Listen for state when ticket pop is ready to go..
+          //Once the ticket needs to send the spartans, and isMe information..
            window['ipc'].on("ticket:ready", (event, data) => {
+                // WINDOW ACTION SEND SPARTANS USER TO THE WINDOW..
+                window['ipc'].send("window-action", {
+                    "name" : "TICKET", "event" : "ticket:users", "send" : spartans
+                });
+                
+                // NOTIFY WINDOW TICKET ABOUT MYSELF 
+                window['ipc'].send("window-action", {"name": "TICKET","event": "user:myself", "send" : isMe});
+         
                ticketStateWin.update(window => window = {"open": true, "timestamp" : new Date()}); 
+              
            });
 
             //Listen for state primarily on close window ticket
