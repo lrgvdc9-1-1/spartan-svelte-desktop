@@ -273,7 +273,7 @@
              <Router>
                 <Route path="#ArchiveTicketPage"><ArchiveTicketPage {Audio} {isMe} {url} /></Route>
                 <Route path="#TicketCalendarPage/:organizationId" let:router><CalendarPage {router} /></Route>
-                <Route path="#dashboard" ><DashBoard {isMe} {url} /></Route>
+                <Route path="#dashboard" ><DashBoard {spartans} {isMe} {url} /></Route>
                 <Route path="#WalkIns" ><DashBoardCard {isMe} {url} path={"addressticket/getAllWalkIn/"} /></Route>
                 <Route path="#AllOpenTickets" ><DashBoardCard {isMe} {url} path={`addressticket/getAllPendingTicketsByOrga2/?id=${isMe.ORGANIZATION}`} /></Route>
                 <Route path="#newTicket"  ><Ticket on:toolbar={(event)=>{display = event.detail.text}} {url} {socket} {isMe} {spartans} newTicket={true}  action={action} /></Route>

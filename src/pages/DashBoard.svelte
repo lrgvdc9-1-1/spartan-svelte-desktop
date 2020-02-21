@@ -1,9 +1,10 @@
 <script>
     import { onMount, onDestroy } from 'svelte';
-    
+    import SmallWorkflow from "../ui/PopUp/SmallWorkflow.svelte";
     import SQL from '../utils/sql.js';
     import MenuTicket from "../ui/DropDowns/MenuTicket.svelte";
 
+    export let spartans;
     export let url;
     export let option;
     export let isMe;
@@ -78,6 +79,7 @@
     function addMenuKey(rows) {
         rows.forEach(ele => {
             ele.menu = false;
+            ele.workflow = false;
         });
         return rows;
     }
@@ -209,16 +211,21 @@
                                     {ticket.staff} | <b> {getDateFormat(ticket.created_date)}</b>
                                 </div>
                                 <div class="card-content p-2">
-                                    <table class="table">
-                                        <tr>
-                                            <td>Ticket Id</td>
-                                            <td>{ticket.objectid}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Customer Name</td>
-                                            <td>{ticket.cfirst_name} {ticket.clast_name}</td>
-                                        </tr>
-                                    </table>
+                                    {#if ticket.workflow}
+                                         <SmallWorkflow {sql} {spartans} idTicket={ticket.id_ticket} />
+                                    {:else}
+                                        <table class="table">
+                                            <tr>
+                                                <td>Ticket Id</td>
+                                                <td>{ticket.objectid}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Customer Name</td>
+                                                <td>{ticket.cfirst_name} {ticket.clast_name}</td>
+                                            </tr>
+                                        </table>
+                                    {/if}
+                                    
                                 </div>
                                 <div class="card-footer">
                                     {#if ticket.menu}
@@ -227,7 +234,7 @@
                                    
                                     <button on:click={() => { ticket.menu = !ticket.menu}} class="flat-button mif-note-add" ></button>
                                     <button on:click={()=> {onZoomLocation(ticket)}} class="flat-button mif-location"></button>
-                                    <button class="flat-button mif-share"></button>
+                                    <button on:click="{()=>{ticket.workflow = !ticket.workflow}}" class="flat-button mif-share"></button>
                                 </div>
                             </div>
                         </div>

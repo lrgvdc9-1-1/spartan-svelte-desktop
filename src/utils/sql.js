@@ -36,6 +36,10 @@ export default class SQL {
         }
     }
 
+    getTicketWorkflow(ticketId){
+        return this.pool.query(this.api['tickets']['workflow'], [ticketId]);
+    }
+
     getTicketComFeedTotal(whereInfo) {
         if(this.client_status) {
             return this.pool.query(this.api['tickets']['feedTotal'], whereInfo);
