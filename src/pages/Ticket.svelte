@@ -1,6 +1,7 @@
 <script>
    import { onMount, onDestroy, createEventDispatcher } from 'svelte';
    import { fade } from 'svelte/transition';
+   import InputPicker from "../ui/Calendar/InputPicker.svelte";
    import SQL from '../utils/sql';
    import Loading from "../ui/Loading.svelte";
    import OnlineDash from "../ui/OnlineDash.svelte";
@@ -554,7 +555,8 @@
                            </div>
                            <div class="form-group">
                               <label>Date Addressed</label>
-                              <input  type="date" data-title="Date Addressed" data-section="Location Validation" class="inTicket" id="date_addressed"  >
+                              <InputPicker title="Date Addressed" btnGroup={true} section="Location Validation" id="date_addressed" clazz="inTicket"  />
+                        
                               <span id="date_addressed_span"></span>
                            </div>
 
@@ -583,8 +585,8 @@
 
                            <div class="form-group">
                               <label>Address Issued Date</label>
-                              <input  type="date" data-title="Address Issued Date" data-section="Location Validation" class="inTicket" id="address_issued_date"  >
-                              <span id="address_issued_date_span"></span>
+                               <InputPicker title="Address Issued Date" btnGroup={true} section="Location Validation" id="address_issued_date" clazz="inTicket"  />
+                               <span id="address_issued_date_span"></span>
                            </div>
 
                            <div class="form-group">
@@ -661,7 +663,7 @@
                               <label>
                                  Verified Date
                               </label>
-                              <input class="inTicket" id="date_verified" data-title="Verified Date"  data-section="Database"   type="date" />
+                              <InputPicker title="Verified Date" btnGroup={true} section="Database" id="date_verified" clazz="inTicket"  />
                               <span id="date_verified_span"></span>
                            </div>
                            <div class="form-group">
@@ -686,7 +688,7 @@
                               <span id="initials_mapping_span"></span>
                            </div>
                            <div class="form-group">
-                              <input type="date" data-title="Date" data-section="GIS" id="mapping_verified_date" class="inTicket">
+                              <InputPicker btnGroup={true} clazz="inTicket" title="Date" section="GIS" id="mapping_verified_date" />
                               <span id="mapping_verified_date_span"></span>
                            </div>
                            <br>
@@ -704,8 +706,9 @@
                               </select>
                               <span id="initials_geocoding_span"></span>
                            </div>
-                           <div class="form-group">
-                              <input type="date" data-title="Geocoding Date" data-section="GIS" id="geocoding_date" class="inTicket">
+                           <div class="form-group">  
+
+                              <InputPicker btnGroup={true} clazz="inTicket" title="Geocoding Date" section="GIS" id="geocoding_date" />
                               <span id="geocoding_date_span"></span>
                            </div>
                      </div>

@@ -1,17 +1,17 @@
 
 async function  initDB() {
 
-		console.time("init");
+		
 		// DO DNS LOOK UP local network connect to db
 		// if not fail over to API http request 
 		// Assume client status is offline..
 		client_status = false;
 		try {
-			console.log("GOING TO TRY");
+		
 			await dns.lookup('911.local', {all: true}, async (err, addresses) =>
 				{
 
-					console.log(addresses);
+				
 					if(addresses){
 						
 						client_status = (addresses.length > 0) ? true : false;

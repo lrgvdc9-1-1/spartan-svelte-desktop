@@ -11,6 +11,8 @@
     let username = "";
     let password = "";
     let remMe = false;
+    let incorrect = false;
+    let msg = "";
     $: email = username.toUpperCase();
     $: base64 = btoa(password);
 
@@ -51,7 +53,9 @@
                                     found = true;
                                     user_id = element.user_id;
                                 }else {
+                                    //OTHER WISE WRONG PASSWORD AND USERNAME..
                                     console.log("NOTIFY USER");
+                                    incorrect = true;
                                 }
                             });
                             if(found){
@@ -64,11 +68,11 @@
     }
 
     async function onAuthenticate() {
-        console.log("AUTHENTICATE")
+       // console.log("AUTHENTICATE")
 
         let isPin = false
         let hashHex = "";
-        console.log(`Remember me ${remMe}`);
+       // console.log(`Remember me ${remMe}`);
     
         if(isNaN(password)) { //Not PIN
             const encoder = new TextEncoder();
@@ -87,7 +91,7 @@
         }
         
         sql.logMeIn(email).then((res) => {
-                console.log(res);
+              
                 if(res.rows.length == 1) {
                    let found = false;
                    let user_id = 0;
@@ -95,15 +99,16 @@
            
                         
                         if(element.email == email && isPin && element.pin_pass == password) {
-                                console.log("good pin")
+                                //console.log("good pin")
                                 found = true;
                                 user_id = element.user_id;
                         }else if(element.email == email && element.password == hashHex){
-                            console.log("HASH IS AWESOME")
+                            //console.log("HASH IS AWESOME")
                             found = true;
                             user_id = element.user_id;
                         }else {
-                            console.log("TELL USER BAD USERNAME ");
+                            incorrect = true;
+                            msg = "INCORRECT USER AND PASSWORD";
                             
                              //Clear storage because bad credentials...
                              window.localStorage.clear();
@@ -117,6 +122,30 @@
                 
         });
         
+    }
+
+    //When User Hits Enter...
+    function handleKeyDown(e) {
+        
+        if(e.keyCode == 13) {
+            if(validation()) {
+                 onAuthenticate()
+            }else{
+                incorrect = true;
+            }
+        }
+       
+    }
+
+
+    function validation() {
+        msg = "";
+        incorrect = false;
+        if(!username.includes("@")){
+            msg = "NOT VALID E-MAIL FORMAT";
+            return false;
+        }
+        return true;
     }
 
 </script>
@@ -155,9 +184,17 @@
         cursor: pointer !important;
     }
 
+    .red-outline {
+        border: 1px solid rgb(192, 26, 26);
+    }
+
     .button:hover {
         background: #CAB448 !important;
         color: white !important;
+    }
+    
+    .error {
+        color:rgb(192, 26, 26);;
     }
 </style>
 
@@ -175,13 +212,13 @@
         <h2 class="text-light">SpartanPro V4</h2>
         <hr style="color: #C12F79;" class="thin mt-4 mb-4 ">
         <div class="form-group">
-            <input type="text" bind:value={username} data-role="input" data-prepend="<span class='mif-envelop'>" placeholder="Enter your email..." data-validate="required email">
+            <input class:red-outline={incorrect} type="text" bind:value={username} data-role="input" data-prepend="<span class='mif-envelop'>" placeholder="Enter your email..." data-validate="required email">
         </div>
         <div class="form-group">
-            <input type="password" bind:value={password}   placeholder="Enter your password..." >
+            <input on:keydown={handleKeyDown} class:red-outline={incorrect} type="password" bind:value={password}   placeholder="Enter your password..." >
         </div>
         <div class="form-group mt-10">
-
+            <label class="error">{msg}</label>
             <div class="place-right">
                 <input bind:value={remMe} type="checkbox"  >
                 <span style="color: #CAB448;"> Remember Me</span>
@@ -189,7 +226,9 @@
                 <Link>Forgot Password</Link>
             </div>
            
-            <button on:click|preventDefault={onAuthenticate} style="border: 1px solid #CAB448; background: transparent; color: #05173F;" class="button large rounded">Login</button>
+                <button on:click|preventDefault={onAuthenticate} style="border: 1px solid #CAB448; background: transparent; color: #05173F;" class="button large rounded">Login</button>
+
+            
         </div>
     </form>
     {/if}

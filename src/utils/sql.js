@@ -11,7 +11,7 @@ export default class SQL {
     }
 
     getOrganizationNames(){
-        console.log(this.api['company']['names']);
+        //console.log(this.api['company']['names']);
         return this.pool.query(this.api['company']['names'])
     }
 
@@ -67,6 +67,10 @@ export default class SQL {
      getActiveUsers()
     {
         return this.pool.query(this.api.users.active);
+    }
+
+    getAllUsers() {
+        return this.pool.query(this.api['users']['all']);
     }
 
     getAttachments(whereInfo) {

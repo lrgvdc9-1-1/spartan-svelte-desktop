@@ -1,4 +1,4 @@
-export default class User {
+ class User {
 
     constructor(uid, fname, mname, lname, email, icon, orga,orga_name, wcenter, active) {
         this.user_id    = uid;
@@ -72,6 +72,10 @@ export default class User {
         this.last_name = nwName;
     }
 
+    get EMLOWER() {
+        return this.email.toLowerCase();
+    }
+
     get EMAIL() {
         return this.email;
     }
@@ -97,3 +101,5 @@ export default class User {
     }
 
 }
+
+module.exports = User;

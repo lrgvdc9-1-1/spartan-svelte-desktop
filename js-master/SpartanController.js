@@ -226,7 +226,7 @@ class SpartanController{
       }
   }
 
-
+  //
   setupIPCEvents() {
 
     this.ipc.on('window-action', (event, window) => {
@@ -287,6 +287,10 @@ class SpartanController{
     });
 
 
+  }
+
+  getWindows() {
+      return this.win;
   }
 
  

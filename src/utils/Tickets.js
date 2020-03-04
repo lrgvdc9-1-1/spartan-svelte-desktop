@@ -214,6 +214,16 @@ export default class Tickets {
     return data;
   }
 
+  //Conversion of Date Object Back to string database can accept..
+  convertDateToString(date){
+    if(date instanceof Date){
+        var yyyy = date.getFullYear();
+        var mm   = (date.getMonth() + 1 < 10) ? `0${date.getMonth()+ 1}` : date.getMonth() + 1;
+        var dd   = (date.getDate() < 10) ? `0${date.getDate()}` : date.getDate();
+        return `${yyyy}-${mm}-${dd}`;
+    }
+}
+
   updateFormById(elemId, value) {
      
     if(this.formInputs) {
@@ -237,6 +247,7 @@ export default class Tickets {
           
             var elem = document.getElementById(x);
             var type = elem.type;
+          
            
             var skip = false;
             if(elem.dataset.check == 1) {
@@ -244,11 +255,20 @@ export default class Tickets {
             }
 
             if(type == "checkbox") {
-              //if(x == "address_issued" || x == "letter_generated" || x == "plack_generated" || x == "called_cust"){
+             
            
                elem.checked = (attribute[x] == 1) ? true : false;
                skip = true;
-             // }
+           
+            }else if(x.indexOf("date") != -1 && attribute[x]) {
+              console.log(attribute[x]);
+              elem.value = this.formatDate(attribute[x]);
+
+              elem.dispatchEvent(new CustomEvent('picker', { detail: 
+                  {"date" : attribute[x], 
+                  "parse" :  this.convertDateToString(attribute[x])}
+                })); //Emit Customer event to that element
+                continue;               
             }
           
             if(!skip) {

@@ -1,11 +1,13 @@
 // Modules to control application life and create native browser window
 const SpartanController = require('./js-master/SpartanController');
+const SocketController  = require("./js-master/SocketController");
 const electron = require('electron');
 const { app, BrowserWindow, dialog} = electron
-
+const io = require("socket.io-client")
 const path = require('path')
 const url  = require('url')
 const fs = require('fs');
+
 
 
 
@@ -26,7 +28,7 @@ if(Shell) {
 
 //Spartan Controllers Handles Creation, Communication of windows.
 let spartan = new SpartanController(ipc, electron, BrowserWindow, path, url, fs, Shell, __dirname, dialog);
-
+let socket = new SocketController(io, "http://hchapa:3000",ipc, spartan);
 
 
 

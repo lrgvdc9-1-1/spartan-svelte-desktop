@@ -30,44 +30,40 @@
   let message = 'ONLINE';
   let Audio;
 
-  $: console.log(`CHANGING: ${spartans.length}`)
+  //$: console.log(`CHANGING: ${spartans.length}`)
   $: username = (isMe) ? `${isMe.first_name} ${isMe.last_name}` : 'SIGN IN - SPARTANS'
   
 
 
   //Connection to spartan chat server...
-  let socket = io('http://hchapa:3000'); 
+  let socket = null; //io('http://hchapa:3000'); 
   
   onMount(async () => {
       
       ipcNavigationEvents();
-      socket.on("online", (users) => { // Collect all the users...
 
-      
-          //Reset everythign to no socket id, and online off everyone.
-          spartans.forEach(spartan => {
-             spartan.SOCKETID = null;
-             spartan.ONLINE = 0;
-          });
+      window['ipc'].on("online", (data) => {
+            //Reset everythign to no socket id, and online off everyone.
+            spartans.forEach(spartan => {
+              spartan.SOCKETID = null;
+              spartan.ONLINE = 0;
+            });
 
-          //Then Change which spartan to be on or off..
-          for(var x in users) {
-              let user = users[x];
-              spartans.forEach(spartan => {
-                    if(user.uid == spartan.UID) {
-                      spartan.SOCKETID = user.socketid;
-                      spartan.ONLINE = 1;
-                      return; //Kill for each..
-                    }
-              });
-          }
+            //Then Change which spartan to be on or off..
+            for(var x in users) {
+                let user = users[x];
+                spartans.forEach(spartan => {
+                      if(user.uid == spartan.UID) {
+                        spartan.SOCKETID = user.socketid;
+                        spartan.ONLINE = 1;
+                        return; //Kill for each..
+                      }
+                });
+            }
 
-          //Reassig itself..
-          spartans = spartans;
-      })
-
-      //Future for comunication esri map with main application..
-
+            //Reassig itself..
+            spartans = spartans;
+      });
   });
 
   //Once the application has sign in then this can happen..
@@ -77,13 +73,13 @@
       loginComponent.setSQL(sql);
 
       var res_orga = await sql.getOrganizationNames();
-      //console.log(res_orga);
+     
       organizations_name = res_orga.rows || [];
-      // console.log(organizations_name);
-      sql.getActiveUsers().then((res) => {
-        
+     
+      sql.getAllUsers().then((res) => {
+         ipc.send("socket-update-users", {"data" : res.rows});
          res.rows.forEach(em => {
-            spartans.push(new User(em.user_id, em.first_name, em.middle_name, em.last_name, em.email, em.icon2, em.organization_id, em.org_name, em.work_center));
+            spartans.push(new User(em.user_id, em.first_name, em.middle_name, em.last_name, em.email, em.icon2, em.organization_id, em.org_name, em.work_center, em.active));
          });
 
          SpartansState.update(spartans => spartans = {"users": spartans, "timestamp" : new Date()}); 
@@ -114,10 +110,11 @@
 
     if(isMe) {
         //Let user know I am online...
-        ipc.send('window-action', {"event" : 'get-user-info' , 'name' : 'GIS', "send" : isMe});//send-gis-user', isMe);
+        ipc.send('window-action', {"event" : 'get-user-info' , 'name' : 'GIS', "send" : isMe});
         Audio.play();
         startApp = true;
-        socket.emit("aboutme", isMe); //Tell Socket about me..
+        ipc.send("socket-is-me", {"event" : "aboutme", "data" : isMe});
+        //socket.emit("aboutme", isMe); //Tell Socket about me..
     }
 
   }
@@ -413,7 +410,7 @@
 <!-- <RibbonToolbar {socket} url={url} /> -->
 {#if startApp}
    <!-- content here -->
-  <RibbonToolbar {Audio} {sql} {socket} {isMe} {spartans} {url} />
+  <RibbonToolbar {Audio} {sql} {isMe} {spartans} {url} />
 {:else }
   <Login {Audio} bind:this={loginComponent} on:ready={onLoginReady} on:user={onSelectUser}  />
 {/if}
