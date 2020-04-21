@@ -27,6 +27,10 @@ export default class User {
         return this.me;
     }
 
+    get ACTIVE() {
+        return parseInt(this.active);
+    }
+
     set IsMe(value) {
         this.me = value;
     }

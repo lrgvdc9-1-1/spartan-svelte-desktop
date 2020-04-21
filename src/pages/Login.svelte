@@ -5,7 +5,7 @@
     import SQL from '../utils/sql';
 
     export let Audio;
-
+    export let spartans;
     let sql;
     let visible = false;
     let username = "";
@@ -13,6 +13,7 @@
     let remMe = false;
     let incorrect = false;
     let msg = "";
+    let active = true;
     $: email = username.toUpperCase();
     $: base64 = btoa(password);
 
@@ -59,6 +60,7 @@
                                 }
                             });
                             if(found){
+                                console.log("DISPATCH");
                                 dispatch("user", {user_id: user_id});
                             }
                         }
@@ -68,7 +70,7 @@
     }
 
     async function onAuthenticate() {
-       // console.log("AUTHENTICATE")
+     
 
         let isPin = false
         let hashHex = "";
@@ -124,11 +126,21 @@
         
     }
 
+    function handleOnClick(){
+        console.log("HANDLE CLICK");
+        if(validation() && active){
+            onAuthenticate();
+        }else{
+            incorrect = true;
+        }
+    }
+
     //When User Hits Enter...
     function handleKeyDown(e) {
         
         if(e.keyCode == 13) {
-            if(validation()) {
+            console.log("13 enter")
+            if(validation() && active) {
                  onAuthenticate()
             }else{
                 incorrect = true;
@@ -145,7 +157,43 @@
             msg = "NOT VALID E-MAIL FORMAT";
             return false;
         }
+       
         return true;
+    }
+
+    function handleOnFocus() {
+        msg = "";
+        incorrect = false;
+
+    }
+
+    function handleLostFocus() {
+        active = true;
+        msg = "";
+         if(spartans) {
+            var found = false;
+            var isMe = null;
+            
+            spartans.forEach(user => {
+               
+                if(user.EMAIL == email && user.ACTIVE == 1){
+                    isMe = user;
+                    found = true;
+                    return;
+                }
+            });
+
+           active = found;
+           if(found) {
+              
+               window['ipc'].send("socket-is-me", {"data" : isMe});
+           }else{
+               msg = "NEED TO ACTIVED ACCOUNT";
+               if(!isMe) {
+                   msg = "ACCOUN'T DOESN'T EXIST";
+               }
+           }
+        }
     }
 
 </script>
@@ -212,7 +260,7 @@
         <h2 class="text-light">SpartanPro V4</h2>
         <hr style="color: #C12F79;" class="thin mt-4 mb-4 ">
         <div class="form-group">
-            <input class:red-outline={incorrect} type="text" bind:value={username} data-role="input" data-prepend="<span class='mif-envelop'>" placeholder="Enter your email..." data-validate="required email">
+            <input class:red-outline={incorrect} type="text" on:focus={handleOnFocus} on:blur={handleLostFocus} bind:value={username} data-role="input" data-prepend="<span class='mif-envelop'>" placeholder="Enter your email..." data-validate="required email">
         </div>
         <div class="form-group">
             <input on:keydown={handleKeyDown} class:red-outline={incorrect} type="password" bind:value={password}   placeholder="Enter your password..." >

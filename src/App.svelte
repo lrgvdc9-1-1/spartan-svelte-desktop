@@ -3,7 +3,7 @@
   import {ticketStateWin, SpartansState} from "./stores/SpartanData.js";
   import { fade } from 'svelte/transition';
   import { Router, Route, Link, navigateTo  } from './lib/main';
- 
+  import Header from "./ui/Header.svelte";
 	import RibbonToolbar from './ui/RibbonToolbar.svelte';
 	import Login from "./pages/Login.svelte";
 	import Ticket from './pages/Ticket.svelte';
@@ -42,12 +42,10 @@
       
       ipcNavigationEvents();
 
+
+      //Handle All the users..
       window['ipc'].on("online", (data) => {
-            //Reset everythign to no socket id, and online off everyone.
-            spartans.forEach(spartan => {
-              spartan.SOCKETID = null;
-              spartan.ONLINE = 0;
-            });
+           
 
             //Then Change which spartan to be on or off..
             for(var x in users) {
@@ -63,6 +61,11 @@
 
             //Reassig itself..
             spartans = spartans;
+      });
+
+     //Handle All the offline users..
+      window['ipc'].on("offline", (data) => {
+
       });
   });
 
@@ -87,6 +90,8 @@
       }).catch(err => console.log("Error executing query", err.stack));
 
       loginComponent.checkOnSave();
+
+
       window['ipc'].send("window-action", {"show" : true, "name" : "Main"});
       window['ipc'].send('window-action', {"close" : true, "name" : "Splash"});
       window['ipc'].send("window-action", {"local" :  true});
@@ -113,8 +118,8 @@
         ipc.send('window-action', {"event" : 'get-user-info' , 'name' : 'GIS', "send" : isMe});
         Audio.play();
         startApp = true;
-        ipc.send("socket-is-me", {"event" : "aboutme", "data" : isMe});
-        //socket.emit("aboutme", isMe); //Tell Socket about me..
+        ipc.send("socket-action", {"event" : "aboutme", "data" : isMe});
+        
     }
 
   }
@@ -217,45 +222,7 @@
 </script>
 
 <style>
-  #titlebar {
-	display: block;
-	position: fixed;
-  width: 100%;
-  height: 38px;
-  background: #05173F;
-  z-index: 2;
-  border-bottom: 2px solid #CAB448;
-  }
-
-  #titlebar #drag-region {
-    width: 100%;
-    height: 100%;
-    cursor: grab;
-    -webkit-app-region: drag;
-  }
-  #titlebar {
-    color: #FFF;
-  }
-  #titlebar #drag-region {
-    display: grid;
-    grid-template-columns: 80px auto 125px 138px;
-  }
-  #window-title {
-    grid-column: 2;
-    display: flex;
-    align-items: center;
-    bottom: 8px;
-    
   
-  }
-
-
-  #window-icon {
-    grid-column: 1;
-    display: flex;
-    align-items: center;
-    margin-left: 8px;
-  }
 
   #window-username {
     position: absolute;
@@ -268,61 +235,7 @@
   #window-username button:hover {
     cursor: pointer;
   }
-  #window-title span {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: 1.5;
-  }
-  #window-controls {
-    display: grid;
-    grid-template-columns: repeat(4, 46px);
-    position: absolute;
-    top: 0;
-    right: 0;
-    height: 100%;
-    font-family: segoe;
-    font-size: 10px;
-  }
-  #window-controls {
-    -webkit-app-region: no-drag;
-  }
-  #window-controls .button {
-    grid-row: 1 / span 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-  }
-
-
-
-  #window-controls .button {
-    user-select: none;
-    color: #BBB;
-    background: transparent;
-  }
-  #window-controls .button:hover {
-    background: rgba(255,255,255,0.2);
-    color: #FFF;
-    cursor: pointer;
-  }
-
-  #window-controls #min-button {
-    grid-column: 3;
-  }
-  #window-controls #max-button, #window-controls #restore-button {
-    grid-column: 4;
-  }
-  #window-controls #restore-button {
-    display: none;
-  }
-  #window-controls #close-button {
-    grid-column: 5;
-  }
-  #window-controls #close-button:hover {
-    background: #E81123;
-  }
+ 
   .subMenu {
     list-style: none;
       position: absolute;
@@ -344,10 +257,10 @@
 
 </style>
 <svelte:window on:clientfailed={onFailedDNS} on:clientready={queryDB}></svelte:window>
-<audio bind:this={Audio} id="myAudio">
-  <source src="./music-tones/filling-your-inbox.mp3" type="audio/mpeg">
-  Your browser does not support the audio element.
-</audio>
+  <audio bind:this={Audio} id="myAudio">
+    <source src="./music-tones/filling-your-inbox.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
 
 <div  id="window-username">
               <button on:blur={()=>{shMenu = false;}} style="color:#CAB448; background: transparent; border: 0;" 
@@ -371,39 +284,8 @@
                 </ul>
               {/if}
           </div>
-<header id="titlebar">
-      <div id="drag-region" style="cursor: grab !important;">
-        <div id="window-icon">
-          <img width="50" height="50" src="./assets/spartan_logo.webp" alt="Spartan Logo">
-        </div>
-        <div id="window-title">
-         
-          <span>Spartan Pro Desktop</span>
-           
-        </div>
 
-         
-         
-
-        <div id="window-controls">
-          
-        
-
-          <div class="button" id="min-button">
-            <span>&#xE921;</span>
-          </div>
-          <div class="button" id="max-button">
-            <span>&#xE922;</span>
-          </div>
-          <div class="button" id="restore-button">
-            <span>&#xE923;</span>
-          </div>
-          <div class="button" id="close-button">
-            <span>&#xE8BB;</span>
-          </div>
-        </div>
-      </div>
-    </header>
+<Header />
 <div style="height: 38px;"></div>
 <!-- <DatePicker /> -->
 
@@ -412,7 +294,7 @@
    <!-- content here -->
   <RibbonToolbar {Audio} {sql} {isMe} {spartans} {url} />
 {:else }
-  <Login {Audio} bind:this={loginComponent} on:ready={onLoginReady} on:user={onSelectUser}  />
+  <Login {spartans} {Audio} bind:this={loginComponent} on:ready={onLoginReady} on:user={onSelectUser}  />
 {/if}
 
 

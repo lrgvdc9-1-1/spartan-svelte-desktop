@@ -36,7 +36,7 @@ class SocketController{
 
         this.ipc.on("socket-is-me", (event, window) => {
             var user = window.data;
-
+           
             if(_self.spartans) {
                 var length = _self.spartans.length;
                 for(var i = 0; i < length; i++) {
@@ -44,20 +44,18 @@ class SocketController{
                         _self.spartans[i].me = true;
                         _self.spartans[i].socket_id = _self.socketid;
                         _self.indexMe = i;
+                        _self.spartans[i].online = true;
                         break;
                     }
                     
                 }
-
-                console.log(_self.spartans[_self.indexMe]);
-                //console.log(_self.spartans);
-
+               // console.log(_self.spartans[_self.indexMe]);
             }
         });
 
         this.ipc.on("socket-action", (event, window) =>{
             
-            _self.socket.emit(window.name, window.data);
+            _self.socket.emit(window.event, window.data);
         })
     }
 
@@ -68,6 +66,7 @@ class SocketController{
 
         
         this.socket.on("online", (data) => {
+            console.log("I AM ONLINE");
             if(data.socketid == _self.socketid) {
 
             }
@@ -78,8 +77,9 @@ class SocketController{
         });
 
         this.socket.on("socketid", (data) => {
-            //var window = _self.spartanController.getWindows();
-            _self.socketid = data;           
+            //var window = 
+            _self.socketid = data;        
+              
         });
     }
 

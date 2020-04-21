@@ -11,7 +11,7 @@
         this.organization_id = orga;
         this.work_center = wcenter;
         this.socket_id = 0;
-        this.online = 0;
+        this.online = false;
         this.active = active;
         this.me = false;
         this.splash = false;
